@@ -7,8 +7,8 @@ class GitHubDataManager {
     constructor(options = {}) {
         // Настройки по умолчанию
         this.config = {
-            owner: options.owner || 'YOUR-GITHUB-USERNAME', // ЗАМЕНИТЕ НА ВАШ USERNAME
-            repo: options.repo || 'wow-addon-configs',
+            owner: options.owner || 'n-burov', // ЗАМЕНИТЕ НА ВАШ USERNAME
+            repo: options.repo || 'AferistHelper-web''',
             branch: options.branch || 'main',
             cacheTTL: options.cacheTTL || 5 * 60 * 1000, // 5 минут
             retryCount: options.retryCount || 3,
