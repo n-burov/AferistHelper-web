@@ -1,0 +1,148 @@
+name: Validate Configs
+
+on:
+  pull_request:
+    paths:
+      - 'configs/configs.json'
+      - 'configs/screenshots/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Validate JSON syntax
+        run: |
+          echo "🔍 Проверка синтаксиса configs.json..."
+          if ! python3 -m json.tool configs/configs.json > /dev/null 2>&1; then
+            echo "❌ Ошибка: configs.json содержит синтаксические ошибки JSON"
+            exit 1
+          fi
+          echo "✅ JSON синтаксис верный"
+          
+      - name: Validate config structure
+        run: |
+          echo "🔍 Проверка структуры конфигов..."
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+          
+          try {
+            const data = JSON.parse(fs.readFileSync('configs/configs.json', 'utf8'));
+            
+            // Проверяем meta
+            if (!data.meta) {
+              console.error('❌ Отсутствует секция meta');
+              process.exit(1);
+            }
+            
+            // Проверяем configs
+            if (!Array.isArray(data.configs)) {
+              console.error('❌ configs должен быть массивом');
+              process.exit(1);
+            }
+            
+            const requiredFields = ['id', 'name', 'addon', 'description', 'config', 'author'];
+            const validAddons = ['elvui', 'wa', 'details', 'plater', 'dbm', 'bigwigs'];
+            const validClasses = ['warrior', 'paladin', 'deathknight', 'mage', 'priest', 'rogue', 'shaman', 'hunter', 'warlock', 'druid', 'universal'];
+            const validRoles = ['tank', 'healer', 'dps', 'all'];
+            
+            let errors = [];
+            
+            data.configs.forEach((config, index) => {
+              // Проверяем обязательные поля
+              requiredFields.forEach(field => {
+                if (!config[field]) {
+                  errors.push(\`Конфиг #\${index} (\${config.name || 'без названия'}): отсутствует поле \${field}\`);
+                }
+              });
+              
+              // Проверяем уникальность ID
+              const duplicate = data.configs.find((c, i) => c.id === config.id && i !== index);
+              if (duplicate) {
+                errors.push(\`Конфиг #\${index}: дублирующийся ID '\${config.id}'\`);
+              }
+              
+              // Проверяем допустимость значений
+              if (config.addon && !validAddons.includes(config.addon)) {
+                errors.push(\`Конфиг #\${index}: недопустимое значение addon: '\${config.addon}'\`);
+              }
+              
+              if (config.class && !validClasses.includes(config.class)) {
+                errors.push(\`Конфиг #\${index}: недопустимое значение class: '\${config.class}'\`);
+              }
+              
+              if (config.role && !validRoles.includes(config.role)) {
+                errors.push(\`Конфиг #\${index}: недопустимое значение role: '\${config.role}'\`);
+              }
+              
+              // Проверяем размер конфига
+              if (config.config && config.config.length > 100000) {
+                errors.push(\`Конфиг #\${index}: слишком большой конфиг (\${config.config.length} символов, максимум 100000)\`);
+              }
+              
+              // Проверяем длину названия
+              if (config.name && config.name.length > 100) {
+                errors.push(\`Конфиг #\${index}: слишком длинное название (\${config.name.length} символов, максимум 100)\`);
+              }
+            });
+            
+            if (errors.length > 0) {
+              console.error('❌ Найдены ошибки:');
+              errors.forEach(error => console.error('   - ' + error));
+              process.exit(1);
+            }
+            
+            console.log(\`✅ Проверено \${data.configs.length} конфигов, ошибок не найдено\`);
+            
+          } catch (error) {
+            console.error('❌ Ошибка при проверке:', error.message);
+            process.exit(1);
+          }
+          "
+          
+      - name: Check screenshot sizes
+        run: |
+          echo "🔍 Проверка размеров скриншотов..."
+          if [ -d "configs/screenshots" ]; then
+            find configs/screenshots -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" \) | \
+            while read file; do
+              size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+              if [ $size -gt 2097152 ]; then
+                echo "❌ Слишком большой файл: $file ($size байт, максимум 2MB)"
+                exit 1
+              fi
+            done
+          fi
+          echo "✅ Проверка скриншотов завершена"
+          
+      - name: Comment on success
+        if: success()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Все автоматические проверки пройдены!\n\nКонфиг готов к рассмотрению. Владелец репозитория проверит его вручную и добавит в базу.'
+            })
+            
+      - name: Comment on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Автоматические проверки не пройдены.\n\nПожалуйста, исправьте ошибки и обновите Pull Request. Проверьте:\n1. Корректность JSON синтаксиса\n2. Наличие всех обязательных полей\n3. Уникальность ID конфигов\n4. Размер файлов (скриншоты не более 2MB)'
+            })
