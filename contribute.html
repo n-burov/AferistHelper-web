@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить конфиг - WoW 3.3.5 Configs</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_dragon_01.jpg">
+    <style>
+        /* Дополнительные стили для страницы контрибьютинга */
+        .contribute-hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(92, 219, 149, 0.1), rgba(76, 217, 100, 0.1));
+            border-radius: 20px;
+            margin: 30px 0;
+            border: 1px solid rgba(92, 219, 149, 0.3);
+        }
+        
+        .contribute-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--lighter);
+        }
+        
+        .contribute-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .method-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            height: 100%;
+        }
+        
+        .method-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .method-header {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .method-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .method-card:nth-child(1) .method-icon {
+            background: rgba(255, 107, 53, 0.2);
+            color: #ff6b35;
+        }
+        
+        .method-card:nth-child(2) .method-icon {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+        }
+        
+        .method-card:nth-child(3) .method-icon {
+            background: rgba(157, 80, 187, 0.2);
+            color: #9d50bb;
+        }
+        
+        .method-title {
+            flex: 1;
+        }
+        
+        .method-title h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: var(--lighter);
+        }
+        
+        .method-difficulty {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .method-content {
+            padding: 25px;
+        }
+        
+        .method-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .method-steps {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+        
+        .method-steps li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .method-steps li i {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        
+        .method-action {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .method-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(92, 219, 149, 0.3);
+        }
+        
+        .template-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 60px 0;
+            border: 1px solid var(--border);
+        }
+        
+        .template-section h2 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        
+        .template-code {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .template-code pre {
+            margin: 0;
+            padding: 25px;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--light);
+        }
+        
+        .template-code code {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .template-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .copy-template-btn {
+            padding: 12px 25px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            color: var(--dark);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .copy-template-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(92, 219, 149, 0.3);
+        }
+        
+        .requirements-section {
+            margin: 60px 0;
+        }
+        
+        .requirements-section h2 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 40px;
+            font-size: 1.8rem;
+        }
+        
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .requirement-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .requirement-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+        
+        .req-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .requirement-card.valid .req-icon {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+        
+        .requirement-card.invalid .req-icon {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        
+        .requirement-card.warning .req-icon {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+        
+        .requirement-card.info .req-icon {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+        
+        .requirement-content h3 {
+            color: var(--lighter);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .requirement-content p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+        
+        .quick-form-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 60px 0;
+            border: 1px solid var(--border);
+        }
+        
+        .quick-form-section h2 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        
+        .quick-form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(92, 219, 149, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .submit-btn {
+            padding: 15px 40px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            color: var(--dark);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(92, 219, 149, 0.3);
+        }
+        
+        .form-note {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .contribute-hero {
+                padding: 40px 20px;
+            }
+            
+            .contribute-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .methods-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .template-section {
+                padding: 25px;
+            }
+            
+            .template-code pre {
+                padding: 20px;
+                font-size: 0.85rem;
+            }
+            
+            .requirements-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-form-section {
+                padding: 25px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1><i class="fas fa-code-branch"></i> Добавить конфиг</h1>
+                <p class="subtitle">Поделитесь своими конфигами с сообществом</p>
+            </div>
+            <nav>
+                <a href="index.html"><i class="fas fa-th-large"></i> Конфиги</a>
+                <a href="addons.html"><i class="fas fa-puzzle-piece"></i> Аддоны</a>
+                <a href="contribute.html" class="active contribute-link">
+                    <i class="fas fa-plus-circle"></i> Добавить конфиг
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Герой секция -->
+        <section class="contribute-hero">
+            <h1>Поделитесь своим конфигом</h1>
+            <p>Добавьте свой конфиг в общую базу и помогите другим игрокам настроить интерфейс</p>
+        </section>
+
+        <!-- Способы добавления -->
+        <div class="methods-grid">
+            <!-- Способ 1: GitHub Issue -->
+            <div class="method-card">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="method-title">
+                        <h3>Через GitHub Issue</h3>
+                        <span class="method-difficulty">Простой способ</span>
+                    </div>
+                </div>
+                <div class="method-content">
+                    <p class="method-description">
+                        Создайте Issue с описанием вашего конфига. Мы сами добавим его в базу.
+                    </p>
+                    <ul class="method-steps">
+                        <li><i class="fas fa-check"></i> Заполните форму Issue</li>
+                        <li><i class="fas fa-check"></i> Приложите код конфига</li>
+                        <li><i class="fas fa-check"></i> Опишите особенности</li>
+                        <li><i class="fas fa-check"></i> Ждите добавления</li>
+                    </ul>
+                    <a href="https://github.com/YOUR-USERNAME/wow-addon-configs/issues/new/choose" 
+                       class="method-action" 
+                       target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Создать Issue
+                    </a>
+                </div>
+            </div>
+
+            <!-- Способ 2: Pull Request -->
+            <div class="method-card">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i class="fas fa-code-merge"></i>
+                    </div>
+                    <div class="method-title">
+                        <h3>Через Pull Request</h3>
+                        <span class="method-difficulty">Для продвинутых</span>
+                    </div>
+                </div>
+                <div class="method-content">
+                    <p class="method-description">
+                        Сделайте форк репозитория, добавьте конфиг и создайте Pull Request.
+                    </p>
+                    <ul class="method-steps">
+                        <li><i class="fas fa-check"></i> Форкните репозиторий</li>
+                        <li><i class="fas fa-check"></i> Добавьте конфиг в configs.json</li>
+                        <li><i class="fas fa-check"></i> Создайте Pull Request</li>
+                        <li><i class="fas fa-check"></i> Ждите проверки и мержа</li>
+                    </ul>
+                    <a href="https://github.com/YOUR-USERNAME/wow-addon-configs/fork" 
+                       class="method-action" 
+                       target="_blank">
+                        <i class="fas fa-code-branch"></i> Форкнуть репозиторий
+                    </a>
+                </div>
+            </div>
+
+            <!-- Способ 3: Шаблон -->
+            <div class="method-card">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="method-title">
+                        <h3>Скопировать шаблон</h3>
+                        <span class="method-difficulty">Шаблон</span>
+                    </div>
+                </div>
+                <div class="method-content">
+                    <p class="method-description">
+                        Используйте готовый JSON-шаблон для вашего конфига.
+                    </p>
+                    <div style="margin-top: 20px;">
+                        <button onclick="copyTemplate()" class="method-action">
+                            <i class="fas fa-copy"></i> Копировать шаблон
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаблон конфига -->
+        <section class="template-section">
+            <h2><i class="fas fa-code"></i> Шаблон конфига</h2>
+            <div class="template-code">
+                <pre><code>{
+  "id": "unique-id-" + Date.now(),
+  "name": "Название вашего конфига",
+  "addon": "elvui",
+  "class": "universal",
+  "role": "dps",
+  "description": "Подробное описание вашего конфига...",
+  "config": "ВАШ_КОНФИГ_ЗДЕСЬ",
+  "screenshot": "screenshot.jpg",
+  "author": "Ваш GitHub ник",
+  "created": "2024-01-15T12:00:00Z"
+}</code></pre>
+            </div>
+            <div class="template-actions">
+                <button onclick="copyTemplate()" class="copy-template-btn">
+                    <i class="fas fa-copy"></i> Копировать шаблон
+                </button>
+                <button onclick="generateId()" class="copy-template-btn secondary" style="background: var(--card-bg); color: var(--light); border: 1px solid var(--border);">
+                    <i class="fas fa-key"></i> Сгенерировать ID
+                </button>
+            </div>
+        </section>
+
+        <!-- Требования -->
+        <section class="requirements-section">
+            <h2><i class="fas fa-clipboard-check"></i> Требования к конфигам</h2>
+            <div class="requirements-grid">
+                <div class="requirement-card valid">
+                    <div class="req-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h3>Только для WoW 3.3.5</h3>
+                        <p>Конфиги должны быть совместимы с версией 3.3.5a</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-card valid">
+                    <div class="req-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h3>Популярные аддоны</h3>
+                        <p>ElvUI, WeakAuras, Details!, Plater, DBM/BigWigs</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-card invalid">
+                    <div class="req-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h3>Без вредоносного кода</h3>
+                        <p>Конфиги проверяются на безопасность</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-card warning">
+                    <div class="req-icon">
+                        <i class="fas fa-exclamation"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h3>Скриншоты приветствуются</h3>
+                        <p>Приложите скриншот интерфейса</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-card info">
+                    <div class="req-icon">
+                        <i class="fas fa-info"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h3>Уникальный ID</h3>
+                        <p>Каждый конфиг должен иметь уникальный идентификатор</p>
+                    </div>
+                </div>
+                
+                <div class="requirement-card info">
+                    <div class="req-icon">
+                        <i class="fas fa-info"></i>
+                    </div>
+                    <div class="requirement-content">
+                        <h3>Четкое описание</h3>
+                        <p>Опишите особенности и назначение конфига</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Быстрая форма -->
+        <section class="quick-form-section">
+            <h2><i class="fas fa-paper-plane"></i> Быстрая отправка</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: rgba(255, 255, 255, 0.8);">
+                Заполните форму ниже, и мы создадим Issue на GitHub за вас
+            </p>
+            
+            <form id="quickConfigForm" class="quick-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="configName">
+                            <i class="fas fa-heading"></i> Название конфига *
+                        </label>
+                        <input type="text" id="configName" required 
+                               placeholder="Например: ElvUI для рейдового хила">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="configAddon">
+                            <i class="fas fa-plug"></i> Аддон *
+                        </label>
+                        <select id="configAddon" required>
+                            <option value="">Выберите аддон</option>
+                            <option value="elvui">ElvUI</option>
+                            <option value="wa">WeakAuras</option>
+                            <option value="details">Details!</option>
+                            <option value="plater">Plater</option>
+                            <option value="dbm">DBM</option>
+                            <option value="bigwigs">BigWigs</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="configClass">
+                            <i class="fas fa-user"></i> Класс
+                        </label>
+                        <select id="configClass">
+                            <option value="universal">Универсальный</option>
+                            <option value="warrior">Воин</option>
+                            <option value="paladin">Паладин</option>
+                            <option value="deathknight">Рыцарь смерти</option>
+                            <option value="mage">Маг</option>
+                            <option value="priest">Жрец</option>
+                            <option value="rogue">Разбойник</option>
+                            <option value="shaman">Шаман</option>
+                            <option value="hunter">Охотник</option>
+                            <option value="warlock">Чернокнижник</option>
+                            <option value="druid">Друид</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="configRole">
+                            <i class="fas fa-tasks"></i> Роль
+                        </label>
+                        <select id="configRole">
+                            <option value="all">Все роли</option>
+                            <option value="tank">Танк</option>
+                            <option value="healer">Хил</option>
+                            <option value="dps">ДПС</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="configDescription">
+                        <i class="fas fa-align-left"></i> Описание *
+                    </label>
+                    <textarea id="configDescription" required 
+                              placeholder="Опишите особенности вашего конфига..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="configContent">
+                        <i class="fas fa-code"></i> Код конфига *
+                    </label>
+                    <textarea id="configContent" required 
+                              placeholder="Вставьте сюда код конфига..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="configAuthor">
+                            <i class="fas fa-user"></i> Ваш GitHub username *
+                        </label>
+                        <input type="text" id="configAuthor" required 
+                               placeholder="Ваш ник на GitHub">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="configScreenshot">
+                            <i class="fas fa-image"></i> Скриншот (ссылка)
+                        </label>
+                        <input type="url" id="configScreenshot" 
+                               placeholder="https://imgur.com/...">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Отправить конфиг
+                    </button>
+                </div>
+                
+                <div class="form-note">
+                    <i class="fas fa-info-circle"></i>
+                    Конфиг будет добавлен после проверки
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3><i class="fas fa-dragon"></i> WoW 3.3.5 Config Hub</h3>
+                    <p>База конфигов для аддонов World of Warcraft 3.3.5</p>
+                    <p class="footer-note">Все конфиги проверяются перед добавлением в базу</p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="https://github.com/YOUR-USERNAME/wow-addon-configs" 
+                       target="_blank" 
+                       class="github-link">
+                        <i class="fab fa-github"></i> GitHub репозиторий
+                    </a>
+                    <a href="index.html" class="contribute-link">
+                        <i class="fas fa-th-large"></i> Все конфиги
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 WoW 3.3.5 Config Hub. World of Warcraft и Blizzard Entertainment являются товарными знаками или зарегистрированными товарными знаками Blizzard Entertainment, Inc.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/utils.js"></script>
+    <script>
+        // Копирование шаблона
+        function copyTemplate() {
+            const template = `{
+  "id": "unique-id-" + Date.now(),
+  "name": "Название вашего конфига",
+  "addon": "elvui",
+  "class": "universal",
+  "role": "dps",
+  "description": "Подробное описание вашего конфига...",
+  "config": "ВАШ_КОНФИГ_ЗДЕСЬ",
+  "screenshot": "screenshot.jpg",
+  "author": "Ваш GitHub ник",
+  "created": "${new Date().toISOString()}"
+}`;
+            
+            copyToClipboard(template).then(success => {
+                if (success) {
+                    showNotification('Шаблон скопирован в буфер обмена!', 'success');
+                } else {
+                    showNotification('Не удалось скопировать шаблон', 'error');
+                }
+            });
+        }
+        
+        // Генерация ID
+        function generateId() {
+            const id = 'config-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            copyToClipboard(`"${id}"`).then(success => {
+                if (success) {
+                    showNotification('ID скопирован в буфер обмена!', 'success');
+                }
+            });
+        }
+        
+        // Обработка формы
+        document.getElementById('quickConfigForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('configName').value,
+                addon: document.getElementById('configAddon').value,
+                class: document.getElementById('configClass').value,
+                role: document.getElementById('configRole').value,
+                description: document.getElementById('configDescription').value,
+                config: document.getElementById('configContent').value,
+                author: document.getElementById('configAuthor').value,
+                screenshot: document.getElementById('configScreenshot').value || ''
+            };
+            
+            // Создаем Issue URL
+            const issueUrl = `https://github.com/YOUR-USERNAME/wow-addon-configs/issues/new?` +
+                `title=[Конфиг] ${encodeURIComponent(formData.name)}&` +
+                `body=${encodeURIComponent(`
+**Аддон:** ${formData.addon}
+**Класс:** ${formData.class}
+**Роль:** ${formData.role}
+**Автор:** ${formData.author}
+**Скриншот:** ${formData.screenshot || 'Не указан'}
+
+**Описание:**
+${formData.description}
+
+**Конфиг:**
+\`\`\`
+${formData.config}
+\`\`\`
+
+*Создано через форму на сайте*
+                `)}`;
+            
+            // Открываем в новой вкладке
+            window.open(issueUrl, '_blank');
+            
+            // Показываем уведомление
+            showNotification('Открывается форма для создания Issue на GitHub', 'info');
+            
+            // Очищаем форму
+            this.reset();
+        });
+    </script>
+</body>
+</html>
