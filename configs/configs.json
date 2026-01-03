@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-15T14:30:00Z",
+    "updatedBy": "admin",
+    "totalConfigs": 3,
+    "schemaVersion": "1.0"
+  },
+  "configs": [
+    {
+      "id": "elvui-universal-dps-1",
+      "name": "ElvUI - Универсальный DPS интерфейс",
+      "addon": "elvui",
+      "class": "universal",
+      "role": "dps",
+      "description": "Чистый минималистичный интерфейс для DPS классов. Оптимизирован для рейдов, скрыты лишние элементы, улучшена видимость важной информации.",
+      "config": "Профиль ElvUI для DPS...\n-- Вставьте сюда ваш конфиг ElvUI\n-- Он будет скопирован по нажатию кнопки",
+      "screenshot": "elvui-dps-preview.jpg",
+      "author": "admin",
+      "created": "2024-01-15T10:00:00Z"
+    },
+    {
+      "id": "wa-raid-timers-icc",
+      "name": "WeakAuras - Таймеры ICC",
+      "addon": "wa",
+      "class": "universal",
+      "role": "all",
+      "description": "Полный набор аур для рейда Icecrown Citadel. Таймеры способностей боссов, предупреждения об особых механиках, отслеживание дебаффов.",
+      "config": "Профиль WeakAuras для ICC...\n-- Вставьте сюда ваш конфиг WeakAuras\n-- Он будет скопирован по нажатию кнопки",
+      "screenshot": "wa-icc-timers.jpg",
+      "author": "raidleader",
+      "created": "2024-01-14T15:30:00Z"
+    },
+    {
+      "id": "details-tank-metrics",
+      "name": "Details! - Метрики для танков",
+      "addon": "details",
+      "class": "deathknight",
+      "role": "tank",
+      "description": "Профиль Details! с акцентом на полученный урон, спасения и угрозу. Оптимизирован для танков в рейдах.",
+      "config": "Профиль Details! для танков...\n-- Вставьте сюда ваш конфиг Details!\n-- Он будет скопирован по нажатию кнопки",
+      "screenshot": "details-tank-metrics.jpg",
+      "author": "tankmain",
+      "created": "2024-01-13T09:15:00Z"
+    }
+  ]
+}
