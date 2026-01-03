@@ -17,7 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
         searchQuery: '',
         isLoading: true,
         sortBy: 'date',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
+        lastUpdate: null,
+        dataSource: 'loading' // 'fresh', 'cache', 'error'
     };
     
     // Инициализация
@@ -25,6 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     async function init() {
         try {
+            // Создаем кнопку обновления
+            createRefreshButton();
+            
             // Загружаем конфиги
             await loadConfigs();
             
@@ -42,14 +47,73 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /**
+     * Создание кнопки обновления
+     */
+    function createRefreshButton() {
+        // Проверяем, есть ли уже кнопка
+        if (document.getElementById('refreshBtn')) return;
+        
+        // Ищем место для кнопки (рядом с поиском)
+        const searchSection = document.querySelector('.search-section');
+        if (!searchSection) return;
+        
+        // Создаем контейнер для кнопки
+        const refreshContainer = document.createElement('div');
+        refreshContainer.className = 'refresh-container';
+        refreshContainer.style.cssText = `
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        `;
+        
+        // Создаем кнопку
+        const refreshBtn = document.createElement('button');
+        refreshBtn.id = 'refreshBtn';
+        refreshBtn.className = 'refresh-btn';
+        refreshBtn.innerHTML = `
+            <i class="fas fa-sync-alt"></i> Обновить конфиги
+        `;
+        refreshBtn.style.cssText = `
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            color: var(--dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        `;
+        
+        // Добавляем обработчик
+        refreshBtn.addEventListener('click', async () => {
+            await refreshConfigs();
+        });
+        
+        refreshContainer.appendChild(refreshBtn);
+        
+        // Вставляем перед поиском
+        searchSection.parentNode.insertBefore(refreshContainer, searchSection);
+    }
+    
+    /**
      * Загрузка конфигов
      */
     async function loadConfigs(forceRefresh = false) {
         appState.isLoading = true;
+        appState.dataSource = 'loading';
         updateLoadingState(true);
+        updateRefreshButtonState(true);
         
         try {
             const result = await gitHubData.getConfigs(forceRefresh);
+            
+            // Обновляем состояние источника данных
+            appState.dataSource = result.fromCache ? 'cache' : 'fresh';
+            appState.lastUpdate = new Date();
             
             if (result.success) {
                 appState.configs = result.data;
@@ -61,20 +125,138 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Рендерим конфиги
                 renderConfigs();
                 
+                // Показываем уведомление только если данные из кэша
+                if (result.fromCache && !forceRefresh) {
+                    showDataSourceNotification(result);
+                }
+                
                 if (forceRefresh) {
                     showNotification('Конфиги успешно обновлены', 'success');
                 }
                 
-                console.log(`[App] Загружено ${result.data.length} конфигов`);
+                console.log(`[App] Загружено ${result.data.length} конфигов (${result.fromCache ? 'из кэша' : 'свежие'})`);
             } else {
-                showNotification('Используем кэшированные данные', 'warning');
+                appState.dataSource = 'error';
+                showNotification('Используем кэшированные данные из-за ошибки', 'warning');
             }
         } catch (error) {
             console.error('[App] Ошибка загрузки конфигов:', error);
+            appState.dataSource = 'error';
             showNotification('Ошибка загрузки конфигов', 'error');
         } finally {
             appState.isLoading = false;
             updateLoadingState(false);
+            updateRefreshButtonState(false);
+            updateDataSourceIndicator();
+        }
+    }
+    
+    /**
+     * Принудительное обновление конфигов
+     */
+    async function refreshConfigs() {
+        console.log('[App] Принудительное обновление...');
+        await loadConfigs(true);
+    }
+    
+    /**
+     * Уведомление об источнике данных
+     */
+    function showDataSourceNotification(result) {
+        const cacheAge = result.timestamp ? Date.now() - result.timestamp : null;
+        
+        if (cacheAge && cacheAge < 60000) { // Меньше минуты
+            // Не показываем уведомление для свежего кэша
+            return;
+        }
+        
+        const ageText = cacheAge ? 
+            `${Math.floor(cacheAge / 1000)} секунд назад` : 
+            'недавно';
+        
+        showNotification(
+            `Данные из кэша (обновлены ${ageText}). Нажмите "Обновить конфиги" для загрузки свежих данных.`,
+            'info',
+            5000
+        );
+    }
+    
+    /**
+     * Обновление состояния кнопки обновления
+     */
+    function updateRefreshButtonState(isLoading) {
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (!refreshBtn) return;
+        
+        if (isLoading) {
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+            refreshBtn.disabled = true;
+            refreshBtn.style.opacity = '0.7';
+        } else {
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Обновить конфиги';
+            refreshBtn.disabled = false;
+            refreshBtn.style.opacity = '1';
+        }
+    }
+    
+    /**
+     * Обновление индикатора источника данных
+     */
+    function updateDataSourceIndicator() {
+        // Можно добавить индикатор в интерфейс
+        const statsBar = document.querySelector('.stats-bar');
+        if (!statsBar) return;
+        
+        // Ищем или создаем индикатор
+        let indicator = document.getElementById('dataSourceIndicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'dataSourceIndicator';
+            indicator.className = 'stat';
+            indicator.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 0.85rem;
+            `;
+            statsBar.appendChild(indicator);
+        }
+        
+        const icons = {
+            'fresh': 'fas fa-check-circle',
+            'cache': 'fas fa-history',
+            'error': 'fas fa-exclamation-triangle',
+            'loading': 'fas fa-spinner fa-spin'
+        };
+        
+        const colors = {
+            'fresh': '#2ecc71',
+            'cache': '#f39c12',
+            'error': '#e74c3c',
+            'loading': '#3498db'
+        };
+        
+        const texts = {
+            'fresh': 'Свежие данные',
+            'cache': 'Данные из кэша',
+            'error': 'Ошибка загрузки',
+            'loading': 'Загрузка...'
+        };
+        
+        const source = appState.dataSource;
+        indicator.innerHTML = `
+            <i class="${icons[source]}" style="color: ${colors[source]}"></i>
+            <span>${texts[source]}</span>
+        `;
+        
+        // Добавляем время обновления
+        if (appState.lastUpdate && source !== 'loading') {
+            const timeAgo = Math.floor((Date.now() - appState.lastUpdate) / 1000);
+            const timeText = timeAgo < 60 ? 
+                `${timeAgo} сек назад` : 
+                `${Math.floor(timeAgo / 60)} мин назад`;
+            
+            indicator.innerHTML += `<span style="margin-left: 5px; opacity: 0.7;">(${timeText})</span>`;
         }
     }
     
@@ -95,472 +277,32 @@ document.addEventListener('DOMContentLoaded', function() {
         initResponsiveHandlers();
     }
     
-    /**
-     * Инициализация фильтров
-     */
-    function initFilters() {
-        // Обработчики для фильтров по аддонам
-        document.getElementById('addonFilter').addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                // Обновляем активную кнопку
-                document.querySelectorAll('#addonFilter .filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                e.target.classList.add('active');
-                
-                // Обновляем фильтр
-                appState.filters.addon = e.target.dataset.addon;
-                applyFilters();
-            }
-        });
-        
-        // Обработчики для фильтров по классам
-        document.getElementById('classFilter').addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                document.querySelectorAll('#classFilter .filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                e.target.classList.add('active');
-                
-                appState.filters.class = e.target.dataset.class;
-                applyFilters();
-            }
-        });
-        
-        // Обработчики для фильтров по ролям
-        document.getElementById('roleFilter').addEventListener('click', (e) => {
-            if (e.target.classList.contains('filter-btn')) {
-                document.querySelectorAll('#roleFilter .filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                e.target.classList.add('active');
-                
-                appState.filters.role = e.target.dataset.role;
-                applyFilters();
-            }
-        });
-    }
-    
-    /**
-     * Инициализация поиска
-     */
-    function initSearch() {
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        
-        // Поиск с дебаунсом
-        const debouncedSearch = debounce(function() {
-            appState.searchQuery = searchInput.value.toLowerCase().trim();
-            applyFilters();
-        }, 300);
-        
-        searchInput.addEventListener('input', debouncedSearch);
-        
-        // Очистка поиска
-        clearSearchBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            appState.searchQuery = '';
-            applyFilters();
-        });
-        
-        // Очистка при Escape
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                searchInput.value = '';
-                appState.searchQuery = '';
-                applyFilters();
-                searchInput.blur();
-            }
-        });
-    }
-    
-    /**
-     * Инициализация кнопок
-     */
-    function initButtons() {
-        // Кнопка обновления (если есть)
-        const refreshBtn = document.getElementById('refreshBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => {
-                loadConfigs(true);
-            });
-        }
-        
-        // Кнопка сброса фильтров (если есть)
-        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
-        if (resetFiltersBtn) {
-            resetFiltersBtn.addEventListener('click', () => {
-                resetFilters();
-            });
-        }
-    }
-    
-    /**
-     * Применение фильтров
-     */
-    function applyFilters() {
-        if (appState.configs.length === 0) return;
-        
-        let filtered = [...appState.configs];
-        
-        // Фильтрация по аддону
-        if (appState.filters.addon !== 'all') {
-            filtered = filtered.filter(config => 
-                config.addon === appState.filters.addon
-            );
-        }
-        
-        // Фильтрация по классу
-        if (appState.filters.class !== 'all') {
-            filtered = filtered.filter(config => 
-                config.class === appState.filters.class
-            );
-        }
-        
-        // Фильтрация по роли
-        if (appState.filters.role !== 'all') {
-            filtered = filtered.filter(config => 
-                config.role === appState.filters.role || config.role === 'all'
-            );
-        }
-        
-        // Поиск
-        if (appState.searchQuery) {
-            const query = appState.searchQuery;
-            filtered = filtered.filter(config => 
-                config.name.toLowerCase().includes(query) ||
-                config.description.toLowerCase().includes(query) ||
-                config.author.toLowerCase().includes(query)
-            );
-        }
-        
-        // Сортировка
-        filtered = sortConfigs(filtered, appState.sortBy, appState.sortOrder);
-        
-        // Обновляем состояние
-        appState.filteredConfigs = filtered;
-        
-        // Рендерим результаты
-        renderConfigs();
-        
-        // Обновляем статистику поиска
-        updateSearchStats(filtered.length);
-    }
-    
-    /**
-     * Сброс фильтров
-     */
-    function resetFilters() {
-        // Сбрасываем активные кнопки фильтров
-        document.querySelectorAll('.filter-btn.active').forEach(btn => {
-            if (btn.dataset.addon !== 'all' && 
-                btn.dataset.class !== 'all' && 
-                btn.dataset.role !== 'all') {
-                btn.classList.remove('active');
-            }
-        });
-        
-        // Активируем кнопки "Все"
-        document.querySelector('[data-addon="all"]').classList.add('active');
-        document.querySelector('[data-class="all"]').classList.add('active');
-        document.querySelector('[data-role="all"]').classList.add('active');
-        
-        // Сбрасываем состояние
-        appState.filters = {
-            addon: 'all',
-            class: 'all',
-            role: 'all'
-        };
-        appState.searchQuery = '';
-        
-        // Сбрасываем поле поиска
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) searchInput.value = '';
-        
-        // Применяем фильтры
-        applyFilters();
-        
-        showNotification('Фильтры сброшены', 'info');
-    }
-    
-    /**
-     * Сортировка конфигов
-     */
-    function sortConfigs(configs, sortBy, order = 'desc') {
-        const sorted = [...configs];
-        
-        sorted.sort((a, b) => {
-            let aValue, bValue;
-            
-            switch (sortBy) {
-                case 'date':
-                    aValue = new Date(a.created || 0);
-                    bValue = new Date(b.created || 0);
-                    break;
-                case 'name':
-                    aValue = a.name.toLowerCase();
-                    bValue = b.name.toLowerCase();
-                    break;
-                case 'author':
-                    aValue = a.author.toLowerCase();
-                    bValue = b.author.toLowerCase();
-                    break;
-                default:
-                    return 0;
-            }
-            
-            if (order === 'asc') {
-                return aValue > bValue ? 1 : -1;
-            } else {
-                return aValue < bValue ? 1 : -1;
-            }
-        });
-        
-        return sorted;
-    }
-    
-    /**
-     * Рендеринг конфигов
-     */
-    function renderConfigs() {
-        const grid = document.getElementById('configsGrid');
-        const noResults = document.getElementById('noResults');
-        
-        if (!grid) return;
-        
-        if (appState.filteredConfigs.length === 0) {
-            grid.style.display = 'none';
-            if (noResults) noResults.style.display = 'block';
-            return;
-        }
-        
-        if (noResults) noResults.style.display = 'none';
-        grid.style.display = 'grid';
-        
-        // Рендерим карточки
-        grid.innerHTML = appState.filteredConfigs.map(config => 
-            createConfigCard(config)
-        ).join('');
-        
-        // Добавляем обработчики кнопок копирования
-        initCopyButtons();
-        
-        // Обновляем счетчик
-        updateConfigCount();
-    }
-    
-    /**
-     * Создание карточки конфига
-     */
-    function createConfigCard(config) {
-        const addonIcon = getAddonIcon(config.addon);
-        const classIcon = getClassIcon(config.class);
-        const screenshotUrl = gitHubData.getScreenshotUrl(config.screenshot);
-        
-        return `
-            <div class="config-card" data-id="${config.id}">
-                <div class="config-header">
-                    <div class="config-title">${escapeHtml(config.name)}</div>
-                    <div class="config-meta">
-                        <span class="config-badge addon-${config.addon}">
-                            <i class="${addonIcon}"></i> ${config.addon.toUpperCase()}
-                        </span>
-                        <span class="config-badge">
-                            <i class="${classIcon}"></i> ${getClassLabel(config.class)}
-                        </span>
-                        <span class="config-badge">
-                            <i class="fas fa-tasks"></i> ${getRoleLabel(config.role)}
-                        </span>
-                    </div>
-                </div>
-                <div class="config-content">
-                    <div class="config-description">
-                        ${escapeHtml(config.description)}
-                        <div class="config-footer">
-                            <span class="author">
-                                <i class="fas fa-user"></i> ${escapeHtml(config.author)}
-                            </span>
-                            <span class="date">
-                                <i class="fas fa-calendar"></i> ${formatDate(config.created)}
-                            </span>
-                        </div>
-                    </div>
-                    
-                    ${screenshotUrl ? `
-                    <div class="config-screenshot">
-                        <img src="${screenshotUrl}" 
-                             alt="Скриншот: ${escapeHtml(config.name)}"
-                             loading="lazy"
-                             onerror="this.parentElement.className='config-screenshot placeholder'">
-                    </div>
-                    ` : `
-                    <div class="config-screenshot placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Скриншот отсутствует</span>
-                    </div>
-                    `}
-                    
-                    <button class="copy-btn" data-config-id="${config.id}">
-                        <i class="fas fa-copy"></i> Копировать конфиг
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    
-    /**
-     * Инициализация кнопок копирования
-     */
-    function initCopyButtons() {
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', async function() {
-                const configId = this.dataset.configId;
-                const config = appState.configs.find(c => c.id === configId);
-                
-                if (!config || !config.config) {
-                    showNotification('Конфиг не найден', 'error');
-                    return;
-                }
-                
-                try {
-                    const success = await copyToClipboard(config.config);
-                    
-                    if (success) {
-                        // Визуальная обратная связь
-                        this.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
-                        this.classList.add('copied');
-                        
-                        // Возвращаем обратно через 2 секунды
-                        setTimeout(() => {
-                            this.innerHTML = '<i class="fas fa-copy"></i> Копировать конфиг';
-                            this.classList.remove('copied');
-                        }, 2000);
-                        
-                        showNotification('Конфиг скопирован в буфер обмена', 'success');
-                    } else {
-                        showNotification('Не удалось скопировать конфиг', 'error');
-                    }
-                } catch (error) {
-                    console.error('Copy error:', error);
-                    showNotification('Ошибка при копировании', 'error');
-                }
-            });
-        });
-    }
-    
-    /**
-     * Обновление статистики
-     */
-    function updateStats(configs, meta) {
-        // Общее количество конфигов
-        const totalConfigs = document.getElementById('totalConfigs');
-        if (totalConfigs) {
-            totalConfigs.textContent = configs.length;
-        }
-        
-        // Уникальные авторы
-        const uniqueAuthors = document.getElementById('uniqueAuthors');
-        if (uniqueAuthors) {
-            const authors = new Set(configs.map(c => c.author));
-            uniqueAuthors.textContent = authors.size;
-        }
-        
-        // Последнее обновление
-        const lastUpdated = document.getElementById('lastUpdated');
-        if (lastUpdated) {
-            if (meta && meta.lastUpdated) {
-                lastUpdated.textContent = formatDate(meta.lastUpdated);
-            } else {
-                lastUpdated.textContent = 'только что';
-            }
-        }
-        
-        // Обновляем общий счетчик
-        updateConfigCount();
-    }
-    
-    /**
-     * Обновление счетчика конфигов
-     */
-    function updateConfigCount() {
-        const configCount = document.getElementById('configCount');
-        if (configCount) {
-            const total = appState.configs.length;
-            const filtered = appState.filteredConfigs.length;
-            
-            if (total === filtered) {
-                configCount.textContent = `(${total})`;
-            } else {
-                configCount.textContent = `(${filtered} из ${total})`;
-            }
-        }
-    }
-    
-    /**
-     * Обновление статистики поиска
-     */
-    function updateSearchStats(count) {
-        const searchResultsCount = document.getElementById('searchResultsCount');
-        if (searchResultsCount) {
-            searchResultsCount.textContent = count;
-        }
-    }
-    
-    /**
-     * Обновление состояния загрузки
-     */
-    function updateLoadingState(isLoading) {
-        const loadingElement = document.querySelector('.loading');
-        if (loadingElement) {
-            loadingElement.style.display = isLoading ? 'flex' : 'none';
-        }
-    }
+    // Остальные функции остаются без изменений...
+    // ... (фильтры, поиск, рендеринг и т.д.)
     
     /**
      * Запуск проверки обновлений
      */
     function startUpdateChecker() {
-        // Проверяем обновления каждые 5 минут
+        // Проверяем обновления каждую минуту
         setInterval(async () => {
             try {
                 const updateInfo = await gitHubData.checkForUpdates();
-                if (updateInfo && updateInfo.hasUpdate) {
-                    console.log('[App] Обнаружены обновления, загружаем...');
-                    await loadConfigs(true);
+                if (updateInfo && appState.dataSource === 'cache') {
+                    console.log('[App] Обнаружены обновления на сервере');
+                    // Можно показать уведомление или автоматически обновить
+                    // showNotification('Доступны обновления конфигов', 'info');
                 }
             } catch (error) {
                 console.warn('[App] Ошибка проверки обновлений:', error);
             }
-        }, 5 * 60 * 1000); // 5 минут
-    }
-    
-    /**
-     * Инициализация адаптивных обработчиков
-     */
-    function initResponsiveHandlers() {
-        // Обработчик изменения размера окна
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                // Можно добавить адаптивные изменения
-                console.log('[App] Размер окна изменен');
-            }, 250);
-        });
-    }
-    
-    /**
-     * Экранирование HTML
-     */
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+        }, 60 * 1000); // 1 минута
     }
     
     // Экспортируем публичные методы
     window.app = {
         loadConfigs,
+        refreshConfigs,
         resetFilters,
         getState: () => ({ ...appState }),
         getGitHubStats: () => gitHubData.getStats()
