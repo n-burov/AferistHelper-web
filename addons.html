@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аддоны для WoW 3.3.5</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="https://wow.zamimg.com/images/wow/icons/large/inv_misc_head_dragon_01.jpg">
+    <style>
+        /* Дополнительные стили для страницы аддонов */
+        .addons-hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(26, 71, 42, 0.8), rgba(45, 90, 39, 0.8));
+            border-radius: 20px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .addons-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80') center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .addons-hero > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .addons-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--lighter);
+        }
+        
+        .addons-hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .addons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .addon-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .addon-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .addon-header {
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .addon-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+        
+        .addon-header.elvui .addon-icon { background: #ff6b35; color: white; }
+        .addon-header.wa .addon-icon { background: #4ecdc4; color: white; }
+        .addon-header.details .addon-icon { background: #45b7d1; color: white; }
+        .addon-header.plater .addon-icon { background: #9d50bb; color: white; }
+        
+        .addon-title {
+            flex: 1;
+        }
+        
+        .addon-title h3 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            color: var(--lighter);
+        }
+        
+        .addon-version {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+        
+        .addon-content {
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .addon-description {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            flex: 1;
+        }
+        
+        .addon-features {
+            margin-bottom: 25px;
+        }
+        
+        .addon-features h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .feature-list li i {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        
+        .addon-download {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(92, 219, 149, 0.3);
+        }
+        
+        .download-btn.secondary {
+            background: var(--card-bg);
+            color: var(--light);
+            border: 1px solid var(--border);
+        }
+        
+        .download-btn.secondary:hover {
+            background: var(--hover-bg);
+        }
+        
+        .installation-guide {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 60px 0;
+            border: 1px solid var(--border);
+        }
+        
+        .installation-guide h2 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 40px;
+            font-size: 1.8rem;
+        }
+        
+        .guide-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .guide-step {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.
