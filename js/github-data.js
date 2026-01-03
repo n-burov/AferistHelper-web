@@ -5,13 +5,13 @@
 
 class GitHubDataManager {
     constructor(options = {}) {
-        // Настройки по умолчанию
+        // Настройки по умолчанию - ЗАМЕНИТЕ USERNAME!
         this.config = {
-            owner: options.owner || 'n-burov', // ЗАМЕНИТЕ НА ВАШ USERNAME
-            repo: options.repo || 'AferistHelper-web''',
+            owner: options.owner || 'n-burov', // ✅ Ваш GitHub username
+            repo: options.repo || 'AferistHelper-web', // ✅ Ваш репозиторий
             branch: options.branch || 'main',
-            cacheTTL: options.cacheTTL || 5 * 60 * 1000, // 5 минут
-            retryCount: options.retryCount || 3,
+            cacheTTL: options.cacheTTL || 10 * 1000, // ✅ 10 секунд вместо 5 минут
+            retryCount: options.retryCount || 2,
             retryDelay: options.retryDelay || 1000
         };
         
@@ -38,22 +38,19 @@ class GitHubDataManager {
             errors: 0,
             lastSuccess: null
         };
+        
+        console.log('[GitHubData] Инициализирован для:', this.config.owner, this.config.repo);
     }
     
     /**
      * Получить все конфиги
      */
     async getConfigs(forceRefresh = false) {
-        // Проверяем кэш
-        if (!forceRefresh && this._isCacheValid()) {
-            this.stats.cacheHits++;
-            console.log('[GitHubData] Используем кэшированные данные');
-            return {
-                success: true,
-                data: this.cache.configs || [],
-                meta: this.cache.meta || {},
-                fromCache: true
-            };
+        // Всегда пробуем загрузить свежие данные, но используем кэш при ошибке
+        const shouldUseCache = !forceRefresh && this._isCacheValid();
+        
+        if (shouldUseCache) {
+            console.log('[GitHubData] Используем кэшированные данные (TTL еще не истек)');
         }
         
         this.isLoading = true;
@@ -66,33 +63,19 @@ class GitHubDataManager {
             const url = `${this.rawBaseUrl}/configs/configs.json`;
             const headers = {};
             
-            // Добавляем ETag для кэширования
-            if (this.cache.etag && !forceRefresh) {
-                headers['If-None-Match'] = this.cache.etag;
-            }
+            // Добавляем параметр для предотвращения кэширования браузером
+            const cacheBuster = `?t=${Date.now()}`;
+            const finalUrl = url + cacheBuster;
             
-            const response = await this._fetchWithRetry(url, { headers });
-            
-            if (response.status === 304) {
-                // Данные не изменились
-                this.cache.timestamp = Date.now();
-                this.isLoading = false;
-                
-                return {
-                    success: true,
-                    data: this.cache.configs || [],
-                    meta: this.cache.meta || {},
-                    fromCache: true,
-                    notModified: true
-                };
-            }
+            // НЕ добавляем ETag - хотим всегда свежие данные
+            const response = await this._fetchWithRetry(finalUrl, { 
+                headers,
+                cache: 'no-cache' // ✅ Предотвращаем кэширование браузером
+            });
             
             if (!response.ok) {
                 throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
             }
-            
-            // Сохраняем ETag
-            this.cache.etag = response.headers.get('ETag');
             
             const data = await response.json();
             
@@ -116,7 +99,8 @@ class GitHubDataManager {
                 data: this.cache.configs,
                 meta: this.cache.meta,
                 fromCache: false,
-                response: response
+                fresh: true,
+                timestamp: this.cache.timestamp
             };
             
         } catch (error) {
@@ -125,15 +109,16 @@ class GitHubDataManager {
             this.stats.errors++;
             this.isLoading = false;
             
-            // Возвращаем кэшированные данные при ошибке
+            // Возвращаем кэшированные данные только при ошибке сети
             if (this.cache.configs && this.cache.configs.length > 0) {
-                console.log('[GitHubData] Используем старые данные из кэша из-за ошибки');
+                console.log('[GitHubData] Используем старые данные из кэша из-за ошибки:', error.message);
                 return {
                     success: false,
                     data: this.cache.configs,
                     meta: this.cache.meta,
                     fromCache: true,
-                    error: error.message
+                    error: error.message,
+                    fresh: false
                 };
             }
             
@@ -143,9 +128,23 @@ class GitHubDataManager {
                 data: this._getFallbackConfigs(),
                 meta: {},
                 fromCache: false,
-                error: error.message
+                error: error.message,
+                fresh: false
             };
         }
+    }
+    
+    /**
+     * Принудительное обновление данных
+     */
+    async refreshConfigs() {
+        console.log('[GitHubData] Принудительное обновление данных...');
+        
+        // Очищаем кэш
+        this.clearCache();
+        
+        // Загружаем заново
+        return this.getConfigs(true);
     }
     
     /**
@@ -163,8 +162,9 @@ class GitHubDataManager {
             return filename; // Data URL
         }
         
-        // Относительный путь в репозитории
-        return `${this.rawBaseUrl}/configs/screenshots/${filename}`;
+        // Относительный путь в репозитории с cache buster
+        const cacheBuster = `?t=${Date.now()}`;
+        return `${this.rawBaseUrl}/configs/screenshots/${filename}${cacheBuster}`;
     }
     
     /**
@@ -194,18 +194,18 @@ class GitHubDataManager {
      */
     async checkForUpdates() {
         try {
-            const response = await fetch(`${this.rawBaseUrl}/configs/configs.json`, {
-                method: 'HEAD'
+            const response = await fetch(`${this.rawBaseUrl}/configs/configs.json?t=${Date.now()}`, {
+                method: 'HEAD',
+                cache: 'no-cache'
             });
             
             if (response.ok) {
                 const lastModified = response.headers.get('last-modified');
-                const etag = response.headers.get('etag');
                 
                 return {
-                    hasUpdate: etag !== this.cache.etag,
+                    hasUpdate: true, // Всегда возвращаем true, чтобы проверяли
                     lastModified: lastModified,
-                    etag: etag
+                    url: `${this.rawBaseUrl}/configs/configs.json`
                 };
             }
             
@@ -232,13 +232,16 @@ class GitHubDataManager {
      * Получить статистику
      */
     getStats() {
+        const cacheAge = this.cache.timestamp ? Date.now() - this.cache.timestamp : null;
         return {
             ...this.stats,
-            cacheAge: this.cache.timestamp ? Date.now() - this.cache.timestamp : null,
+            cacheAge: cacheAge,
+            cacheAgeText: cacheAge ? `${Math.floor(cacheAge / 1000)} секунд назад` : 'нет',
             hasCache: !!this.cache.configs,
             cacheSize: this.cache.configs ? this.cache.configs.length : 0,
             isLoading: this.isLoading,
-            lastError: this.lastError?.message
+            lastError: this.lastError?.message,
+            config: this.config
         };
     }
     
@@ -276,16 +279,6 @@ class GitHubDataManager {
         // Проверяем наличие configs массива
         if (!Array.isArray(data.configs)) return false;
         
-        // Проверяем несколько конфигов на структуру
-        if (data.configs.length > 0) {
-            const sample = data.configs[0];
-            const requiredFields = ['id', 'name', 'addon', 'description', 'config'];
-            
-            for (const field of requiredFields) {
-                if (!sample[field]) return false;
-            }
-        }
-        
         return true;
     }
     
@@ -295,18 +288,23 @@ class GitHubDataManager {
     async _fetchWithRetry(url, options = {}, retries = this.config.retryCount) {
         for (let i = 0; i <= retries; i++) {
             try {
-                const response = await fetch(url, options);
+                // Добавляем timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд timeout
                 
-                // Если не 5xx ошибка, возвращаем как есть
-                if (response.status < 500 || i === retries) {
-                    return response;
-                }
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                return response;
+                
             } catch (error) {
                 if (i === retries) throw error;
-            }
-            
-            // Ждем перед следующей попыткой
-            if (i < retries) {
+                
+                // Ждем перед следующей попыткой
                 await new Promise(resolve => 
                     setTimeout(resolve, this.config.retryDelay * Math.pow(2, i))
                 );
@@ -329,18 +327,6 @@ class GitHubDataManager {
                 role: 'all',
                 description: 'Базовая настройка ElvUI для всех классов и ролей.',
                 config: '-- Вставьте сюда ваш конфиг ElvUI\n-- Этот конфиг загружается при ошибке соединения',
-                screenshot: null,
-                author: 'system',
-                created: new Date().toISOString()
-            },
-            {
-                id: 'fallback-2',
-                name: 'WeakAuras - Пример',
-                addon: 'wa',
-                class: 'universal',
-                role: 'all',
-                description: 'Пример настройки WeakAuras для отслеживания способностей.',
-                config: '-- Вставьте сюда ваш конфиг WeakAuras\n-- Этот конфиг загружается при ошибке соединения',
                 screenshot: null,
                 author: 'system',
                 created: new Date().toISOString()
