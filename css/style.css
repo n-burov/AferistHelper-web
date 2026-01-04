@@ -434,6 +434,12 @@ nav a.active {
     color: rgba(255, 255, 255, 0.6);
 }
 
+.config-bottom {
+    margin-top: auto; /* Прижимаем к низу */
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .author, .date {
     display: flex;
     align-items: center;
