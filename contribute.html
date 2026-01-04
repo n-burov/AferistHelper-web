@@ -449,12 +449,6 @@
     </header>
 
     <div class="container">
-        <!-- Герой секция -->
-        <section class="contribute-hero">
-            <h1>Поделитесь своим конфигом</h1>
-            <p>Добавьте свой конфиг в общую базу и помогите другим игрокам настроить интерфейс</p>
-        </section>
-
         <!-- Способы добавления -->
         <div class="methods-grid">
             <!-- Способ 1: GitHub Issue -->
@@ -478,7 +472,7 @@
                         <li><i class="fas fa-check"></i> Опишите особенности</li>
                         <li><i class="fas fa-check"></i> Ждите добавления</li>
                     </ul>
-                    <a href="https://github.com/YOUR-USERNAME/wow-addon-configs/issues/new/choose" 
+                    <a href="https://github.com/n-burov/AferistHelper-web/issues/new/choose" 
                        class="method-action" 
                        target="_blank">
                         <i class="fas fa-external-link-alt"></i> Создать Issue
@@ -507,7 +501,7 @@
                         <li><i class="fas fa-check"></i> Создайте Pull Request</li>
                         <li><i class="fas fa-check"></i> Ждите проверки и мержа</li>
                     </ul>
-                    <a href="https://github.com/YOUR-USERNAME/wow-addon-configs/fork" 
+                    <a href="https://github.com/n-burov/AferistHelper-web/fork" 
                        class="method-action" 
                        target="_blank">
                         <i class="fas fa-code-branch"></i> Форкнуть репозиторий
@@ -823,7 +817,7 @@
             };
             
             // Создаем Issue URL
-            const issueUrl = `https://github.com/YOUR-USERNAME/wow-addon-configs/issues/new?` +
+            const issueUrl = `https://github.com/n-burov/AferistHelper-web/issues/new?` +
                 `title=[Конфиг] ${encodeURIComponent(formData.name)}&` +
                 `body=${encodeURIComponent(`
 **Аддон:** ${formData.addon}
