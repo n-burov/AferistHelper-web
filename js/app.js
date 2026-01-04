@@ -746,50 +746,6 @@ function updateLoadingState(isLoading, message = 'Загрузка...') {
     }
 }
 
-// Создание кнопки диагностики
-function createDiagnosticButton() {
-    const nav = document.querySelector('nav');
-    if (!nav) return;
-    
-    const diagnosticBtn = document.createElement('a');
-    diagnosticBtn.href = '#';
-    diagnosticBtn.className = 'contribute-link';
-    diagnosticBtn.innerHTML = '<i class="fas fa-bug"></i> Диагностика';
-    diagnosticBtn.style.marginLeft = '10px';
-    
-    diagnosticBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        
-        // Запускаем диагностику
-        console.clear();
-        console.log('=== ЗАПУСК ДИАГНОСТИКИ ===');
-        
-        // Проверяем доступность файла
-        await testFileAccess();
-        
-        // Проверяем состояние gitHubData
-        if (window.gitHubData) {
-            console.log('GitHubData состояние:', {
-                isLoading: window.gitHubData.isLoading,
-                lastError: window.gitHubData.lastError,
-                stats: window.gitHubData.stats,
-                cache: window.gitHubData.cache
-            });
-            
-            // Запускаем встроенную диагностику
-            try {
-                const results = await window.gitHubData.diagnose();
-                console.log('Результаты диагностики GitHubData:', results);
-            } catch (diagnoseError) {
-                console.error('Ошибка диагностики:', diagnoseError);
-            }
-        }
-        
-        alert('Диагностика запущена. Проверьте консоль (F12) для подробной информации.');
-    });
-    
-    nav.appendChild(diagnosticBtn);
-}
 
 // Вспомогательные функции
 function escapeHtml(text) {
