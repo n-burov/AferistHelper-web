@@ -466,8 +466,10 @@ function renderConfigs(configs) {
              data-name="${escapeHtml(config.name || '').toLowerCase()}"
              data-description="${escapeHtml(config.description || '').toLowerCase()}">
             <div class="config-header">
-                <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
-                <div class="config-meta">
+                <div class="config-title-row">
+                    <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
+                </div>
+                <div class="config-meta-row">
                     <span class="config-badge addon-${config.addon || 'unknown'} class-${config.addon || 'unknown'}">
                         <i class="${getAddonIcon(config.addon)}"></i> ${(config.addon || 'unknown').toUpperCase()}
                     </span>
