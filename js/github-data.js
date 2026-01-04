@@ -48,6 +48,66 @@ class GitHubDataManager {
     }
     
     /**
+     * Валидация полученных данных
+     */
+    _validateData(data) {
+        try {
+            logger.debug('Валидация данных:', data);
+            
+            // Проверяем базовую структуру
+            if (!data || typeof data !== 'object') {
+                logger.error('Данные не являются объектом:', typeof data);
+                return false;
+            }
+            
+            // Проверяем наличие метаданных
+            if (!data.meta || typeof data.meta !== 'object') {
+                logger.warn('Отсутствуют метаданные или они не являются объектом');
+            }
+            
+            // Проверяем наличие конфигов
+            if (!data.configs || !Array.isArray(data.configs)) {
+                logger.error('Конфиги отсутствуют или не являются массивом:', data.configs);
+                return false;
+            }
+            
+            // Минимальная проверка каждого конфига
+            for (let i = 0; i < Math.min(data.configs.length, 3); i++) { // Проверяем только первые 3
+                const config = data.configs[i];
+                
+                if (!config.id || !config.name) {
+                    logger.error(`Конфиг ${i} не имеет id или name:`, config);
+                    return false;
+                }
+                
+                // Проверяем обязательные поля для аддона
+                if (!config.addon) {
+                    logger.warn(`Конфиг ${config.name} не имеет поля addon`);
+                }
+                
+                // Проверяем валидность даты
+                if (config.created) {
+                    const date = new Date(config.created);
+                    if (isNaN(date.getTime())) {
+                        logger.warn(`Конфиг ${config.name} имеет невалидную дату: ${config.created}`);
+                    }
+                }
+            }
+            
+            logger.debug('Валидация успешна', {
+                configsCount: data.configs.length,
+                hasMeta: !!data.meta
+            });
+            
+            return true;
+            
+        } catch (error) {
+            logger.errorDetails(error, '_validateData');
+            return false;
+        }
+    }
+    
+    /**
      * Получить все конфиги из репозитория
      */
     async getConfigs(forceRefresh = false) {
@@ -301,8 +361,6 @@ class GitHubDataManager {
         
         return results;
     }
-    
-    // Остальные методы остаются с логами...
     
     /**
      * Запрос с повторными попытками
