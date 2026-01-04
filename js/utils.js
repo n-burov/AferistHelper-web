@@ -33,7 +33,13 @@ class Logger {
         }
     }
 
-    // ДОБАВЬТЕ ЭТОТ МЕТОД:
+    // Добавьте этот метод:
+    debug(...args) {
+        if (this.enabled) {
+            console.debug(`[${this.name}]`, ...args);
+        }
+    }
+
     errorDetails(error, context = '') {
         if (this.enabled) {
             console.error(`[${this.name}] [${context}]`, error.message);
