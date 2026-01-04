@@ -21,7 +21,7 @@
     },
     {
       "id": "elvui-paladin-protection-segazbs",
-      "name": "ElvUI для Прот. паладина - Полный интерфейс",
+      "name": "ElvUI для Прот. паладина",
       "addon": "elvui",
       "class": "paladin",
       "role": "tank",
