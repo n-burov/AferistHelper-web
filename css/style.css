@@ -376,6 +376,7 @@ nav a.active {
     font-weight: 600;
     color: var(--lighter);
     flex: 1;
+    margin-bottom: 10px;
 }
 
 .config-meta {
@@ -386,14 +387,28 @@ nav a.active {
 
 .config-badge {
     background: rgba(255, 255, 255, 0.15);
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 12px;
     font-size: 0.75rem;
     display: flex;
     align-items: center;
     gap: 5px;
     white-space: nowrap;
+    font-weight: 500;
 }
+
+/* Цвета классов как в макросах */
+.config-badge.class-warrior { background: rgba(199, 156, 110, 0.2); color: #C79C6E; }
+.config-badge.class-paladin { background: rgba(245, 140, 186, 0.2); color: #F58CBA; }
+.config-badge.class-deathknight { background: rgba(196, 30, 59, 0.2); color: #C41E3B; }
+.config-badge.class-mage { background: rgba(105, 204, 240, 0.2); color: #69CCF0; }
+.config-badge.class-priest { background: rgba(255, 255, 255, 0.2); color: #FFFFFF; }
+.config-badge.class-rogue { background: rgba(255, 245, 105, 0.2); color: #FFF569; }
+.config-badge.class-shaman { background: rgba(0, 112, 222, 0.2); color: #0070DE; }
+.config-badge.class-hunter { background: rgba(171, 212, 115, 0.2); color: #ABD473; }
+.config-badge.class-warlock { background: rgba(148, 130, 201, 0.2); color: #9482C9; }
+.config-badge.class-druid { background: rgba(255, 125, 10, 0.2); color: #FF7D0A; }
+.config-badge.class-universal { background: rgba(255, 255, 255, 0.1); color: #CCCCCC; }
 
 .config-badge.addon-elvui { background: rgba(255, 107, 53, 0.2); color: #ff6b35; }
 .config-badge.addon-wa { background: rgba(78, 205, 196, 0.2); color: #4ecdc4; }
