@@ -468,7 +468,7 @@ function renderConfigs(configs) {
             <div class="config-header">
                 <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
                 <div class="config-meta">
-                    <span class="config-badge addon-${config.addon || 'unknown'}">
+                    <span class="config-badge addon-${config.addon || 'unknown'} class-${config.addon || 'unknown'}">
                         <i class="${getAddonIcon(config.addon)}"></i> ${(config.addon || 'unknown').toUpperCase()}
                     </span>
                     <span class="config-badge class-${config.class || 'unknown'}">
@@ -479,19 +479,21 @@ function renderConfigs(configs) {
             <div class="config-content">
                 <div class="config-description">
                     ${escapeHtml(config.description || 'Нет описания')}
+                </div>
+                <div class="config-bottom">
                     <div class="config-footer">
                         <span class="author">👤 ${escapeHtml(config.author || 'Неизвестный автор')}</span>
                         ${config.created ? `<span class="date">📅 ${formatDate(config.created)}</span>` : ''}
                     </div>
-                </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    ${screenshotButton}
-                    <button class="copy-btn" 
-                        data-config="${configEncoded}"
-                        onclick="copyConfigFromButton(this)"
-                        style="${screenshotButton ? 'flex: 1;' : 'width: 100%;'}">
-                        <i class="fas fa-copy"></i> Копировать конфиг
-                    </button>
+                    <div class="config-buttons">
+                        ${screenshotButton}
+                        <button class="copy-btn" 
+                            data-config="${configEncoded}"
+                            onclick="copyConfigFromButton(this)"
+                            style="${screenshotButton ? 'flex: 1;' : 'width: 100%;'}">
+                            <i class="fas fa-copy"></i> Копировать конфиг
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
