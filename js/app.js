@@ -447,20 +447,17 @@ function renderConfigs(configs) {
         `;
         return;
     }
-
-    if (config.screenshot && config.screenshot !== 'blank.png') {
-        const viewScreenshotBtn = document.createElement('button');
-        viewScreenshotBtn.className = 'view-screenshot-btn';
-        viewScreenshotBtn.innerHTML = '<i class="fas fa-eye"></i>';
-        viewScreenshotBtn.title = 'Посмотреть скриншот';
-        viewScreenshotBtn.onclick = () => showScreenshot(config.screenshot);
-        // Добавьте кнопку в нужное место в карточке
-    }
     
     // Рендерим конфиги без изменения порядка
     grid.innerHTML = configs.map(config => {
         // Безопасно кодируем конфиг для data-атрибута
         const configEncoded = encodeURIComponent(JSON.stringify(config.config || ''));
+        
+        // Создаем кнопку просмотра скриншота если есть скриншот
+        const screenshotButton = config.screenshot && config.screenshot !== 'blank.png' ? 
+            `<button class="view-screenshot-btn" onclick="showScreenshot('${config.screenshot}')" title="Посмотреть скриншот">
+                <i class="fas fa-eye"></i>
+            </button>` : '';
         
         return `
         <div class="config-card" 
@@ -487,11 +484,15 @@ function renderConfigs(configs) {
                         ${config.created ? `<span class="date">📅 ${formatDate(config.created)}</span>` : ''}
                     </div>
                 </div>
-                <button class="copy-btn" 
-                    data-config="${configEncoded}"
-                    onclick="copyConfigFromButton(this)">
-                    <i class="fas fa-copy"></i> Копировать конфиг
-                </button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    ${screenshotButton}
+                    <button class="copy-btn" 
+                        data-config="${configEncoded}"
+                        onclick="copyConfigFromButton(this)"
+                        style="${screenshotButton ? 'flex: 1;' : 'width: 100%;'}">
+                        <i class="fas fa-copy"></i> Копировать конфиг
+                    </button>
+                </div>
             </div>
         </div>
         `;
@@ -506,6 +507,7 @@ function renderConfigs(configs) {
     // Обновляем счетчик конфигов
     updateConfigCount(configs.length);
 }
+
 
 function showScreenshot(filename) {
     const screenshotUrl = `screenshots/${filename}`;
