@@ -423,8 +423,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         updateLoadingState(false);
     }
     
-    // Создаем кнопку диагностики в UI
-    createDiagnosticButton();
 });
 
 // Функция рендеринга конфигов с безопасным копированием
