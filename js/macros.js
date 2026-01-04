@@ -6,17 +6,87 @@
 // Глобальные переменные
 let allMacros = [];
 
+// Вспомогательные функции
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getClassIcon(className) {
+    const icons = {
+        'warrior': 'fas fa-shield-alt',
+        'paladin': 'fas fa-sun',
+        'deathknight': 'fas fa-skull',
+        'mage': 'fas fa-fire',
+        'priest': 'fas fa-cross',
+        'rogue': 'fas fa-user-secret',
+        'shaman': 'fas fa-bolt',
+        'hunter': 'fas fa-bullseye',
+        'warlock': 'fas fa-hat-wizard',
+        'druid': 'fas fa-paw',
+        'universal': 'fas fa-users'
+    };
+    return icons[className] || 'fas fa-user';
+}
+
+function getClassLabel(className) {
+    const labels = {
+        'warrior': 'Воин',
+        'paladin': 'Паладин',
+        'deathknight': 'Рыцарь смерти',
+        'mage': 'Маг',
+        'priest': 'Жрец',
+        'rogue': 'Разбойник',
+        'shaman': 'Шаман',
+        'hunter': 'Охотник',
+        'warlock': 'Чернокнижник',
+        'druid': 'Друид',
+        'universal': 'Универсальный'
+    };
+    return labels[className] || className;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Неизвестно';
+    
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        
+        // Если сегодня
+        if (diff < 24 * 60 * 60 * 1000) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `сегодня в ${hours}:${minutes}`;
+        }
+        
+        // Если вчера
+        if (diff < 48 * 60 * 60 * 1000) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `вчера в ${hours}:${minutes}`;
+        }
+        
+        // Более 2 дней назад
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        
+        return `${day}.${month}.${year}`;
+    } catch (error) {
+        return dateString;
+    }
+}
+
 // Функция для загрузки макросов
 async function loadMacros() {
     try {
         showLoading(true, 'Загрузка макросов...');
         
         console.log('🚀 Загрузка макросов...');
-        
-        // Проверяем наличие gitHubData
-        if (!window.gitHubData) {
-            throw new Error('GitHubData не загружен!');
-        }
         
         // Пробуем загрузить макросы напрямую
         const macrosUrl = 'https://raw.githubusercontent.com/n-burov/AferistHelper-web/main/macros/macros.json';
@@ -141,9 +211,6 @@ function renderMacros(macros) {
                         onclick="copyMacroFromButton(this)">
                         <i class="fas fa-copy"></i> Копировать макрос
                     </button>
-                    ${macro.command ? `<button class="copy-command-btn" onclick="copyToClipboard('${escapeHtml(macro.command).replace(/'/g, "\\'")}')">
-                        <i class="fas fa-terminal"></i> Копировать команду
-                    </button>` : ''}
                 </div>
                 ${macro.macro ? `<div class="macro-preview">
                     <pre><code>${escapeHtml(macro.macro.substring(0, 200))}${macro.macro.length > 200 ? '...' : ''}</code></pre>
@@ -464,29 +531,8 @@ function addMacrosStyles() {
             color: white;
         }
         
-        .copy-command-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-        }
-        
         .copy-macro-btn:hover {
             background: linear-gradient(135deg, #2980b9, #3498db);
-        }
-        
-        .copy-command-btn:hover {
-            background: rgba(46, 204, 113, 0.3);
         }
         
         .copy-macro-btn.copied {
