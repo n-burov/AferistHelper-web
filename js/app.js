@@ -450,26 +450,8 @@ function renderConfigs(configs) {
         return;
     }
     
-    // Сортируем конфиги: сначала "универсальный" класс, остальные по алфавиту
-    const sortedConfigs = [...configs].sort((a, b) => {
-        // "Универсальный" класс всегда первый
-        if (a.class === 'universal' && b.class !== 'universal') return -1;
-        if (a.class !== 'universal' && b.class === 'universal') return 1;
-        
-        // Затем сортируем по имени класса
-        const classA = getClassLabel(a.class || '');
-        const classB = getClassLabel(b.class || '');
-        if (classA !== classB) return classA.localeCompare(classB);
-        
-        // Затем по имени аддона
-        if (a.addon !== b.addon) return (a.addon || '').localeCompare(b.addon || '');
-        
-        // Затем по имени
-        return (a.name || '').localeCompare(b.name || '');
-    });
-    
-    // Рендерим отсортированные конфиги
-    grid.innerHTML = sortedConfigs.map(config => {
+    // Рендерим конфиги без изменения порядка
+    grid.innerHTML = configs.map(config => {
         // Безопасно кодируем конфиг для data-атрибута
         const configEncoded = encodeURIComponent(JSON.stringify(config.config || ''));
         
@@ -477,7 +459,6 @@ function renderConfigs(configs) {
         <div class="config-card" 
              data-addon="${config.addon || ''}"
              data-class="${config.class || ''}"
-             data-role="${config.role || 'all'}"
              data-name="${escapeHtml(config.name || '').toLowerCase()}"
              data-description="${escapeHtml(config.description || '').toLowerCase()}">
             <div class="config-header">
@@ -516,7 +497,7 @@ function renderConfigs(configs) {
     initFilters();
     
     // Обновляем счетчик конфигов
-    updateConfigCount(sortedConfigs.length);
+    updateConfigCount(configs.length);
 }
 
 // Инициализация фильтров
@@ -531,7 +512,7 @@ function initFilters() {
             button.classList.add('active');
             
             // Применяем фильтры
-            applyFilters();
+            filterConfigs();
         });
     });
     
@@ -541,17 +522,7 @@ function initFilters() {
         button.addEventListener('click', () => {
             classFilterButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
-            applyFilters();
-        });
-    });
-    
-    // Кнопки фильтрации по роли (но всегда показываем все роли)
-    const roleFilterButtons = document.querySelectorAll('#roleFilter .filter-btn');
-    roleFilterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            roleFilterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            applyFilters();
+            filterConfigs();
         });
     });
     
@@ -561,7 +532,7 @@ function initFilters() {
     
     if (searchInput) {
         searchInput.addEventListener('input', () => {
-            applyFilters();
+            filterConfigs();
             
             // Показываем/скрываем кнопку очистки
             if (clearSearchBtn) {
@@ -576,72 +547,105 @@ function initFilters() {
                 searchInput.value = '';
                 searchInput.focus();
                 clearSearchBtn.style.display = 'none';
-                applyFilters();
+                filterConfigs();
             }
         });
     }
 }
 
-// Применение фильтров
-function applyFilters() {
-    const configCards = document.querySelectorAll('.config-card');
-    if (!configCards.length || !window.allConfigs) return;
+// Фильтрация конфигов
+function filterConfigs() {
+    if (!window.allConfigs || !window.allConfigs.length) return;
     
     // Получаем активные фильтры
     const activeAddon = document.querySelector('#addonFilter .filter-btn.active')?.dataset.addon || 'all';
     const activeClass = document.querySelector('#classFilter .filter-btn.active')?.dataset.class || 'all';
-    const activeRole = document.querySelector('#roleFilter .filter-btn.active')?.dataset.role || 'all';
     const searchQuery = document.getElementById('searchInput')?.value?.toLowerCase().trim() || '';
     
-    let visibleCount = 0;
-    
-    configCards.forEach(card => {
-        const cardAddon = card.dataset.addon;
-        const cardClass = card.dataset.class;
-        const cardRole = card.dataset.role;
-        const cardName = card.dataset.name;
-        const cardDescription = card.dataset.description;
+    // Фильтруем конфиги
+    const filteredConfigs = window.allConfigs.filter(config => {
+        // Проверяем фильтр по аддону
+        const addonMatches = activeAddon === 'all' || activeAddon === config.addon;
         
-        // Проверяем соответствие фильтрам
-        const addonMatches = activeAddon === 'all' || activeAddon === cardAddon;
-        const classMatches = activeClass === 'all' || activeClass === cardClass;
-        const roleMatches = activeRole === 'all' || activeRole === cardRole || cardRole === 'all';
+        // Проверяем фильтр по классу
+        const classMatches = activeClass === 'all' || activeClass === config.class;
         
         // Проверяем поиск
         let searchMatches = true;
         if (searchQuery) {
-            searchMatches = cardName.includes(searchQuery) || cardDescription.includes(searchQuery);
+            const name = (config.name || '').toLowerCase();
+            const description = (config.description || '').toLowerCase();
+            searchMatches = name.includes(searchQuery) || description.includes(searchQuery);
         }
         
-        // Показываем/скрываем карточку
-        const isVisible = addonMatches && classMatches && roleMatches && searchMatches;
-        card.style.display = isVisible ? 'block' : 'none';
+        // ИГНОРИРУЕМ фильтр по роли - всегда true
+        const roleMatches = true; // Всегда показываем все конфиги независимо от роли
         
-        if (isVisible) visibleCount++;
+        return addonMatches && classMatches && roleMatches && searchMatches;
     });
     
-    // Показываем/скрываем сообщение "Нет результатов"
-    const noResultsElement = document.getElementById('noResults');
-    const configsGrid = document.getElementById('configsGrid');
+    // Обновляем отображение
+    updateFilteredConfigs(filteredConfigs);
+}
+
+// Обновление отфильтрованных конфигов
+function updateFilteredConfigs(filteredConfigs) {
+    const grid = document.getElementById('configsGrid');
+    if (!grid) return;
     
-    if (noResultsElement) {
-        noResultsElement.style.display = visibleCount === 0 ? 'block' : 'none';
+    if (!filteredConfigs || filteredConfigs.length === 0) {
+        grid.innerHTML = `
+            <div class="no-results" style="display: block; grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <i class="fas fa-search"></i>
+                <h3>Конфиги не найдены</h3>
+                <p>Попробуйте изменить параметры фильтрации</p>
+            </div>
+        `;
+        
+        // Обновляем счетчики
+        updateConfigCount(0);
+        updateSearchResultsCount(0);
+        return;
     }
     
-    if (configsGrid && visibleCount === 0) {
-        configsGrid.style.display = 'none';
-    } else if (configsGrid) {
-        configsGrid.style.display = 'grid';
-    }
+    // Обновляем сетку с отфильтрованными конфигами
+    grid.innerHTML = filteredConfigs.map(config => {
+        const configEncoded = encodeURIComponent(JSON.stringify(config.config || ''));
+        
+        return `
+        <div class="config-card">
+            <div class="config-header">
+                <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
+                <div class="config-meta">
+                    <span class="config-badge addon-${config.addon || 'unknown'}">
+                        <i class="${getAddonIcon(config.addon)}"></i> ${(config.addon || 'unknown').toUpperCase()}
+                    </span>
+                    <span class="config-badge class-${config.class || 'unknown'}">
+                        <i class="${getClassIcon(config.class)}"></i> ${getClassLabel(config.class || '')}
+                    </span>
+                </div>
+            </div>
+            <div class="config-content">
+                <div class="config-description">
+                    ${escapeHtml(config.description || 'Нет описания')}
+                    <div class="config-footer">
+                        <span class="author">👤 ${escapeHtml(config.author || 'Неизвестный автор')}</span>
+                        ${config.created ? `<span class="date">📅 ${formatDate(config.created)}</span>` : ''}
+                    </div>
+                </div>
+                <button class="copy-btn" 
+                    data-config="${configEncoded}"
+                    onclick="copyConfigFromButton(this)">
+                    <i class="fas fa-copy"></i> Копировать конфиг
+                </button>
+            </div>
+        </div>
+        `;
+    }).join('');
     
-    // Обновляем счетчик результатов поиска
-    const searchResultsCount = document.getElementById('searchResultsCount');
-    if (searchResultsCount) {
-        searchResultsCount.textContent = visibleCount;
-    }
-    
-    // Обновляем счетчик конфигов в заголовке
-    updateConfigCount(visibleCount);
+    // Обновляем счетчики
+    updateConfigCount(filteredConfigs.length);
+    updateSearchResultsCount(filteredConfigs.length);
 }
 
 // Обновление счетчика конфигов в заголовке
@@ -651,6 +655,15 @@ function updateConfigCount(count) {
         configCountElement.textContent = `(${count})`;
     }
 }
+
+// Обновление счетчика результатов поиска
+function updateSearchResultsCount(count) {
+    const searchResultsCount = document.getElementById('searchResultsCount');
+    if (searchResultsCount) {
+        searchResultsCount.textContent = count;
+    }
+}
+
 // Функция для копирования конфига из кнопки
 function copyConfigFromButton(button) {
     try {
@@ -732,6 +745,7 @@ function updateLoadingState(isLoading, message = 'Загрузка...') {
         }
     }
 }
+
 // Создание кнопки диагностики
 function createDiagnosticButton() {
     const nav = document.querySelector('nav');
@@ -869,7 +883,7 @@ window.testFileAccess = testFileAccess;
 window.showErrorOverlay = showErrorOverlay;
 window.copyConfigFromButton = copyConfigFromButton;
 window.renderConfigs = renderConfigs;
-window.applyFilters = applyFilters; // Экспортируем для отладки
+window.filterConfigs = filterConfigs;
 
 // Добавляем CSS для кнопки копирования
 const copyButtonStyles = document.createElement('style');
@@ -884,7 +898,7 @@ copyButtonStyles.textContent = `
     
     .config-card {
         transition: transform 0.2s ease;
-        display: block !important; /* Важно для фильтрации */
+        display: block !important;
     }
     
     .config-card:hover {
