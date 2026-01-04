@@ -4,51 +4,282 @@
 // utils.js - ОБНОВЛЕННАЯ ВЕРСИЯ
 
 class Logger {
-    constructor(name = 'App') {
+    constructor(name = 'App', options = {}) {
         this.name = name;
-        this.enabled = true;
+        this.enabled = options.enabled !== false;
+        this.level = options.level || 'debug'; // debug, info, warn, error
+        this.levels = {
+            debug: 0,
+            info: 1,
+            warn: 2,
+            error: 3
+        };
     }
 
+    // Базовые методы консоли
     log(...args) {
-        if (this.enabled) {
+        if (this.enabled && this.levels[this.level] <= 0) {
             console.log(`[${this.name}]`, ...args);
         }
     }
 
+    debug(...args) {
+        if (this.enabled && this.levels[this.level] <= 0) {
+            console.debug(`[${this.name}]`, ...args);
+        }
+    }
+
     info(...args) {
-        if (this.enabled) {
+        if (this.enabled && this.levels[this.level] <= 1) {
             console.info(`[${this.name}]`, ...args);
         }
     }
 
     warn(...args) {
-        if (this.enabled) {
+        if (this.enabled && this.levels[this.level] <= 2) {
             console.warn(`[${this.name}]`, ...args);
         }
     }
 
     error(...args) {
-        if (this.enabled) {
+        if (this.enabled && this.levels[this.level] <= 3) {
             console.error(`[${this.name}]`, ...args);
         }
     }
 
-    // Добавьте этот метод:
-    debug(...args) {
+    trace(...args) {
         if (this.enabled) {
-            console.debug(`[${this.name}]`, ...args);
+            console.trace(`[${this.name}]`, ...args);
         }
+    }
+
+    dir(...args) {
+        if (this.enabled) {
+            console.dir(`[${this.name}]`, ...args);
+        }
+    }
+
+    table(...args) {
+        if (this.enabled) {
+            console.table(...args);
+        }
+    }
+
+    count(label = 'default') {
+        if (this.enabled) {
+            console.count(`[${this.name}] ${label}`);
+        }
+    }
+
+    countReset(label = 'default') {
+        if (this.enabled) {
+            console.countReset(`[${this.name}] ${label}`);
+        }
+    }
+
+    time(label = 'default') {
+        if (this.enabled) {
+            console.time(`[${this.name}] ${label}`);
+        }
+    }
+
+    timeLog(label = 'default', ...args) {
+        if (this.enabled) {
+            console.timeLog(`[${this.name}] ${label}`, ...args);
+        }
+    }
+
+    timeEnd(label = 'default') {
+        if (this.enabled) {
+            console.timeEnd(`[${this.name}] ${label}`);
+        }
+    }
+
+    group(...args) {
+        if (this.enabled) {
+            console.group(`[${this.name}]`, ...args);
+        }
+    }
+
+    groupCollapsed(...args) {
+        if (this.enabled) {
+            console.groupCollapsed(`[${this.name}]`, ...args);
+        }
+    }
+
+    groupEnd() {
+        if (this.enabled) {
+            console.groupEnd();
+        }
+    }
+
+    clear() {
+        if (this.enabled) {
+            console.clear();
+        }
+    }
+
+    // Специальные методы для приложения
+    logRequest(...args) {
+        this.info('[Request]', ...args);
+    }
+
+    logResponse(...args) {
+        this.info('[Response]', ...args);
+    }
+
+    logData(...args) {
+        this.debug('[Data]', ...args);
+    }
+
+    logCache(...args) {
+        this.debug('[Cache]', ...args);
+    }
+
+    logNetwork(...args) {
+        this.info('[Network]', ...args);
+    }
+
+    logUI(...args) {
+        this.debug('[UI]', ...args);
+    }
+
+    logState(...args) {
+        this.debug('[State]', ...args);
     }
 
     errorDetails(error, context = '') {
         if (this.enabled) {
-            console.error(`[${this.name}] [${context}]`, error.message);
-            console.error(`[${this.name}] Stack:`, error.stack);
+            this.error(`[${context}]`, error.message);
+            this.error('Stack:', error.stack);
+            
+            // Дополнительная информация об ошибке
+            if (error.name) this.error('Error name:', error.name);
+            if (error.code) this.error('Error code:', error.code);
+            if (error.status) this.error('Status:', error.status);
+            if (error.url) this.error('URL:', error.url);
         }
     }
+
+    // Методы для работы с объектами
+    dirObject(obj, depth = null) {
+        if (this.enabled) {
+            console.dir(obj, { depth, colors: true });
+        }
+    }
+
+    inspect(obj, options = {}) {
+        if (this.enabled) {
+            console.log(`[${this.name}] Inspect:`, obj);
+            if (options.showKeys) {
+                this.debug('Keys:', Object.keys(obj));
+            }
+            if (options.showValues) {
+                this.debug('Values:', Object.values(obj));
+            }
+            if (options.showType) {
+                this.debug('Type:', typeof obj);
+            }
+        }
+    }
+
+    // Методы для производительности
+    profile(label = 'default') {
+        if (this.enabled && console.profile) {
+            console.profile(`[${this.name}] ${label}`);
+        }
+    }
+
+    profileEnd(label = 'default') {
+        if (this.enabled && console.profileEnd) {
+            console.profileEnd(`[${this.name}] ${label}`);
+        }
+    }
+
+    // Утилиты
+    separator(char = '=', length = 50) {
+        if (this.enabled) {
+            console.log(`[${this.name}] ${char.repeat(length)}`);
+        }
+    }
+
+    title(title) {
+        if (this.enabled) {
+            this.separator('=', 50);
+            console.log(`[${this.name}] ${title.toUpperCase()}`);
+            this.separator('=', 50);
+        }
+    }
+
+    section(title) {
+        if (this.enabled) {
+            console.log(`\n[${this.name}] === ${title} ===`);
+        }
+    }
+
+    // Методы для настройки
+    enable() {
+        this.enabled = true;
+        this.info('Logger enabled');
+    }
+
+    disable() {
+        this.info('Logger disabled');
+        this.enabled = false;
+    }
+
+    setLevel(level) {
+        if (this.levels.hasOwnProperty(level)) {
+            this.level = level;
+            this.debug(`Log level set to: ${level}`);
+        } else {
+            this.warn(`Invalid log level: ${level}. Using default: debug`);
+            this.level = 'debug';
+        }
+    }
+
+    // Проверка доступности методов
+    isDebugEnabled() {
+        return this.enabled && this.levels[this.level] <= 0;
+    }
+
+    isInfoEnabled() {
+        return this.enabled && this.levels[this.level] <= 1;
+    }
+
+    isWarnEnabled() {
+        return this.enabled && this.levels[this.level] <= 2;
+    }
+
+    isErrorEnabled() {
+        return this.enabled && this.levels[this.level] <= 3;
+    }
+
+    // Создание дочернего логгера
+    child(childName) {
+        return new Logger(`${this.name}:${childName}`, {
+            enabled: this.enabled,
+            level: this.level
+        });
+    }
 }
+
 // Сразу создаем глобальный экземпляр
 const logger = new Logger('App');
+
+// Также создаем глобальные методы для обратной совместимости
+// Это на случай если где-то вызывают функции напрямую из window.logger
+window.logger = logger;
+
+// Дополнительные утилитарные методы
+logger.request = (...args) => logger.logRequest(...args);
+logger.response = (...args) => logger.logResponse(...args);
+logger.data = (...args) => logger.logData(...args);
+logger.cache = (...args) => logger.logCache(...args);
+logger.network = (...args) => logger.logNetwork(...args);
+logger.ui = (...args) => logger.logUI(...args);
+logger.state = (...args) => logger.logState(...args);
+
 
 // Кэш для уведомлений
 let notificationTimeout = null;
