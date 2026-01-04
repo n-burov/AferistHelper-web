@@ -608,6 +608,7 @@ function filterConfigs() {
 }
 
 // Обновление отфильтрованных конфигов
+// Обновление отфильтрованных конфигов
 function updateFilteredConfigs(filteredConfigs) {
     const grid = document.getElementById('configsGrid');
     if (!grid) return;
@@ -627,16 +628,28 @@ function updateFilteredConfigs(filteredConfigs) {
         return;
     }
     
-    // Обновляем сетку с отфильтрованными конфигами
+    // Обновляем сетку с отфильтрованными конфигами (НОВЫЙ ШАБЛОН)
     grid.innerHTML = filteredConfigs.map(config => {
         const configEncoded = encodeURIComponent(JSON.stringify(config.config || ''));
         
+        // Создаем кнопку просмотра скриншота если есть скриншот
+        const screenshotButton = config.screenshot && config.screenshot !== 'blank.png' ? 
+            `<button class="view-screenshot-btn" onclick="showScreenshot('${config.screenshot}')" title="Посмотреть скриншот">
+                <i class="fas fa-eye"></i>
+            </button>` : '';
+        
         return `
-        <div class="config-card">
+        <div class="config-card" 
+             data-addon="${config.addon || ''}"
+             data-class="${config.class || ''}"
+             data-name="${escapeHtml(config.name || '').toLowerCase()}"
+             data-description="${escapeHtml(config.description || '').toLowerCase()}">
             <div class="config-header">
-                <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
-                <div class="config-meta">
-                    <span class="config-badge addon-${config.addon || 'unknown'}">
+                <div class="config-title-row">
+                    <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
+                </div>
+                <div class="config-meta-row">
+                    <span class="config-badge addon-${config.addon || 'unknown'} class-${config.addon || 'unknown'}">
                         <i class="${getAddonIcon(config.addon)}"></i> ${(config.addon || 'unknown').toUpperCase()}
                     </span>
                     <span class="config-badge class-${config.class || 'unknown'}">
@@ -647,16 +660,22 @@ function updateFilteredConfigs(filteredConfigs) {
             <div class="config-content">
                 <div class="config-description">
                     ${escapeHtml(config.description || 'Нет описания')}
+                </div>
+                <div class="config-bottom">
                     <div class="config-footer">
                         <span class="author">👤 ${escapeHtml(config.author || 'Неизвестный автор')}</span>
                         ${config.created ? `<span class="date">📅 ${formatDate(config.created)}</span>` : ''}
                     </div>
+                    <div class="config-buttons">
+                        ${screenshotButton}
+                        <button class="copy-btn" 
+                            data-config="${configEncoded}"
+                            onclick="copyConfigFromButton(this)"
+                            style="${screenshotButton ? 'flex: 1;' : 'width: 100%;'}">
+                            <i class="fas fa-copy"></i> Копировать конфиг
+                        </button>
+                    </div>
                 </div>
-                <button class="copy-btn" 
-                    data-config="${configEncoded}"
-                    onclick="copyConfigFromButton(this)">
-                    <i class="fas fa-copy"></i> Копировать конфиг
-                </button>
             </div>
         </div>
         `;
