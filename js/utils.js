@@ -1,6 +1,42 @@
 /**
  * Утилиты для проекта
  */
+// utils.js - ОБНОВЛЕННАЯ ВЕРСИЯ
+
+// В САМОМ НАЧАЛЕ файла добавьте:
+class Logger {
+    constructor(name = 'App') {
+        this.name = name;
+        this.enabled = true;
+    }
+
+    log(...args) {
+        if (this.enabled) {
+            console.log(`[${this.name}]`, ...args);
+        }
+    }
+
+    info(...args) {
+        if (this.enabled) {
+            console.info(`[${this.name}]`, ...args);
+        }
+    }
+
+    warn(...args) {
+        if (this.enabled) {
+            console.warn(`[${this.name}]`, ...args);
+        }
+    }
+
+    error(...args) {
+        if (this.enabled) {
+            console.error(`[${this.name}]`, ...args);
+        }
+    }
+}
+
+// Сразу создаем глобальный экземпляр
+const logger = new Logger('App');
 
 // Кэш для уведомлений
 let notificationTimeout = null;
