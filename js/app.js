@@ -454,7 +454,7 @@ function renderConfigs(configs) {
         const configEncoded = encodeURIComponent(JSON.stringify(config.config || ''));
         
         // Создаем кнопку просмотра скриншота если есть скриншот
-        const screenshotButton = config.screenshot && config.screenshot !== 'blank.png' ? 
+        const screenshotButton = config.screenshot && config.screenshot !== '' ? 
             `<button class="view-screenshot-btn" onclick="showScreenshot('${config.screenshot}')" title="Посмотреть скриншот">
                 <i class="fas fa-eye"></i>
             </button>` : '';
