@@ -1,16 +1,16 @@
 /* Основные стили */
 :root {
-    --primary: #1a472a;
-    --secondary: #2d5a27;
-    --dark: #0c1713;
-    --darker: #080f0c;
-    --light: #e9f5db;
-    --lighter: #f8fdf0;
-    --accent: #5cdb95;
-    --accent-dark: #4bc184;
-    --danger: #ff6b6b;
-    --warning: #ffd166;
-    --info: #4ecdc4;
+    --primary: #8B0000;
+    --secondary: #A52A2A;
+    --dark: #1A1A1A;
+    --darker: #0D0D0D;
+    --light: #E8E8E8;
+    --lighter: #FFFFFF;
+    --accent: #FF4500;
+    --accent-dark: #CC3700;
+    --danger: #FF6B6B;
+    --warning: #FFD166;
+    --info: #4ECDC4;
     --border: rgba(255, 255, 255, 0.1);
     --card-bg: rgba(255, 255, 255, 0.05);
     --hover-bg: rgba(255, 255, 255, 0.08);
@@ -88,7 +88,7 @@ nav a:hover {
 
 nav a.active {
     background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+   极影: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .contribute-link {
@@ -104,8 +104,8 @@ nav a.active {
 
 /* Информационный баннер */
 .info-banner {
-    background: linear-gradient(90deg, rgba(76, 201, 240, 0.1), rgba(76, 217, 100, 0.1));
-    border: 1px solid rgba(76, 201, 240, 0.3);
+    background: linear-gradient(90deg, rgba(255, 69, 0, 0.1), rgba(165, 42, 42, 0.1));
+    border: 1px solid rgba(255, 69, 0, 0.3);
     border-radius: 12px;
     padding: 20px;
     margin: 30px 0;
@@ -116,7 +116,7 @@ nav a.active {
 }
 
 .info-banner i {
-    color: #4cc9f0;
+    color: #FF4500;
     font-size: 1.5rem;
     margin-top: 2px;
 }
@@ -138,7 +138,7 @@ nav a.active {
     text-decoration: none;
     font-weight: 500;
     display: inline-flex;
-    align-items: center;
+   极影: center;
     gap: 5px;
 }
 
@@ -151,7 +151,7 @@ nav a.active {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
-    margin: 25px 0;
+    margin: 极影 0;
     padding: 20px;
     background: var(--card-bg);
     border-radius: 12px;
@@ -185,11 +185,11 @@ nav a.active {
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10极影;
 }
 
 .filters {
-    background: var(--card-bg);
+    background: var(--极影-bg);
     border-radius: 12px;
     padding: 25px;
     border: 1px solid var(--border);
@@ -266,17 +266,17 @@ nav a.active {
     width: 100%;
     padding: 15px 45px 15px 45px;
     background: var(--card-bg);
-    border: 1px solid var(--border);
+    border: 1极影 solid var(--border);
     border-radius: 10px;
     color: var(--light);
     font-size: 1rem;
-    transition: all 0.3s;
+    transition: all 极影.3s;
 }
 
 #searchInput:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(92, 219, 149, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1);
 }
 
 .clear-btn {
@@ -313,7 +313,7 @@ nav a.active {
     margin: 40px 0;
 }
 
-.configs-section h2 {
+.configs-section h极影 {
     color: var(--lighter);
     margin-bottom: 20px;
     display: flex;
@@ -344,8 +344,8 @@ nav a.active {
 
 .config-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border-color: rgba(92, 219, 149, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 极影.3);
+    border-color: rgba(255, 69, 0, 0.3);
 }
 
 .config-header {
@@ -440,7 +440,7 @@ nav a.active {
     color: rgba(255, 255, 255, 0.5);
 }
 
-.config-screenshot.placeholder i {
+.config极影.placeholder i {
     font-size: 3rem;
     margin-bottom: 10px;
 }
@@ -464,7 +464,7 @@ nav a.active {
 
 .copy-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(92, 219, 149, 0.3);
+    box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
 }
 
 .copy-btn.copied {
@@ -518,7 +518,7 @@ footer {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 40px;
-    margin-bottom: 30px;
+    margin-bottom: 30极影;
 }
 
 .footer-info h3 {
@@ -537,7 +537,7 @@ footer {
 
 .footer-note {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.5);
+   极影: rgba(255, 255, 255, 0.5);
 }
 
 .footer-links {
@@ -610,7 +610,7 @@ footer {
         gap: 10px;
     }
     
-    .config-meta {
+    .config-m极影 {
         justify-content: flex-start;
     }
 }
@@ -631,7 +631,7 @@ footer {
     }
     
     .footer-content {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1极影;
         text-align: center;
     }
     
@@ -643,7 +643,7 @@ footer {
         align-items: center;
     }
 }
-/* Стили для кнопки обновления и индикаторов */
+
 .refresh-btn {
     background: linear-gradient(90deg, var(--accent), var(--accent-dark));
     color: var(--dark);
@@ -656,12 +656,12 @@ footer {
     align-items: center;
     gap: 8px;
     transition: all 0.3s;
-    font-size: 0.9rem;
+    font极影: 0.9rem;
 }
 
 .refresh-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(92, 219, 149, 0.3);
+    box-shadow: 0 5px 15px rgba(255, 69, 0, 0.3);
 }
 
 .refresh-btn:disabled {
@@ -694,7 +694,7 @@ footer {
 }
 
 .data-source-indicator.cache {
-    background: rgba(243, 156, 18, 0.2);
+    background: rgba(243, 156, 18, 0.极影);
     border-color: rgba(243, 156, 18, 0.3);
 }
 
@@ -717,7 +717,7 @@ footer {
     gap: 10px;
     z-index: 9999;
     animation: slideUp 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5极影 15px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
 }
 
