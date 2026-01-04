@@ -116,19 +116,15 @@ function renderMacros(macros) {
         
         return `
         <div class="macro-card" 
-             data-addon="${macro.addon || ''}"
              data-class="${macro.class || ''}"
              data-name="${escapeHtml(macro.name || '').toLowerCase()}"
              data-description="${escapeHtml(macro.description || '').toLowerCase()}">
             <div class="macro-header">
                 <div class="macro-title">${escapeHtml(macro.name || 'Без названия')}</div>
                 <div class="macro-meta">
-                    ${macro.addon ? `<span class="macro-badge addon-${macro.addon}">
-                        <i class="${getAddonIcon(macro.addon)}"></i> ${(macro.addon || 'unknown').toUpperCase()}
-                    </span>` : ''}
-                    ${macro.class ? `<span class="macro-badge class-${macro.class}">
+                    <span class="macro-badge class-${macro.class}">
                         <i class="${getClassIcon(macro.class)}"></i> ${getClassLabel(macro.class || '')}
-                    </span>` : ''}
+                    </span>
                 </div>
             </div>
             <div class="macro-content">
@@ -210,18 +206,8 @@ function copyMacroFromButton(button) {
     }
 }
 
-// Инициализация фильтров
+// Инициализация фильтров (ТОЛЬКО по классу)
 function initFilters() {
-    // Кнопки фильтрации по аддону
-    const addonFilterButtons = document.querySelectorAll('#addonFilter .filter-btn');
-    addonFilterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            addonFilterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            filterMacros();
-        });
-    });
-    
     // Кнопки фильтрации по классу
     const classFilterButtons = document.querySelectorAll('#classFilter .filter-btn');
     classFilterButtons.forEach(button => {
@@ -258,20 +244,16 @@ function initFilters() {
     }
 }
 
-// Фильтрация макросов
+// Фильтрация макросов (ТОЛЬКО по классу и поиску)
 function filterMacros() {
     if (!allMacros || !allMacros.length) return;
     
     // Получаем активные фильтры
-    const activeAddon = document.querySelector('#addonFilter .filter-btn.active')?.dataset.addon || 'all';
     const activeClass = document.querySelector('#classFilter .filter-btn.active')?.dataset.class || 'all';
     const searchQuery = document.getElementById('searchInput')?.value?.toLowerCase().trim() || '';
     
     // Фильтруем макросы
     const filteredMacros = allMacros.filter(macro => {
-        // Проверяем фильтр по аддону
-        const addonMatches = activeAddon === 'all' || activeAddon === macro.addon;
-        
         // Проверяем фильтр по классу
         const classMatches = activeClass === 'all' || activeClass === macro.class;
         
@@ -286,7 +268,7 @@ function filterMacros() {
                            macroText.includes(searchQuery);
         }
         
-        return addonMatches && classMatches && searchMatches;
+        return classMatches && searchMatches;
     });
     
     // Обновляем отображение
@@ -379,14 +361,6 @@ function showLoading(show, message = 'Загрузка...') {
     }
 }
 
-// Вспомогательные функции (должны быть в utils.js, но продублируем для надежности)
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
 // Запуск при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Макросы - Загрузка страницы');
@@ -474,7 +448,7 @@ function addMacrosStyles() {
             margin-bottom: 15px;
         }
         
-        .copy-macro-btn, .copy-command-btn {
+        .copy-macro-btn {
             flex: 1;
             padding: 10px;
             border: none;
@@ -486,14 +460,22 @@ function addMacrosStyles() {
             align-items: center;
             justify-content: center;
             gap: 8px;
-        }
-        
-        .copy-macro-btn {
             background: linear-gradient(135deg, #3498db, #2980b9);
             color: white;
         }
         
         .copy-command-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             background: rgba(46, 204, 113, 0.2);
             color: #2ecc71;
             border: 1px solid rgba(46, 204, 113, 0.3);
@@ -534,6 +516,73 @@ function addMacrosStyles() {
             background-color: #3498db !important;
             color: white !important;
             border-color: #3498db !important;
+        }
+        
+        /* Стили для бейджей классов */
+        .macro-badge.class-shaman {
+            background: rgba(0, 112, 222, 0.2);
+            color: #0070de;
+            border-color: rgba(0, 112, 222, 0.3);
+        }
+        
+        .macro-badge.class-mage {
+            background: rgba(105, 204, 240, 0.2);
+            color: #69ccf0;
+            border-color: rgba(105, 204, 240, 0.3);
+        }
+        
+        .macro-badge.class-warlock {
+            background: rgba(148, 130, 201, 0.2);
+            color: #9482c9;
+            border-color: rgba(148, 130, 201, 0.3);
+        }
+        
+        .macro-badge.class-druid {
+            background: rgba(255, 125, 10, 0.2);
+            color: #ff7d0a;
+            border-color: rgba(255, 125, 10, 0.3);
+        }
+        
+        .macro-badge.class-warrior {
+            background: rgba(199, 156, 110, 0.2);
+            color: #c99c6e;
+            border-color: rgba(199, 156, 110, 0.3);
+        }
+        
+        .macro-badge.class-paladin {
+            background: rgba(245, 140, 186, 0.2);
+            color: #f58cba;
+            border-color: rgba(245, 140, 186, 0.3);
+        }
+        
+        .macro-badge.class-deathknight {
+            background: rgba(196, 31, 59, 0.2);
+            color: #c41f3b;
+            border-color: rgba(196, 31, 59, 0.3);
+        }
+        
+        .macro-badge.class-priest {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .macro-badge.class-rogue {
+            background: rgba(255, 245, 105, 0.2);
+            color: #fff569;
+            border-color: rgba(255, 245, 105, 0.3);
+        }
+        
+        .macro-badge.class-hunter {
+            background: rgba(171, 212, 115, 0.2);
+            color: #abd473;
+            border-color: rgba(171, 212, 115, 0.3);
+        }
+        
+        .macro-badge.class-universal {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            border-color: rgba(52, 152, 219, 0.3);
         }
     `;
     document.head.appendChild(styles);
