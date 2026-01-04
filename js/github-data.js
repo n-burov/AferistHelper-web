@@ -409,3 +409,12 @@ window.diagnoseGitHub = async () => {
         alert('Ошибка диагностики: ' + error.message);
     }
 };
+
+// Проверяем, есть ли уже gitHubData
+if (!window.gitHubData) {
+    console.log('📦 Создаем window.gitHubData...');
+    window.gitHubData = new GitHubDataManager();
+    console.log('✅ window.gitHubData создан:', !!window.gitHubData);
+} else {
+    console.log('⚠️ window.gitHubData уже существует');
+}
