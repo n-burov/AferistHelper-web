@@ -1,486 +1,553 @@
 /**
- * Основной скрипт приложения
+ * УЛЬТРА-ДИАГНОСТИЧЕСКАЯ версия приложения
+ * Показывает все ошибки прямо на странице
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-    logger.info('[App] Инициализация приложения...');
-    
-    // Состояние приложения
-    const appState = {
-        configs: [],
-        filteredConfigs: [],
-        filters: {
-            addon: 'all',
-            class: 'all',
-            role: 'all'
-        },
-        searchQuery: '',
-        isLoading: true,
-        sortBy: 'date',
-        sortOrder: 'desc',
-        lastUpdate: null,
-        dataSource: 'loading', // 'fresh', 'cache', 'error', 'fallback'
-        error: null
-    };
-    
-    // Инициализация
-    init();
-    
-    async function init() {
-        try {
-            logger.info('[App] Начало инициализации');
-            
-            // Показываем начальное состояние
-            updateLoadingState(true);
-            
-            // Создаем кнопку обновления и диагностики
-            createControlButtons();
-            
-            // Загружаем конфиги
-            await loadConfigs();
-            
-            // Инициализируем UI
-            initUI();
-            
-            // Запускаем проверку обновлений
-            startUpdateChecker();
-            
-            logger.info('[App] Приложение успешно инициализировано');
-            
-        } catch (error) {
-            logger.errorDetails(error, 'App.init');
-            showNotification('Критическая ошибка инициализации', 'error');
-            
-            // Показываем подробности в UI
-            showErrorDetails(error);
-        } finally {
-            updateLoadingState(false);
-        }
+// Сначала добавим стили для отображения ошибок
+const errorStyles = document.createElement('style');
+errorStyles.textContent = `
+    .error-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 99999;
+        padding: 40px;
+        overflow-y: auto;
+        color: white;
+        font-family: 'Courier New', monospace;
     }
     
-    /**
-     * Создание кнопок управления
-     */
-    function createControlButtons() {
-        const searchSection = document.querySelector('.search-section');
-        if (!searchSection) {
-            logger.warn('Не найден .search-section для кнопок');
-            return;
-        }
-        
-        // Создаем контейнер для кнопок
-        const controlsContainer = document.createElement('div');
-        controlsContainer.className = 'controls-container';
-        controlsContainer.style.cssText = `
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        `;
-        
-        // Кнопка обновления
-        const refreshBtn = createButton(
-            'refreshBtn',
-            '<i class="fas fa-sync-alt"></i> Обновить конфиги',
-            async () => {
-                logger.info('[App] Ручное обновление конфигов');
-                await refreshConfigs();
-            }
-        );
-        
-        // Кнопка диагностики
-        const diagnoseBtn = createButton(
-            'diagnoseBtn',
-            '<i class="fas fa-stethoscope"></i> Диагностика',
-            async () => {
-                logger.info('[App] Запуск диагностики');
-                await window.diagnoseGitHub?.();
-            }
-        );
-        diagnoseBtn.style.background = 'linear-gradient(90deg, #3498db, #2980b9)';
-        
-        // Кнопка сброса фильтров
-        const resetBtn = createButton(
-            'resetFiltersBtn',
-            '<i class="fas fa-filter"></i> Сбросить фильтры',
-            () => {
-                logger.info('[App] Сброс фильтров');
-                resetFilters();
-            }
-        );
-        resetBtn.style.background = 'var(--card-bg)';
-        resetBtn.style.color = 'var(--light)';
-        resetBtn.style.border = '1px solid var(--border)';
-        
-        controlsContainer.appendChild(refreshBtn);
-        controlsContainer.appendChild(diagnoseBtn);
-        controlsContainer.appendChild(resetBtn);
-        
-        // Вставляем перед поиском
-        searchSection.parentNode.insertBefore(controlsContainer, searchSection);
-        
-        logger.debug('Кнопки управления созданы');
+    .error-header {
+        background: #e74c3c;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     
-    /**
-     * Создание кнопки
-     */
-    function createButton(id, html, onClick) {
-        const button = document.createElement('button');
-        button.id = id;
-        button.innerHTML = html;
-        button.style.cssText = `
-            background: linear-gradient(90deg, var(--accent), var(--accent-dark));
-            color: var(--dark);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        `;
-        
-        button.addEventListener('mouseenter', () => {
-            if (!button.disabled) {
-                button.style.transform = 'translateY(-2px)';
-                button.style.boxShadow = '0 5px 15px rgba(92, 219, 149, 0.3)';
-            }
-        });
-        
-        button.addEventListener('mouseleave', () => {
-            button.style.transform = '';
-            button.style.boxShadow = '';
-        });
-        
-        button.addEventListener('click', onClick);
-        
-        return button;
+    .error-content {
+        background: #2c3e50;
+        padding: 30px;
+        border-radius: 0 0 10px 10px;
+        overflow-x: auto;
     }
     
-    /**
-     * Загрузка конфигов
-     */
-    async function loadConfigs(forceRefresh = false) {
-        logger.info('[App] Загрузка конфигов', { forceRefresh });
-        
-        appState.isLoading = true;
-        appState.dataSource = 'loading';
-        appState.error = null;
-        
-        updateLoadingState(true);
-        updateControlButtonsState(true);
-        
-        try {
-            const result = await gitHubData.getConfigs(forceRefresh);
-            
-            // Обновляем состояние источника данных
-            appState.dataSource = result.fromCache ? 'cache' : 
-                                 result.isFallback ? 'fallback' : 'fresh';
-            appState.lastUpdate = new Date();
-            appState.error = result.error || null;
-            
-            logger.info('[App] Результат загрузки:', {
-                success: result.success,
-                dataSource: appState.dataSource,
-                configsCount: result.data?.length || 0,
-                error: result.error,
-                isFallback: result.isFallback
-            });
-            
-            if (result.success || result.data?.length > 0) {
-                appState.configs = result.data || [];
-                appState.filteredConfigs = [...appState.configs];
-                
-                // Обновляем статистику
-                updateStats(result.data, result.meta);
-                
-                // Рендерим конфиги
-                renderConfigs();
-                
-                // Показываем уведомление о состоянии
-                showDataSourceNotification(result);
-                
-            } else {
-                appState.dataSource = 'error';
-                showNotification('Не удалось загрузить конфиги', 'error');
-            }
-            
-        } catch (error) {
-            logger.errorDetails(error, 'App.loadConfigs');
-            appState.dataSource = 'error';
-            appState.error = error.message;
-            showNotification('Ошибка загрузки конфигов: ' + error.message, 'error');
-            
-            // Показываем ошибку в UI
-            showErrorState();
-            
-        } finally {
-            appState.isLoading = false;
-            updateLoadingState(false);
-            updateControlButtonsState(false);
-            updateDataSourceIndicator();
-            logger.logState(appState);
-        }
+    .error-title {
+        margin: 0;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     
-    /**
-     * Показать состояние ошибки
-     */
-    function showErrorState() {
-        const grid = document.getElementById('configsGrid');
-        if (!grid) return;
+    .close-error {
+        background: white;
+        color: #e74c3c;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    
+    .debug-section {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .debug-section h4 {
+        margin-top: 0;
+        color: #3498db;
+        border-bottom: 1px solid #3498db;
+        padding-bottom: 5px;
+    }
+    
+    .debug-info {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+    
+    .status-success { background: #2ecc71; color: white; }
+    .status-error { background: #e74c3c; color: white; }
+    .status-warning { background: #f39c12; color: white; }
+    .status-info { background: #3498db; color: white; }
+`;
+document.head.appendChild(errorStyles);
+
+// Глобальный обработчик ошибок
+window.addEventListener('error', function(event) {
+    console.error('Глобальная ошибка:', event.error);
+    showErrorOverlay({
+        type: 'Глобальная ошибка',
+        message: event.message,
+        error: event.error,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno
+    });
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+    console.error('Необработанный Promise rejection:', event.reason);
+    showErrorOverlay({
+        type: 'Promise rejection',
+        message: event.reason?.message || 'Неизвестная ошибка Promise',
+        error: event.reason
+    });
+});
+
+// Функция показа ошибки
+function showErrorOverlay(errorInfo) {
+    // Удаляем старый оверлей если есть
+    const oldOverlay = document.querySelector('.error-overlay');
+    if (oldOverlay) oldOverlay.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'error-overlay';
+    
+    // Собираем всю возможную информацию
+    const appState = window.app?.getState?.() || 'app недоступен';
+    const githubData = window.gitHubData || 'gitHubData недоступен';
+    const configUrl = 'https://raw.githubusercontent.com/n-burov/AferistHelper-web/main/configs/configs.json';
+    
+    overlay.innerHTML = `
+        <div class="error-header">
+            <h2 class="error-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                Критическая ошибка приложения
+            </h2>
+            <button class="close-error" onclick="this.parentElement.parentElement.remove()">
+                Закрыть
+            </button>
+        </div>
         
-        grid.innerHTML = `
-            <div class="error-state" style="
-                grid-column: 1 / -1;
-                text-align: center;
-                padding: 60px 20px;
-                color: rgba(255, 255, 255, 0.7);
-            ">
-                <div style="font-size: 4rem; margin-bottom: 20px; color: #e74c3c;">
-                    <i class="fas fa-exclamation-triangle"></i>
+        <div class="error-content">
+            <div class="debug-section">
+                <h4>Основная ошибка</h4>
+                <div class="debug-info">
+Тип: ${errorInfo.type}
+Сообщение: ${errorInfo.message}
+Файл: ${errorInfo.filename || 'неизвестно'}
+Строка: ${errorInfo.lineno || 'неизвестно'}
+Колонка: ${errorInfo.colno || 'неизвестно'}
                 </div>
-                <h3 style="color: #e74c3c; margin-bottom: 15px;">Ошибка загрузки конфигов</h3>
-                <p style="margin-bottom: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
-                    ${appState.error || 'Неизвестная ошибка'}
-                </p>
-                <div style="margin-top: 30px;">
-                    <button onclick="window.diagnoseGitHub?.()" class="refresh-btn" style="
-                        background: #e74c3c;
+            </div>
+            
+            <div class="debug-section">
+                <h4>Состояние приложения</h4>
+                <div class="debug-info">
+${JSON.stringify(appState, null, 2)}
+                </div>
+            </div>
+            
+            <div class="debug-section">
+                <h4>Проверка доступности файла конфигов</h4>
+                <div id="fileCheckResult" class="debug-info">
+Проверяем доступность ${configUrl}...
+                </div>
+            </div>
+            
+            <div class="debug-section">
+                <h4>Действия для решения</h4>
+                <div class="debug-info">
+1. Откройте консоль браузера (F12) для подробных логов
+2. Проверьте URL файла: <a href="${configUrl}" target="_blank" style="color: #3498db;">${configUrl}</a>
+3. Убедитесь что файл существует в репозитории
+4. Проверьте права доступа к репозиторию
+5. Попробуйте очистить кэш браузера (Ctrl+F5)
+                </div>
+                <div style="margin-top: 15px;">
+                    <button onclick="testFileAccess()" style="
+                        background: #3498db;
                         color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        cursor: pointer;
                         margin-right: 10px;
                     ">
-                        <i class="fas fa-stethoscope"></i> Запустить диагностику
+                        <i class="fas fa-check"></i> Проверить доступность файла
                     </button>
-                    <button onclick="app.refreshConfigs()" class="refresh-btn">
-                        <i class="fas fa-sync-alt"></i> Повторить попытку
+                    <button onclick="location.reload(true)" style="
+                        background: #2ecc71;
+                        color: white;
+                        border: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    ">
+                        <i class="fas fa-sync-alt"></i> Перезагрузить страницу
                     </button>
-                </div>
-                <div style="margin-top: 20px; font-size: 0.9rem; color: rgba(255, 255, 255, 0.5);">
-                    <p>Возможные причины:</p>
-                    <ul style="text-align: left; display: inline-block; margin-top: 10px;">
-                        <li>Файл configs/configs.json не существует в репозитории</li>
-                        <li>Проблемы с доступом к GitHub</li>
-                        <li>Неправильно указан username или название репозитория</li>
-                    </ul>
                 </div>
             </div>
-        `;
-    }
-    
-    /**
-     * Показать детали ошибки
-     */
-    function showErrorDetails(error) {
-        const errorDetails = `
-            <div style="
-                background: rgba(231, 76, 60, 0.1);
-                border: 1px solid #e74c3c;
-                border-radius: 8px;
-                padding: 20px;
-                margin: 20px 0;
-                color: rgba(255, 255, 255, 0.9);
-            ">
-                <h4 style="color: #e74c3c; margin-bottom: 10px;">
-                    <i class="fas fa-bug"></i> Детали ошибки
-                </h4>
-                <pre style="
-                    background: rgba(0, 0, 0, 0.3);
-                    padding: 15px;
-                    border-radius: 5px;
-                    overflow-x: auto;
-                    font-size: 0.85rem;
-                    margin: 0;
-                ">${error.stack || error.message}</pre>
-                <div style="margin-top: 15px; font-size: 0.9rem;">
-                    <p>Откройте консоль браузера (F12) для подробной диагностики</p>
-                </div>
-            </div>
-        `;
-        
-        // Можно добавить куда-то в интерфейс
-        const mainContainer = document.querySelector('main .container');
-        if (mainContainer) {
-            mainContainer.insertAdjacentHTML('afterbegin', errorDetails);
-        }
-    }
-    
-    /**
-     * Обновление состояния кнопок управления
-     */
-    function updateControlButtonsState(isLoading) {
-        const buttons = ['refreshBtn', 'diagnoseBtn', 'resetFiltersBtn'];
-        
-        buttons.forEach(btnId => {
-            const button = document.getElementById(btnId);
-            if (!button) return;
             
-            if (isLoading) {
-                button.disabled = true;
-                button.style.opacity = '0.7';
-                button.style.cursor = 'not-allowed';
+            <div class="debug-section">
+                <h4>Стек ошибки</h4>
+                <div class="debug-info">
+${errorInfo.error?.stack || 'Стек не доступен'}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    // Проверяем доступность файла
+    testFileAccess();
+}
+
+// Функция проверки доступа к файлу
+async function testFileAccess() {
+    const resultElement = document.getElementById('fileCheckResult');
+    if (!resultElement) return;
+    
+    const configUrl = 'https://raw.githubusercontent.com/n-burov/AferistHelper-web/main/configs/configs.json';
+    
+    try {
+        resultElement.innerHTML = `Проверяем доступность ${configUrl}...`;
+        
+        const startTime = Date.now();
+        const response = await fetch(configUrl, { cache: 'no-cache' });
+        const duration = Date.now() - startTime;
+        
+        if (response.ok) {
+            const text = await response.text();
+            let status = '✅ ФАЙЛ ДОСТУПЕН!';
+            
+            try {
+                const json = JSON.parse(text);
+                status += `\nНайдено конфигов: ${json.configs?.length || 0}`;
+                status += `\nМета: ${JSON.stringify(json.meta || {})}`;
+            } catch (e) {
+                status += `\n⚠️ Ошибка парсинга JSON: ${e.message}`;
+            }
+            
+            resultElement.innerHTML = `
+URL: ${configUrl}
+Статус: ${response.status} ${response.statusText}
+Время ответа: ${duration}ms
+Размер: ${text.length} символов
+${status}
+            `;
+        } else {
+            resultElement.innerHTML = `
+❌ ФАЙЛ НЕ ДОСТУПЕН!
+URL: ${configUrl}
+Статус: ${response.status} ${response.statusText}
+Проверьте:
+1. Существует ли файл в репозитории
+2. Правильно ли указан путь
+3. Публичный ли репозиторий
+            `;
+        }
+    } catch (error) {
+        resultElement.innerHTML = `
+❌ ОШИБКА ПРИ ПРОВЕРКЕ!
+URL: ${configUrl}
+Ошибка: ${error.message}
+Возможные причины:
+1. Проблемы с интернет-соединением
+2. CORS ошибки
+3. Блокировка запросов
+        `;
+    }
+}
+
+// Теперь основной код приложения
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 APP START - Ультра-диагностическая версия');
+    
+    try {
+        // Сразу показываем статус загрузки
+        updateLoadingState(true, 'Инициализация...');
+        
+        // 1. Проверяем загрузку всех скриптов
+        console.log('1. Проверка загрузки скриптов:');
+        const scripts = ['utils.js', 'github-data.js', 'app.js'];
+        scripts.forEach(script => {
+            console.log(`   ${script}: ${document.querySelector(`script[src*="${script}"]`) ? '✅' : '❌'}`);
+        });
+        
+        // 2. Проверяем наличие gitHubData
+        console.log('2. Проверка глобальных объектов:');
+        console.log('   window.gitHubData:', window.gitHubData ? '✅' : '❌');
+        
+        if (!window.gitHubData) {
+            throw new Error('gitHubData не загружен! Проверьте загрузку github-data.js');
+        }
+        
+        // 3. Проверяем конфигурацию
+        console.log('3. Конфигурация gitHubData:');
+        console.log('   Owner:', gitHubData.config?.owner);
+        console.log('   Repo:', gitHubData.config?.repo);
+        console.log('   Branch:', gitHubData.config?.branch);
+        
+        if (gitHubData.config?.owner !== 'n-burov' || gitHubData.config?.repo !== 'AferistHelper-web') {
+            console.warn('⚠️ Конфигурация не совпадает с ожидаемой!');
+        }
+        
+        // 4. Пробуем загрузить конфиги напрямую (без кэша)
+        console.log('4. Прямая загрузка конфигов...');
+        updateLoadingState(true, 'Загрузка конфигов...');
+        
+        const testUrl = 'https://raw.githubusercontent.com/n-burov/AferistHelper-web/main/configs/configs.json';
+        console.log('   URL:', testUrl);
+        
+        try {
+            const response = await fetch(testUrl + '?t=' + Date.now());
+            console.log('   Статус:', response.status, response.ok);
+            
+            if (response.ok) {
+                const text = await response.text();
+                console.log('   Размер ответа:', text.length, 'символов');
                 
-                if (btnId === 'refreshBtn') {
-                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+                try {
+                    const data = JSON.parse(text);
+                    console.log('✅ JSON успешно распарсен!');
+                    console.log('   Конфигов:', data.configs?.length || 0);
+                    console.log('   Мета:', data.meta);
+                    
+                    // Теперь используем gitHubData
+                    const result = await gitHubData.getConfigs(true);
+                    console.log('5. Результат через gitHubData:', result);
+                    
+                    if (result.success || result.data?.length > 0) {
+                        // Успех! Рендерим конфиги
+                        renderConfigs(result.data || []);
+                        updateLoadingState(false);
+                        showNotification('Конфиги успешно загружены!', 'success');
+                    } else {
+                        throw new Error('gitHubData вернул пустой результат: ' + (result.error || 'неизвестная ошибка'));
+                    }
+                    
+                } catch (jsonError) {
+                    throw new Error('Ошибка парсинга JSON: ' + jsonError.message);
                 }
             } else {
-                button.disabled = false;
-                button.style.opacity = '1';
-                button.style.cursor = 'pointer';
-                
-                if (btnId === 'refreshBtn') {
-                    button.innerHTML = '<i class="fas fa-sync-alt"></i> Обновить конфиги';
-                }
+                throw new Error(`HTTP ошибка: ${response.status} ${response.statusText}`);
             }
-        });
-    }
-    
-    /**
-     * Обновление индикатора загрузки
-     */
-    function updateLoadingState(isLoading) {
-        const loadingElement = document.querySelector('.loading');
-        if (!loadingElement) {
-            logger.warn('Не найден .loading элемент');
-            return;
+        } catch (fetchError) {
+            throw new Error('Ошибка загрузки файла: ' + fetchError.message);
         }
         
+    } catch (error) {
+        console.error('❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
+        
+        // Показываем ошибку в UI
+        showErrorOverlay({
+            type: 'Инициализация приложения',
+            message: error.message,
+            error: error
+        });
+        
+        // Также показываем простую версию для пользователя
+        const grid = document.getElementById('configsGrid');
+        if (grid) {
+            grid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <div style="font-size: 4rem; color: #e74c3c; margin-bottom: 20px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 style="color: #e74c3c; margin-bottom: 15px;">
+                        Ошибка загрузки конфигов
+                    </h3>
+                    <p style="margin-bottom: 20px; color: rgba(255, 255, 255, 0.8);">
+                        ${error.message}
+                    </p>
+                    <div style="margin-top: 30px;">
+                        <button onclick="location.reload(true)" style="
+                            background: #3498db;
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            margin-right: 10px;
+                        ">
+                            <i class="fas fa-sync-alt"></i> Перезагрузить страницу
+                        </button>
+                        <button onclick="testFileAccess()" style="
+                            background: #2ecc71;
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">
+                            <i class="fas fa-check"></i> Проверить доступность
+                        </button>
+                    </div>
+                    <div style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                        <p style="margin-bottom: 10px; font-size: 0.9em; color: rgba(255, 255, 255, 0.7);">
+                            Для разработчика: откройте консоль (F12) для подробной диагностики
+                        </p>
+                        <button onclick="console.clear(); console.log('App state:', window.app?.getState?.()); console.log('GitHubData:', window.gitHubData);" style="
+                            background: transparent;
+                            color: #3498db;
+                            border: 1px solid #3498db;
+                            padding: 8px 16px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 0.9em;
+                        ">
+                            Показать состояние в консоли
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        updateLoadingState(false);
+    }
+    
+    // Создаем кнопку диагностики в UI
+    createDiagnosticButton();
+});
+
+// Простая функция рендеринга конфигов
+function renderConfigs(configs) {
+    const grid = document.getElementById('configsGrid');
+    if (!grid) return;
+    
+    if (!configs || configs.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <div style="font-size: 3rem; color: #3498db; margin-bottom: 20px;">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3 style="margin-bottom: 10px;">Конфиги не найдены</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 20px;">
+                    База конфигов пуста. Добавьте первый конфиг!
+                </p>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = configs.map(config => `
+        <div class="config-card">
+            <div class="config-header">
+                <div class="config-title">${escapeHtml(config.name)}</div>
+                <div class="config-meta">
+                    <span class="config-badge addon-${config.addon}">
+                        <i class="${getAddonIcon(config.addon)}"></i> ${config.addon.toUpperCase()}
+                    </span>
+                </div>
+            </div>
+            <div class="config-content">
+                <div class="config-description">
+                    ${escapeHtml(config.description)}
+                    <div class="config-footer">
+                        <span class="author">👤 ${escapeHtml(config.author)}</span>
+                    </div>
+                </div>
+                <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(config.config).replace(/'/g, "\\'")}')">
+                    <i class="fas fa-copy"></i> Копировать конфиг
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    // Обновляем счетчики
+    updateStats(configs);
+}
+
+// Обновление статистики
+function updateStats(configs) {
+    const totalElement = document.getElementById('totalConfigs');
+    const authorsElement = document.getElementById('uniqueAuthors');
+    
+    if (totalElement) {
+        totalElement.textContent = configs.length;
+    }
+    
+    if (authorsElement && configs.length > 0) {
+        const authors = new Set(configs.map(c => c.author));
+        authorsElement.textContent = authors.size;
+    }
+}
+
+// Обновление состояния загрузки
+function updateLoadingState(isLoading, message = 'Загрузка...') {
+    const loadingElement = document.querySelector('.loading');
+    if (loadingElement) {
         if (isLoading) {
             loadingElement.style.display = 'flex';
-            loadingElement.innerHTML = `
-                <i class="fas fa-spinner fa-spin"></i> 
-                <span>Загрузка конфигов с GitHub...</span>
-            `;
+            loadingElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message}`;
         } else {
             loadingElement.style.display = 'none';
         }
     }
+}
+
+// Создание кнопки диагностики
+function createDiagnosticButton() {
+    const nav = document.querySelector('nav');
+    if (!nav) return;
     
-    /**
-     * Рендеринг конфигов
-     */
-    function renderConfigs() {
-        const grid = document.getElementById('configsGrid');
-        const noResults = document.getElementById('noResults');
-        
-        if (!grid) {
-            logger.error('Не найден #configsGrid элемент');
-            return;
-        }
-        
-        logger.debug('[App] Рендеринг конфигов', {
-            total: appState.configs.length,
-            filtered: appState.filteredConfigs.length
-        });
-        
-        if (appState.filteredConfigs.length === 0) {
-            grid.style.display = 'none';
-            if (noResults) {
-                noResults.style.display = 'block';
-                noResults.innerHTML = `
-                    <i class="fas fa-inbox"></i>
-                    <h3>Конфиги не найдены</h3>
-                    <p>${appState.configs.length === 0 ? 
-                        'База конфигов пуста или временно недоступна' : 
-                        'Попробуйте изменить параметры фильтрации'}</p>
-                    ${appState.configs.length === 0 ? `
-                    <div style="margin-top: 20px;">
-                        <button onclick="window.diagnoseGitHub?.()" class="refresh-btn" style="font-size: 0.9rem; padding: 8px 15px;">
-                            <i class="fas fa-stethoscope"></i> Проверить доступность
-                        </button>
-                    </div>
-                    ` : ''}
-                `;
-            }
-            return;
-        }
-        
-        if (noResults) noResults.style.display = 'none';
-        grid.style.display = 'grid';
-        
-        // Рендерим карточки
-        grid.innerHTML = appState.filteredConfigs.map(config => 
-            createConfigCard(config)
-        ).join('');
-        
-        // Добавляем обработчики кнопок копирования
-        initCopyButtons();
-        
-        // Обновляем счетчик
-        updateConfigCount();
-        
-        logger.debug('[App] Конфиги отрендерены');
-    }
+    const diagnosticBtn = document.createElement('a');
+    diagnosticBtn.href = '#';
+    diagnosticBtn.className = 'contribute-link';
+    diagnosticBtn.innerHTML = '<i class="fas fa-bug"></i> Диагностика';
+    diagnosticBtn.style.marginLeft = '10px';
     
-    // Остальные функции остаются с логами...
+    diagnosticBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await testFileAccess();
+        
+        // Открываем консоль
+        if (window.chrome && chrome.devtools) {
+            chrome.devtools.inspectedWindow.eval("console.clear()");
+        }
+        
+        alert('Диагностика запущена. Проверьте консоль (F12) и всплывающее окно.');
+    });
     
-    /**
-     * Обновление статистики
-     */
-    function updateStats(configs, meta) {
-        logger.debug('[App] Обновление статистики', {
-            configsCount: configs?.length || 0,
-            meta: meta
-        });
-        
-        // Общее количество конфигов
-        const totalConfigs = document.getElementById('totalConfigs');
-        if (totalConfigs) {
-            const count = configs?.length || 0;
-            totalConfigs.textContent = count;
-            logger.debug(`Общее количество конфигов: ${count}`);
-        }
-        
-        // Уникальные авторы
-        const uniqueAuthors = document.getElementById('uniqueAuthors');
-        if (uniqueAuthors && configs) {
-            const authors = new Set(configs.map(c => c.author));
-            uniqueAuthors.textContent = authors.size;
-            logger.debug(`Уникальных авторов: ${authors.size}`);
-        }
-        
-        // Последнее обновление
-        const lastUpdated = document.getElementById('lastUpdated');
-        if (lastUpdated) {
-            if (meta && meta.lastUpdated) {
-                lastUpdated.textContent = formatDate(meta.lastUpdated);
-                logger.debug(`Последнее обновление: ${meta.lastUpdated}`);
-            } else {
-                lastUpdated.textContent = 'только что';
-            }
-        }
-        
-        // Обновляем общий счетчик
-        updateConfigCount();
-    }
-    
-    // Экспортируем публичные методы
-    window.app = {
-        loadConfigs,
-        refreshConfigs: () => loadConfigs(true),
-        resetFilters,
-        getState: () => ({ ...appState }),
-        getGitHubStats: () => gitHubData.getStats(),
-        diagnose: () => window.diagnoseGitHub?.()
+    nav.appendChild(diagnosticBtn);
+}
+
+// Вспомогательные функции
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function getAddonIcon(addon) {
+    const icons = {
+        'elvui': 'fas fa-layer-group',
+        'wa': 'fas fa-bolt',
+        'details': 'fas fa-chart-bar',
+        'plater': 'fas fa-users'
     };
-    
-    // Добавляем глобальные функции для отладки
-    window.debugApp = () => {
-        console.log('=== DEBUG APP STATE ===');
-        console.log('App State:', appState);
-        console.log('GitHub Data Stats:', gitHubData.getStats());
-        console.log('Cache:', gitHubData.cache);
-        console.log('Window Location:', window.location.href);
-        console.log('GitHub URL:', gitHubData.rawBaseUrl + '/configs/configs.json');
-        console.log('=== END DEBUG ===');
-        
-        alert('Информация в консоли (F12)');
-    };
-    
-    logger.info('[App] Инициализация завершена');
-});
+    return icons[addon] || 'fas fa-plug';
+}
+
+// Экспортируем глобальные функции
+window.testFileAccess = testFileAccess;
+window.showErrorOverlay = showErrorOverlay;
+
+console.log('🚀 Ультра-диагностическая версия загружена!');
