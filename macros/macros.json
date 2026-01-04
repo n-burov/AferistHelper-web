@@ -2,41 +2,350 @@
   "meta": {
     "version": "1.0.0",
     "lastUpdated": "2024-01-15T14:30:00Z",
-    "updatedBy": "admin",
-    "totalMacros": 5,
+    "updatedBy": "SegaZBS",
+    "totalMacros": 21,
     "schemaVersion": "1.0"
   },
   "macros": [
     {
-      "id": "macro-1",
-      "name": "Автоатака + каст",
+      "id": "shaman-1",
+      "name": "Цепная Молния",
       "addon": "universal",
-      "class": "universal",
-      "description": "Макрос для автоматической атаки и каста заклинания",
-      "macro": "#showtooltip\n/cast [harm] Заклинание; [help] Лечение\n/startattack",
-      "command": "/m 1",
-      "author": "admin",
+      "class": "shaman",
+      "description": "Макрос для каста цепной молнии с остановкой каста и автодтакой",
+      "macro": "#showtooltip \n/cast Цепная Молния\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
       "created": "2024-01-15T14:30:00Z"
     },
     {
-      "id": "macro-2",
-      "name": "Фокус цели",
-      "addon": "elvui",
-      "class": "priest",
-      "description": "Установка фокуса на цель и применение дебаффа",
-      "macro": "#showtooltip Слово тьмы: Боль\n/focus [@mouseover,exists,nodead][]\n/cast [@focus,exists,nodead] Слово тьмы: Боль",
-      "author": "priest_main",
-      "created": "2024-01-15T14:35:00Z"
+      "id": "shaman-2",
+      "name": "Выброс лавы",
+      "addon": "universal",
+      "class": "shaman",
+      "description": "Макрос для каста выброса лавы с остановкой каста и автодтакой",
+      "macro": "#showtooltip Выброс лавы\n/cast Выброс лавы\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
     },
     {
-      "id": "macro-3",
-      "name": "Быстрое переключение аур",
-      "addon": "wa",
-      "class": "paladin",
-      "description": "Переключение аур паладина одной кнопкой",
-      "macro": "#showtooltip\n/cast [mod:shift] Аура воздаяния; [mod:ctrl] Аура сосредоточения; Аура благочестия",
-      "author": "paladin_player",
-      "created": "2024-01-15T14:40:00Z"
+      "id": "shaman-3",
+      "name": "Удар бури",
+      "addon": "universal",
+      "class": "shaman",
+      "description": "Макрос для удара бури с остановкой каста и автодтакой",
+      "macro": "#showtooltip\n/cast Удар бури\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "shaman-4",
+      "name": "Молния",
+      "addon": "universal",
+      "class": "shaman",
+      "description": "Макрос для каста молнии с остановкой каста и автодтакой",
+      "macro": "#showtooltip Молния\n/cast Молния\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "shaman-5",
+      "name": "Вскипание лавы",
+      "addon": "universal",
+      "class": "shaman",
+      "description": "Макрос для вскипания лавы с остановкой каста и автодтакой",
+      "macro": "#showtooltip\n/cast Вскипание лавы\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "shaman-6",
+      "name": "Огненный/Земной шок",
+      "addon": "universal",
+      "class": "shaman",
+      "description": "Макрос для огненного шока по умолчанию и земного шока с Shift",
+      "macro": "#showtooltip \n/cast [nomod] Огненный шок;\n/cast [mod:shift] Земной шок;\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "shaman-7",
+      "name": "Баффы и аксессуары",
+      "addon": "universal",
+      "class": "shaman",
+      "description": "Макрос для использования баффов и аксессуаров",
+      "macro": "#showtooltip\n/cast Дух дикого волка\n/cast Забытое искусство кузнеца\n/cast Сфера крови красного дракона\n/use Доблестные захваты Землекрушителя",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "shaman-8",
+      "name": "Зов Стихий/Возвращение тотемов",
+      "addon": "universal",
+      "class": "shaman",
+      "description": "Макрос для зова стихий по умолчанию и возвращения тотемов с Alt",
+      "macro": "#showtooltip \n/cast [nomod] Зов Стихий;\n/cast [mod:alt] Возвращение тотемов;\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-1",
+      "name": "Чародейская вспышка",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для чародейской вспышки без прерывания каста чародейских стрел",
+      "macro": "#showtooltip\n/cast [nochanneling:Чародейские стрелы]Чародейская вспышка",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-2",
+      "name": "Чародейские стрелы",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для каста чародейских стрел",
+      "macro": "#showtooltip\n/cast [nochanneling:Чародейские стрелы]Чародейские стрелы",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-3",
+      "name": "Ледяная Глыба",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для ледяной глыбы с отменой ауры",
+      "macro": "#showtooltip Ледяная Глыба\n/stopcasting\n/cancelaura Ледяная Глыба\n/cast Ледяная Глыба",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-4",
+      "name": "Невидимость",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для отмены и каста невидимости",
+      "macro": "/cancelaura Невидимость\n/cast Невидимость",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-5",
+      "name": "Превращение на курсор",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для превращения цели под курсором",
+      "macro": "#showtooltip Превращение\n/cast [@mouseover] Превращение",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-6",
+      "name": "Величие разума",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для каста и отмены величия разума",
+      "macro": "#showtooltip Величие разума\n/cast Величие разума\n/cancelaura Величие разума",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-7",
+      "name": "Огненный столб/Снежная буря",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для огненного столба по умолчанию и снежной бури с Shift",
+      "macro": "#showtooltip \n/cast [nomod] !Огненный столб;\n/cast [mod:shift] !Снежная буря;\n/stopcasting\n/startattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-8",
+      "name": "Чародейский обстрел",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для чародейского обстрела без прерывания каста",
+      "macro": "#showtooltip\n/cast [nochanneling:Чародейские стрелы]Чародейский обстрел",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "mage-9",
+      "name": "Баффы и аксессуары мага",
+      "addon": "universal",
+      "class": "mage",
+      "description": "Макрос для использования баффов и аксессуаров мага",
+      "macro": "#showtooltip\n/cast Стылая кровь\n/cast Мощь тайной магии\n/use 10\n/use 13\n/use 14",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-1",
+      "name": "Испепеление с баффами",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для испепеления с демоническим могуществом",
+      "macro": "#showtooltip Испепеление\n/cast Демоническое могущество\n/cast Испепеление\n/cast !Теневой колун(Отладка)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-2",
+      "name": "Жертвенный огонь с баффами",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для жертвенного огня с демоническим могуществом",
+      "macro": "#showtooltip Жертвенный огонь\n/cast Демоническое могущество\n/cast Жертвенный огонь\n/cast !Теневой колун(Отладка)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-3",
+      "name": "Ожог души с баффами",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для ожога души с демоническим могуществом",
+      "macro": "#showtooltip Ожог души\n/cast Демоническое могущество\n/cast Ожог души\n/cast !Теневой колун(Отладка)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-4",
+      "name": "Порча с баффами",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для порчи с демоническим могуществом",
+      "macro": "#showtooltip Порча\n/cast Демоническое могущество\n/cast Порча\n/cast !Теневой колун(Отладка)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-5",
+      "name": "Метаморфоза с аксессуарами",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для метаморфозы с использованием аксессуаров",
+      "macro": "#showtooltip Метаморфоза\n/use 10\n/use 13\n/use Перчатки Пустого сердца\n/cast Метаморфоза\n/cast Жертвенный костер(Отладка)\n/cast Боевая регенерация(Активная PvE)\n/cast !Теневой колун(Отладка) /petattack",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-6",
+      "name": "Призыв беса",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для призыва беса с господством скверны",
+      "macro": "#showtooltip Призыв беса(Призыв)\n/cast Господство Скверны\n/cast Призыв беса(Призыв)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-7",
+      "name": "Демонический круг",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для создания демонического круга по умолчанию и телепортации с Alt",
+      "macro": "#showtooltip\n/cast [nomod] Демонический круг: создание\n/cast [mod:alt] Демонический круг: телепортация",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-8",
+      "name": "Регенерация и аксессуары",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для боевой регенерации и использования аксессуаров",
+      "macro": "#showtooltip\n/cast Боевая регенерация(Активная PvE)\n/use Рукавицы Пустого сердца\n/use 13\n/use 14",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-9",
+      "name": "Изгнание на курсор",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для изгнания цели под курсором",
+      "macro": "#showtooltip\n/закл [target=mouseover] Изгнание(Уровень 2)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-10",
+      "name": "Страх на курсор",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для страха цели под курсором",
+      "macro": "#showtooltip\n/закл [target=mouseover] Страх(Уровень 3)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-11",
+      "name": "Создание камня огня",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для создания камня огня",
+      "macro": "#showtooltip\n/use Могучий камень огня\n/use 16\n/click StaticPopup1Button1\n/cast Создание камня огня(Уровень 7)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-12",
+      "name": "Создание камня чар",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для создания камня чар",
+      "macro": "#showtooltip\n/use Могучий камень чар\n/use 16\n/click StaticPopup1Button1\n/cast Создание камня чар(Уровень 6)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "warlock-13",
+      "name": "Стрела Тьмы с баффами",
+      "addon": "universal",
+      "class": "warlock",
+      "description": "Макрос для стрелы тьмы с демоническим могуществом",
+      "macro": "#showtooltip Стрела Тьмы\n/cast Демоническое могущество\n/cast Стрела Тьмы(Уровень 13)\n/cast !Теневой колун(Отладка)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "druid-1",
+      "name": "Звездопад с аксессуарами",
+      "addon": "universal",
+      "class": "druid",
+      "description": "Макрос для звездопада с использованием аксессуаров",
+      "macro": "#showtooltip Звездопад(Уровень 4)\n/use 13\n/use 14\n/cast Звездопад(Уровень 4)\n/cast Боевая регенерация(Активная PvE)\n/use Перчатки ложных знаков",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "druid-2",
+      "name": "Возрождение на курсор",
+      "addon": "universal",
+      "class": "druid",
+      "description": "Макрос для возрождения цели под курсором",
+      "macro": "#showtooltip Возрождение(Уровень 7)\n/закл [target=mouseover] Возрождение(Уровень 7)",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "druid-3",
+      "name": "Смерч на курсор",
+      "addon": "universal",
+      "class": "druid",
+      "description": "Макрос для смерча цели под курсором",
+      "macro": "#showtooltip Смерч\n/закл [target=mouseover] Смерч",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
+    },
+    {
+      "id": "druid-4",
+      "name": "Снятие проклятия на курсор",
+      "addon": "universal",
+      "class": "druid",
+      "description": "Макрос для снятия проклятия с цели под курсором",
+      "macro": "#showtooltip\n/закл [target=mouseover] Снятие проклятия",
+      "author": "SegaZBS",
+      "created": "2024-01-15T14:30:00Z"
     }
   ]
 }
