@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     createDiagnosticButton();
 });
 
-// Простая функция рендеринга конфигов
+// Функция рендеринга конфигов с безопасным копированием
 function renderConfigs(configs) {
     const grid = document.getElementById('configsGrid');
     if (!grid) return;
@@ -447,32 +447,80 @@ function renderConfigs(configs) {
         return;
     }
     
-    grid.innerHTML = configs.map(config => `
+    grid.innerHTML = configs.map(config => {
+        // Безопасно кодируем конфиг для data-атрибута
+        const configEncoded = encodeURIComponent(JSON.stringify(config.config || ''));
+        
+        return `
         <div class="config-card">
             <div class="config-header">
-                <div class="config-title">${escapeHtml(config.name)}</div>
+                <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
                 <div class="config-meta">
-                    <span class="config-badge addon-${config.addon}">
-                        <i class="${getAddonIcon(config.addon)}"></i> ${config.addon.toUpperCase()}
+                    <span class="config-badge addon-${config.addon || 'unknown'}">
+                        <i class="${getAddonIcon(config.addon)}"></i> ${(config.addon || 'unknown').toUpperCase()}
                     </span>
                 </div>
             </div>
             <div class="config-content">
                 <div class="config-description">
-                    ${escapeHtml(config.description)}
+                    ${escapeHtml(config.description || 'Нет описания')}
                     <div class="config-footer">
-                        <span class="author">👤 ${escapeHtml(config.author)}</span>
+                        <span class="author">👤 ${escapeHtml(config.author || 'Неизвестный автор')}</span>
                     </div>
                 </div>
-                <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(config.config).replace(/'/g, "\\'")}')">
+                <button class="copy-btn" 
+                    data-config="${configEncoded}"
+                    onclick="copyConfigFromButton(this)">
                     <i class="fas fa-copy"></i> Копировать конфиг
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
     
     // Обновляем счетчики
     updateStats(configs);
+}
+
+// Функция для копирования конфига из кнопки
+function copyConfigFromButton(button) {
+    try {
+        const configEncoded = button.getAttribute('data-config');
+        if (!configEncoded) {
+            showNotification('Конфиг не найден', 'error');
+            return;
+        }
+        
+        const config = JSON.parse(decodeURIComponent(configEncoded));
+        
+        copyToClipboard(config)
+            .then(success => {
+                if (success) {
+                    // Меняем иконку на успех
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        icon.className = 'fas fa-check';
+                        button.classList.add('copied');
+                        
+                        // Возвращаем иконку обратно через 2 секунды
+                        setTimeout(() => {
+                            icon.className = 'fas fa-copy';
+                            button.classList.remove('copied');
+                        }, 2000);
+                    }
+                    showNotification('Конфиг скопирован в буфер обмена!', 'success');
+                } else {
+                    showNotification('Не удалось скопировать конфиг', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка копирования:', error);
+                showNotification('Ошибка при копировании', 'error');
+            });
+    } catch (error) {
+        console.error('Ошибка обработки конфига:', error);
+        showNotification('Ошибка обработки конфига', 'error');
+    }
 }
 
 // Обновление статистики
@@ -485,7 +533,7 @@ function updateStats(configs) {
     }
     
     if (authorsElement && configs.length > 0) {
-        const authors = new Set(configs.map(c => c.author));
+        const authors = new Set(configs.map(c => c.author).filter(Boolean));
         authorsElement.textContent = authors.size;
     }
 }
@@ -516,14 +564,33 @@ function createDiagnosticButton() {
     
     diagnosticBtn.addEventListener('click', async (e) => {
         e.preventDefault();
+        
+        // Запускаем диагностику
+        console.clear();
+        console.log('=== ЗАПУСК ДИАГНОСТИКИ ===');
+        
+        // Проверяем доступность файла
         await testFileAccess();
         
-        // Открываем консоль
-        if (window.chrome && chrome.devtools) {
-            chrome.devtools.inspectedWindow.eval("console.clear()");
+        // Проверяем состояние gitHubData
+        if (window.gitHubData) {
+            console.log('GitHubData состояние:', {
+                isLoading: window.gitHubData.isLoading,
+                lastError: window.gitHubData.lastError,
+                stats: window.gitHubData.stats,
+                cache: window.gitHubData.cache
+            });
+            
+            // Запускаем встроенную диагностику
+            try {
+                const results = await window.gitHubData.diagnose();
+                console.log('Результаты диагностики GitHubData:', results);
+            } catch (diagnoseError) {
+                console.error('Ошибка диагностики:', diagnoseError);
+            }
         }
         
-        alert('Диагностика запущена. Проверьте консоль (F12) и всплывающее окно.');
+        alert('Диагностика запущена. Проверьте консоль (F12) для подробной информации.');
     });
     
     nav.appendChild(diagnosticBtn);
@@ -531,6 +598,7 @@ function createDiagnosticButton() {
 
 // Вспомогательные функции
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
@@ -541,7 +609,9 @@ function getAddonIcon(addon) {
         'elvui': 'fas fa-layer-group',
         'wa': 'fas fa-bolt',
         'details': 'fas fa-chart-bar',
-        'plater': 'fas fa-users'
+        'plater': 'fas fa-users',
+        'dbm': 'fas fa-clock',
+        'bigwigs': 'fas fa-hourglass-half'
     };
     return icons[addon] || 'fas fa-plug';
 }
@@ -549,5 +619,28 @@ function getAddonIcon(addon) {
 // Экспортируем глобальные функции
 window.testFileAccess = testFileAccess;
 window.showErrorOverlay = showErrorOverlay;
+window.copyConfigFromButton = copyConfigFromButton;
+window.renderConfigs = renderConfigs;
+
+// Добавляем CSS для кнопки копирования
+const copyButtonStyles = document.createElement('style');
+copyButtonStyles.textContent = `
+    .copy-btn.copied {
+        background-color: #2ecc71 !important;
+    }
+    
+    .copy-btn.copied:hover {
+        background-color: #27ae60 !important;
+    }
+    
+    .config-card {
+        transition: transform 0.2s ease;
+    }
+    
+    .config-card:hover {
+        transform: translateY(-2px);
+    }
+`;
+document.head.appendChild(copyButtonStyles);
 
 console.log('🚀 Ультра-диагностическая версия загружена!');
