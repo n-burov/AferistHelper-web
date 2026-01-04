@@ -362,12 +362,14 @@ nav a.active {
 
 .config-header {
     padding: 20px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    background: var(--card-bg); /* Убираем градиентный фон */
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 10px;
+    border-bottom: 1px solid var(--border); /* Добавляем разделитель */
 }
+
 
 .config-title {
     font-size: 1.2rem;
