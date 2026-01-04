@@ -101,14 +101,17 @@ nav a.active {
 }
 
 .contribute-link {
-    background: var(--accent);
-    color: var(--dark) !important;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--light) !important;
+    font-weight: 500;
+    box-shadow: none;
 }
 
 .contribute-link:hover {
-    background: var(--accent-dark);
+    background: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
+    box-shadow: none;
 }
 
 /* Информационный баннер */
