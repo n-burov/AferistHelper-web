@@ -447,6 +447,15 @@ function renderConfigs(configs) {
         `;
         return;
     }
+
+    if (config.screenshot && config.screenshot !== 'blank.png') {
+        const viewScreenshotBtn = document.createElement('button');
+        viewScreenshotBtn.className = 'view-screenshot-btn';
+        viewScreenshotBtn.innerHTML = '<i class="fas fa-eye"></i>';
+        viewScreenshotBtn.title = 'Посмотреть скриншот';
+        viewScreenshotBtn.onclick = () => showScreenshot(config.screenshot);
+        // Добавьте кнопку в нужное место в карточке
+    }
     
     // Рендерим конфиги без изменения порядка
     grid.innerHTML = configs.map(config => {
@@ -496,6 +505,12 @@ function renderConfigs(configs) {
     
     // Обновляем счетчик конфигов
     updateConfigCount(configs.length);
+}
+
+function showScreenshot(filename) {
+    const screenshotUrl = `screenshots/${filename}`;
+    // Открыть модальное окно или новую вкладку
+    window.open(screenshotUrl, '_blank');
 }
 
 // Инициализация фильтров
