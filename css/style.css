@@ -1,13 +1,13 @@
 /* Основные стили */
 :root {
-    --primary: #8B0000;
-    --secondary: #A52A2A;
+    --primary: #660000;        /* Темный бордовый */
+    --secondary: #8B0000;      /* Темно-красный */
     --dark: #1A1A1A;
     --darker: #0D0D0D;
     --light: #E8E8E8;
     --lighter: #FFFFFF;
-    --accent: #FF4500;
-    --accent-dark: #CC3700;
+    --accent: #CC3700;         /* Более темный оранжево-красный */
+    --accent-dark: #A52A2A;
     --danger: #FF6B6B;
     --warning: #FFD166;
     --info: #4ECDC4;
@@ -38,13 +38,22 @@ body {
 
 /* Хедер */
 header {
-    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    background: linear-gradient(
+        to bottom,
+        rgba(102, 0, 0, 0.95) 0%,
+        rgba(76, 0, 0, 0.85) 30%,
+        rgba(51, 0, 0, 0.7) 60%,
+        rgba(38, 0, 0, 0.4) 100%
+    );
     padding: 1rem 0;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     position: sticky;
     top: 0;
     z-index: 1000;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 69, 0, 0.2);
 }
+
 
 .header-content {
     margin-bottom: 1rem;
