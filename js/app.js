@@ -432,6 +432,9 @@ function renderConfigs(configs) {
     const grid = document.getElementById('configsGrid');
     if (!grid) return;
     
+    // Сохраняем конфиги в глобальной переменной для фильтрации
+    window.allConfigs = configs;
+    
     if (!configs || configs.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
@@ -447,17 +450,44 @@ function renderConfigs(configs) {
         return;
     }
     
-    grid.innerHTML = configs.map(config => {
+    // Сортируем конфиги: сначала "универсальный" класс, остальные по алфавиту
+    const sortedConfigs = [...configs].sort((a, b) => {
+        // "Универсальный" класс всегда первый
+        if (a.class === 'universal' && b.class !== 'universal') return -1;
+        if (a.class !== 'universal' && b.class === 'universal') return 1;
+        
+        // Затем сортируем по имени класса
+        const classA = getClassLabel(a.class || '');
+        const classB = getClassLabel(b.class || '');
+        if (classA !== classB) return classA.localeCompare(classB);
+        
+        // Затем по имени аддона
+        if (a.addon !== b.addon) return (a.addon || '').localeCompare(b.addon || '');
+        
+        // Затем по имени
+        return (a.name || '').localeCompare(b.name || '');
+    });
+    
+    // Рендерим отсортированные конфиги
+    grid.innerHTML = sortedConfigs.map(config => {
         // Безопасно кодируем конфиг для data-атрибута
         const configEncoded = encodeURIComponent(JSON.stringify(config.config || ''));
         
         return `
-        <div class="config-card">
+        <div class="config-card" 
+             data-addon="${config.addon || ''}"
+             data-class="${config.class || ''}"
+             data-role="${config.role || 'all'}"
+             data-name="${escapeHtml(config.name || '').toLowerCase()}"
+             data-description="${escapeHtml(config.description || '').toLowerCase()}">
             <div class="config-header">
                 <div class="config-title">${escapeHtml(config.name || 'Без названия')}</div>
                 <div class="config-meta">
                     <span class="config-badge addon-${config.addon || 'unknown'}">
                         <i class="${getAddonIcon(config.addon)}"></i> ${(config.addon || 'unknown').toUpperCase()}
+                    </span>
+                    <span class="config-badge class-${config.class || 'unknown'}">
+                        <i class="${getClassIcon(config.class)}"></i> ${getClassLabel(config.class || '')}
                     </span>
                 </div>
             </div>
@@ -466,6 +496,7 @@ function renderConfigs(configs) {
                     ${escapeHtml(config.description || 'Нет описания')}
                     <div class="config-footer">
                         <span class="author">👤 ${escapeHtml(config.author || 'Неизвестный автор')}</span>
+                        ${config.created ? `<span class="date">📅 ${formatDate(config.created)}</span>` : ''}
                     </div>
                 </div>
                 <button class="copy-btn" 
@@ -480,8 +511,146 @@ function renderConfigs(configs) {
     
     // Обновляем счетчики
     updateStats(configs);
+    
+    // Инициализируем фильтры
+    initFilters();
+    
+    // Обновляем счетчик конфигов
+    updateConfigCount(sortedConfigs.length);
 }
 
+// Инициализация фильтров
+function initFilters() {
+    // Кнопки фильтрации по аддону
+    const addonFilterButtons = document.querySelectorAll('#addonFilter .filter-btn');
+    addonFilterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Убираем активный класс у всех кнопок в этой группе
+            addonFilterButtons.forEach(btn => btn.classList.remove('active'));
+            // Добавляем активный класс нажатой кнопке
+            button.classList.add('active');
+            
+            // Применяем фильтры
+            applyFilters();
+        });
+    });
+    
+    // Кнопки фильтрации по классу
+    const classFilterButtons = document.querySelectorAll('#classFilter .filter-btn');
+    classFilterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            classFilterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            applyFilters();
+        });
+    });
+    
+    // Кнопки фильтрации по роли (но всегда показываем все роли)
+    const roleFilterButtons = document.querySelectorAll('#roleFilter .filter-btn');
+    roleFilterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            roleFilterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            applyFilters();
+        });
+    });
+    
+    // Поле поиска
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            applyFilters();
+            
+            // Показываем/скрываем кнопку очистки
+            if (clearSearchBtn) {
+                clearSearchBtn.style.display = searchInput.value ? 'flex' : 'none';
+            }
+        });
+    }
+    
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+                clearSearchBtn.style.display = 'none';
+                applyFilters();
+            }
+        });
+    }
+}
+
+// Применение фильтров
+function applyFilters() {
+    const configCards = document.querySelectorAll('.config-card');
+    if (!configCards.length || !window.allConfigs) return;
+    
+    // Получаем активные фильтры
+    const activeAddon = document.querySelector('#addonFilter .filter-btn.active')?.dataset.addon || 'all';
+    const activeClass = document.querySelector('#classFilter .filter-btn.active')?.dataset.class || 'all';
+    const activeRole = document.querySelector('#roleFilter .filter-btn.active')?.dataset.role || 'all';
+    const searchQuery = document.getElementById('searchInput')?.value?.toLowerCase().trim() || '';
+    
+    let visibleCount = 0;
+    
+    configCards.forEach(card => {
+        const cardAddon = card.dataset.addon;
+        const cardClass = card.dataset.class;
+        const cardRole = card.dataset.role;
+        const cardName = card.dataset.name;
+        const cardDescription = card.dataset.description;
+        
+        // Проверяем соответствие фильтрам
+        const addonMatches = activeAddon === 'all' || activeAddon === cardAddon;
+        const classMatches = activeClass === 'all' || activeClass === cardClass;
+        const roleMatches = activeRole === 'all' || activeRole === cardRole || cardRole === 'all';
+        
+        // Проверяем поиск
+        let searchMatches = true;
+        if (searchQuery) {
+            searchMatches = cardName.includes(searchQuery) || cardDescription.includes(searchQuery);
+        }
+        
+        // Показываем/скрываем карточку
+        const isVisible = addonMatches && classMatches && roleMatches && searchMatches;
+        card.style.display = isVisible ? 'block' : 'none';
+        
+        if (isVisible) visibleCount++;
+    });
+    
+    // Показываем/скрываем сообщение "Нет результатов"
+    const noResultsElement = document.getElementById('noResults');
+    const configsGrid = document.getElementById('configsGrid');
+    
+    if (noResultsElement) {
+        noResultsElement.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+    
+    if (configsGrid && visibleCount === 0) {
+        configsGrid.style.display = 'none';
+    } else if (configsGrid) {
+        configsGrid.style.display = 'grid';
+    }
+    
+    // Обновляем счетчик результатов поиска
+    const searchResultsCount = document.getElementById('searchResultsCount');
+    if (searchResultsCount) {
+        searchResultsCount.textContent = visibleCount;
+    }
+    
+    // Обновляем счетчик конфигов в заголовке
+    updateConfigCount(visibleCount);
+}
+
+// Обновление счетчика конфигов в заголовке
+function updateConfigCount(count) {
+    const configCountElement = document.getElementById('configCount');
+    if (configCountElement) {
+        configCountElement.textContent = `(${count})`;
+    }
+}
 // Функция для копирования конфига из кнопки
 function copyConfigFromButton(button) {
     try {
@@ -527,6 +696,7 @@ function copyConfigFromButton(button) {
 function updateStats(configs) {
     const totalElement = document.getElementById('totalConfigs');
     const authorsElement = document.getElementById('uniqueAuthors');
+    const lastUpdatedElement = document.getElementById('lastUpdated');
     
     if (totalElement) {
         totalElement.textContent = configs.length;
@@ -535,6 +705,18 @@ function updateStats(configs) {
     if (authorsElement && configs.length > 0) {
         const authors = new Set(configs.map(c => c.author).filter(Boolean));
         authorsElement.textContent = authors.size;
+    }
+    
+    if (lastUpdatedElement && configs.length > 0) {
+        // Находим самую свежую дату создания
+        const dates = configs
+            .map(c => c.created ? new Date(c.created) : null)
+            .filter(d => d && !isNaN(d.getTime()));
+        
+        if (dates.length > 0) {
+            const latestDate = new Date(Math.max(...dates.map(d => d.getTime())));
+            lastUpdatedElement.textContent = formatDate(latestDate.toISOString());
+        }
     }
 }
 
@@ -550,7 +732,6 @@ function updateLoadingState(isLoading, message = 'Загрузка...') {
         }
     }
 }
-
 // Создание кнопки диагностики
 function createDiagnosticButton() {
     const nav = document.querySelector('nav');
@@ -616,11 +797,79 @@ function getAddonIcon(addon) {
     return icons[addon] || 'fas fa-plug';
 }
 
+function getClassIcon(className) {
+    const icons = {
+        'warrior': 'fas fa-shield-alt',
+        'paladin': 'fas fa-sun',
+        'deathknight': 'fas fa-skull',
+        'mage': 'fas fa-fire',
+        'priest': 'fas fa-cross',
+        'rogue': 'fas fa-user-secret',
+        'shaman': 'fas fa-bolt',
+        'hunter': 'fas fa-bow-arrow',
+        'warlock': 'fas fa-hat-wizard',
+        'druid': 'fas fa-paw',
+        'universal': 'fas fa-users'
+    };
+    return icons[className] || 'fas fa-user';
+}
+
+function getClassLabel(className) {
+    const labels = {
+        'warrior': 'Воин',
+        'paladin': 'Паладин',
+        'deathknight': 'Рыцарь смерти',
+        'mage': 'Маг',
+        'priest': 'Жрец',
+        'rogue': 'Разбойник',
+        'shaman': 'Шаман',
+        'hunter': 'Охотник',
+        'warlock': 'Чернокнижник',
+        'druid': 'Друид',
+        'universal': 'Универсальный'
+    };
+    return labels[className] || className;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Неизвестно';
+    
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = now - date;
+        
+        // Если сегодня
+        if (diff < 24 * 60 * 60 * 1000) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `сегодня в ${hours}:${minutes}`;
+        }
+        
+        // Если вчера
+        if (diff < 48 * 60 * 60 * 1000) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `вчера в ${hours}:${minutes}`;
+        }
+        
+        // Более 2 дней назад
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        
+        return `${day}.${month}.${year}`;
+    } catch (error) {
+        return dateString;
+    }
+}
+
 // Экспортируем глобальные функции
 window.testFileAccess = testFileAccess;
 window.showErrorOverlay = showErrorOverlay;
 window.copyConfigFromButton = copyConfigFromButton;
 window.renderConfigs = renderConfigs;
+window.applyFilters = applyFilters; // Экспортируем для отладки
 
 // Добавляем CSS для кнопки копирования
 const copyButtonStyles = document.createElement('style');
@@ -635,10 +884,37 @@ copyButtonStyles.textContent = `
     
     .config-card {
         transition: transform 0.2s ease;
+        display: block !important; /* Важно для фильтрации */
     }
     
     .config-card:hover {
         transform: translateY(-2px);
+    }
+    
+    /* Стили для активных кнопок фильтров */
+    .filter-btn.active {
+        background-color: #3498db !important;
+        color: white !important;
+        border-color: #3498db !important;
+    }
+    
+    /* Показываем кнопку очистки поиска */
+    .clear-btn {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        padding: 0 10px;
+        border-radius: 0 5px 5px 0;
+        transition: all 0.2s;
+    }
+    
+    .clear-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
     }
 `;
 document.head.appendChild(copyButtonStyles);
