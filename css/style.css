@@ -744,13 +744,15 @@ footer {
     }
 }
 
-.horde-symbol {
+.horde-icon {
     width: 24px;
     height: 24px;
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMiA3TDEyIDEyTDIyIDdMMTIgMloiIGZpbGw9IiNGRkZGRkYiLz4KPHBhdGggZD0iTTIgMTJMMTIgMTdMMjIgMTJMMTIgN0wyIDEyWiIgZmlsbD0iI0ZGRkZGRiIvPgo8cGF0aCBkPSJNMiAxN0wxMiAyMkwyMiAxN0wxMiAxMkwyIDE3WiIgZmlsbD0iI0ZGRkZGRiIvPgo8L3N2Zz4=");
-    background-size: contain;
-    background-repeat: no-repeat;
-    filter: invert(1); /* Делаем белым */
-    display: inline-block;
     vertical-align: middle;
+    display: inline-block;
+}
+
+/* Для футера */
+footer .horde-icon {
+    width: 20px;
+    height: 20px;
 }
