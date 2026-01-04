@@ -352,6 +352,9 @@ nav a.active {
     transition: all 0.3s;
     border: 1px solid var(--border);
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Занимаем всю доступную высоту */
 }
 
 .config-card:hover {
@@ -417,19 +420,23 @@ nav a.active {
 
 .config-content {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Занимаем все доступное пространство */
 }
 
 .config-description {
     color: rgba(255, 255, 255, 0.8);
     margin-bottom: 20px;
     line-height: 1.5;
+    flex-grow: 1; /* Описание занимает все свободное пространство */
     min-height: 60px;
 }
 
 .config-footer {
     display: flex;
     justify-content: space-between;
-    margin-top: 15px;
+    margin-bottom: 15px;
     font-size: 0.85rem;
     color: rgba(255, 255, 255, 0.6);
 }
@@ -444,6 +451,12 @@ nav a.active {
     display: flex;
     align-items: center;
     gap: 5px;
+}
+
+.config-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .config-screenshot {
