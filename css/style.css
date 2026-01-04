@@ -661,6 +661,18 @@ footer {
     .config-m极影 {
         justify-content: flex-start;
     }
+    .config-buttons {
+        flex-direction: column;
+    }
+    
+    .view-screenshot-btn {
+        width: 100%;
+    }
+    
+    .config-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
 }
 
 @media (max-width: 480px) {
