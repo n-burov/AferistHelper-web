@@ -774,7 +774,7 @@ function getClassIcon(className) {
         'priest': 'fas fa-cross',
         'rogue': 'fas fa-user-secret',
         'shaman': 'fas fa-bolt',
-        'hunter': 'fas fa-bullseye',
+        'hunter': 'fas fa-bow-arrow',
         'warlock': 'fas fa-hat-wizard',
         'druid': 'fas fa-paw',
         'universal': 'fas fa-users'
