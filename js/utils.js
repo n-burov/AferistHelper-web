@@ -3,7 +3,6 @@
  */
 // utils.js - ОБНОВЛЕННАЯ ВЕРСИЯ
 
-// В САМОМ НАЧАЛЕ файла добавьте:
 class Logger {
     constructor(name = 'App') {
         this.name = name;
@@ -33,8 +32,15 @@ class Logger {
             console.error(`[${this.name}]`, ...args);
         }
     }
-}
 
+    // ДОБАВЬТЕ ЭТОТ МЕТОД:
+    errorDetails(error, context = '') {
+        if (this.enabled) {
+            console.error(`[${this.name}] [${context}]`, error.message);
+            console.error(`[${this.name}] Stack:`, error.stack);
+        }
+    }
+}
 // Сразу создаем глобальный экземпляр
 const logger = new Logger('App');
 
