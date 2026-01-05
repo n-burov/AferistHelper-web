@@ -151,7 +151,7 @@ nav a.active {
     text-decoration: none;
     font-weight: 500;
     display: inline-flex;
-   极影: center;
+    align-items: center;
     gap: 5px;
 }
 
@@ -603,7 +603,7 @@ footer {
 
 .footer-note {
     font-size: 0.9rem;
-   极影: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .footer-links {
@@ -734,7 +734,7 @@ footer {
     align-items: center;
     gap: 8px;
     transition: all 0.3s;
-    font极影: 0.9rem;
+    font-size: 0.9rem;
 }
 
 .refresh-btn:hover:not(:disabled) {
@@ -938,6 +938,39 @@ footer .horde-icon {
     border: 1px solid var(--border);
 }
 
+/* Специальные стили для модального окна со скриншотом */
+.screenshot-modal {
+    max-width: 90%;
+    max-height: 90vh;
+}
+
+.screenshot-body {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dark);
+    min-height: 400px;
+}
+
+.screenshot-body img {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 0;
+    border: none;
+    margin: 0;
+}
+
+.screenshot-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
 /* Адаптивность для модального окна */
 @media (max-width: 768px) {
     .modal-content {
@@ -951,5 +984,18 @@ footer .horde-icon {
     
     .modal-body {
         padding: 20px;
+    }
+    
+    .screenshot-modal {
+        max-width: 95%;
+        margin: 5% auto;
+    }
+    
+    .screenshot-body {
+        min-height: 300px;
+    }
+    
+    .screenshot-body img {
+        max-height: 60vh;
     }
 }
