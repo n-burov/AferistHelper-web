@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-05T18:49:42.821Z",
+    "lastUpdated": "2026-01-05T18:53:44.987Z",
     "updatedBy": "Mr-Dan",
     "totalAddons": 5,
     "schemaVersion": "1.0"
@@ -79,7 +79,7 @@
       "id": "mk1ilz8vpmcoo65pj99",
       "name": "AddonUpdater",
       "version": "v1.0.0",
-      "icon": "fas fa-arrow-circle-o-down",
+      "icon": "fa fa-arrow-circle-o-down",
       "cssClass": "AddonUpdater",
       "description": "Addon Updater - программа для обновления аддонов для игры World Of Warcraft.\n\nУстановка:\n  1) Скачиваем архив.\n  2) Распаковываем. \n  3) Переносим папку в удобное для вас место.\n  4) Запускаем программу AddonUpdater.exe.",
       "features": [
@@ -92,7 +92,7 @@
       ],
       "downloadUrl": "https://github.com/Mr-Dan/AddonUpdater/archive/refs/heads/main.zip",
       "author": "Mr-Dan",
-      "created": "2026-01-05T18:49:41.551Z"
+      "created": "2026-01-05T18:53:44.570Z"
     }
   ]
 }
