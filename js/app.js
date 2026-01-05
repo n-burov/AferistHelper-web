@@ -488,6 +488,9 @@ function renderConfigs(configs) {
                         ${config.created ? `<span class="date">📅 ${formatDate(config.created)}</span>` : ''}
                     </div>
                     <div class="config-buttons">
+                        <button class="instruction-btn" onclick="showInstruction('${config.addon || ''}')" title="Инструкция по установке">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
                         ${screenshotButton}
                         <button class="copy-btn" 
                             data-config="${configEncoded}"
@@ -667,6 +670,9 @@ function updateFilteredConfigs(filteredConfigs) {
                         ${config.created ? `<span class="date">📅 ${formatDate(config.created)}</span>` : ''}
                     </div>
                     <div class="config-buttons">
+                        <button class="instruction-btn" onclick="showInstruction('${config.addon || ''}')" title="Инструкция по установке">
+                            <i class="fas fa-question-circle"></i>
+                        </button>
                         ${screenshotButton}
                         <button class="copy-btn" 
                             data-config="${configEncoded}"
@@ -700,6 +706,90 @@ function updateSearchResultsCount(count) {
     if (searchResultsCount) {
         searchResultsCount.textContent = count;
     }
+}
+
+// Функция для показа инструкции
+function showInstruction(addonType) {
+    const modal = document.getElementById('instructionModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+    
+    if (!modal || !modalTitle || !modalContent) return;
+    
+    // Устанавливаем заголовок
+    modalTitle.textContent = `Инструкция по установке ${addonType.toUpperCase()}`;
+    
+    // Устанавливаем контент в зависимости от типа аддона
+    let content = '';
+    
+    switch(addonType) {
+        case 'elvui':
+            content = `
+                <h4>Установка ElvUI:</h4>
+                <p><strong>1. Скачайте аддон:</strong> Перейдите на официальный сайт ElvUI и скачайте последнюю версию.</p>
+                <p><strong>2. Распакуйте архив:</strong> Распакуйте скачанный архив в папку AddOns вашего клиента WoW.</p>
+                <p><strong>3. Запустите игру:</strong> Войдите в игру, ElvUI автоматически предложит настроить интерфейс.</p>
+                <p><strong>4. Импорт конфига:</strong> Введите команду <code>/elvui</code>, перейдите во вкладку "Профили" и импортируйте конфиг.</p>
+                <p><strong>5. Перезагрузите интерфейс:</strong> Нажмите <code>/reload</code> для применения изменений.</p>
+            `;
+            break;
+        case 'wa':
+            content = `
+                <h4>Установка WeakAuras:</h4>
+                <p><strong>1. Установите аддон:</strong> Убедитесь, что у вас установлен WeakAuras2.</p>
+                <p><strong>2. Импорт ауры:</strong> Скопируйте строку конфига из буфера обмена.</p>
+                <p><strong>3. Создайте новую ауру:</strong> Введите команду <code>/wa</code>, нажмите "Новый" → "Импорт".</p>
+                <p><strong>4. Вставьте строку:</strong> Вставьте скопированный конфиг в поле импорта.</p>
+                <p><strong>5. Сохраните:</strong> Нажмите "Импорт" и закройте окно WeakAuras.</p>
+            `;
+            break;
+        case 'details':
+            content = `
+                <h4>Установка Details!:</h4>
+                <p><strong>1. Установите аддон:</strong> Убедитесь, что Details! установлен.</p>
+                <p><strong>2. Откройте настройки:</strong> Введите команду <code>/details</code>.</p>
+                <p><strong>3. Импорт профиля:</strong> Перейдите во вкладку "Profiles" → "Import Profile".</p>
+                <p><strong>4. Вставьте конфиг:</strong> Вставьте скопированный конфиг в текстовое поле.</p>
+                <p><strong>5. Примените изменения:</strong> Нажмите "Import" и закройте настройки.</p>
+            `;
+            break;
+        default:
+            content = `
+                <h4>Общая инструкция по установке:</h4>
+                <p><strong>1. Скопируйте конфиг:</strong> Нажмите кнопку "Копировать конфиг" на карточке.</p>
+                <p><strong>2. Откройте аддон:</strong> Войдите в игру и откройте настройки соответствующего аддона.</p>
+                <p><strong>3. Найдите импорт:</strong> Обычно импорт находится в разделе "Профили" или "Настройки".</p>
+                <p><strong>4. Вставьте конфиг:</strong> Вставьте скопированный текст в поле импорта.</p>
+                <p><strong>5. Сохраните:</strong> Нажмите кнопку импорта/сохранения.</p>
+                <p><strong>6. Перезагрузите интерфейс:</strong> Выполните команду <code>/reload</code> для применения изменений.</p>
+            `;
+    }
+    
+    modalContent.innerHTML = content;
+    modal.style.display = 'block';
+    
+    // Закрытие модального окна
+    const closeBtn = document.querySelector('.close-modal');
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        };
+    }
+    
+    // Закрытие по клику вне окна
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+    
+    // Закрытие по Escape
+    document.addEventListener('keydown', function handleEscape(event) {
+        if (event.key === 'Escape') {
+            modal.style.display = 'none';
+            document.removeEventListener('keydown', handleEscape);
+        }
+    });
 }
 
 // Функция для копирования конфига из кнопки
