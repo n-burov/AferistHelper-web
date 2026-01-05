@@ -8,6 +8,7 @@ class AdminPanel {
         this.configs = [];
         this.macros = [];
         this.addons = [];
+        this.guides = [];
         this.currentTab = 'configs';
         
         this.init();
@@ -49,14 +50,18 @@ class AdminPanel {
         const cancelEdit = document.getElementById('cancelEdit');
         const cancelMacroEdit = document.getElementById('cancelMacroEdit');
         const cancelAddonEdit = document.getElementById('cancelAddonEdit');
+        const guideForm = document.getElementById('guideForm');
+        const cancelGuideEdit = document.getElementById('cancelGuideEdit');
         
         if (loginBtn) loginBtn.addEventListener('click', () => this.login());
         if (configForm) configForm.addEventListener('submit', (极端的e) => this.handleConfigSubmit(e));
         if (macroForm) macroForm.addEventListener('submit', (e) => this.handleMacroSubmit(e));
         if (addonForm) addonForm.addEventListener('submit', (e) => this.handleAddonSubmit(e));
+        if (guideForm) guideForm.addEventListener('submit', (e) => this.handleGuideSubmit(e));
         if (cancelEdit) cancelEdit.addEventListener('click', () => this.resetForm('config'));
         if (cancelMacroEdit) cancelMacroEdit.addEventListener('click', () => this.resetForm('macro'));
         if (cancelAddonEdit) cancelAddonEdit.addEventListener('click', () => this.resetForm('addon'));
+        if (cancelGuideEdit) cancelGuideEdit.addEventListener('click', () => this.resetForm('guide'));
         
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
@@ -133,12 +138,16 @@ class AdminPanel {
         document.getElementById('configsTab').style.display = tabName === 'configs' ? 'block' : 'none';
         document.getElementById('macrosTab').style.display = tabName === 'macros' ? 'block' : 'none';
         document.getElementById('addonsTab').style.display = tabName === 'addons' ? 'block' : 'none';
+        document.getElementById('guidesTab').style.display = tabName === 'guides' ? 'block' : 'none';
         
         if (tabName === 'macros' && this.macros.length === 0) {
             this.loadMacros();
         }
         if (tabName === 'addons' && this.addons.length === 0) {
             this.loadAddons();
+        }
+        if (tabName === 'guides' && this.guides.length === 0) {
+            this.loadGuides();
         }
     }
 
@@ -195,6 +204,17 @@ class AdminPanel {
         }
     }
 
+    async loadGuides() {
+        try {
+            const response = await fetch('guides/guides.json');
+            const data = await response.json();
+            this.guides = data.guides || [];
+            this.renderGuidesList();
+        } catch (error) {
+            console.error('Error loading guides:', error);
+        }
+    }
+
     renderMacrosList() {
         const container = document.getElementById('macrosList');
         if (!container) return;
@@ -224,6 +244,24 @@ class AdminPanel {
                 ${addon.downloadUrl ? `<p><strong>Ссылка:</strong> <a href="${this.escapeHtml(addon.downloadUrl)}" target="_blank">${this.escapeHtml(addon.downloadUrl)}</a></p>` : '<p><strong>Статус:</strong> В разработке</p>'}
                 <button onclick="admin.editAddon('${this.escapeHtml(addon.id)}')" class="btn-primary">Редактировать</button>
                 <button onclick="admin.deleteAddon('${this.escapeHtml(addon.id)}')" class="btn-danger">Удалить</button>
+            </div>
+        `).join('');
+    }
+
+    renderGuidesList() {
+        const container = document.getElementById('guidesList');
+        if (!container) return;
+
+        container.innerHTML = this.guides.map(guide => `
+            <div class="config-item">
+                <h4>${this.escapeHtml(guide.title)}</h4>
+                <p><strong>Автор:</strong> ${this.escapeHtml(guide.author)}</p>
+                <p>${this.escapeHtml(guide.description)}</p>
+                <a href="${this.escapeHtml(guide.youtubeUrl)}" target="_blank" class="download-btn">
+                    <i class="fab fa-youtube"></i> Смотреть на YouTube
+                </a>
+                <button onclick="admin.editGuide('${this.escapeHtml(guide.id)}')" class="btn-primary">Редактировать</button>
+                <button onclick="admin.deleteGuide('${this.escapeHtml(guide.id)}')" class="btn-danger">Удалить</button>
             </div>
         `).join('');
     }
@@ -357,6 +395,10 @@ class AdminPanel {
             document.getElementById('addonForm').reset();
             document.getElementById('addonId').value = '';
             document.getElementById('addonFormTitle').textContent = 'Добавить аддон';
+        } else if (type === 'guide') {
+            document.getElementById('guideForm').reset();
+            document.getElementById('guideId').value = '';
+            document.getElementById('guideFormTitle').textContent = 'Добавить гайд';
         }
     }
 
@@ -436,6 +478,19 @@ class AdminPanel {
         document.getElementById('addonFormTitle').textContent = 'Редактировать аддон';
     }
 
+    editGuide(guideId) {
+        const guide = this.guides.find(g => g.id === guideId);
+        if (!guide) return;
+
+        document.getElementById('guideId').value = guide.id;
+        document.getElementById('guideTitle').value = guide.title;
+        document.getElementById('guideDescription').value = guide.description;
+        document.getElementById('guideYoutubeUrl').value = guide.youtubeUrl;
+        document.getElementById('guideAuthor').value = guide.author;
+        
+        document.getElementById('guideFormTitle').textContent = 'Редактировать гайд';
+    }
+
     // Метод для обработки отправки формы аддона
     async handleAddonSubmit(e) {
         e.preventDefault();
@@ -481,6 +536,48 @@ class AdminPanel {
         }
     }
 
+    async handleGuideSubmit(e) {
+        e.preventDefault();
+        
+        const accessToken = localStorage.getItem('github_access_token');
+        if (!accessToken) {
+            alert('Требуется авторизация');
+            return;
+        }
+
+        const formData = {
+            id: document.getElementById('guideId').value || this.generateId(),
+            title: document.getElementById('guideTitle').value,
+            description: document.getElementById('guideDescription').value,
+            youtubeUrl: document.getElementById('guideYoutubeUrl').value,
+            author: document.getElementById('guideAuthor').value,
+            created: new Date().toISOString()
+        };
+
+        try {
+            const action = document.getElementById('guideId').value ? 'update' : 'add';
+            
+            const response = await fetch(`${this.apiBase}/guide/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, guideData: formData, accessToken })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                this.resetForm('guide');
+                await this.loadGuides();
+                alert('Гайд успешно сохранен!');
+            } else {
+                throw new Error(result.error || 'Ошибка сохранения');
+            }
+        } catch (error) {
+            console.error('Error saving guide:', error);
+            alert('Ошибка при сохранении гайда: ' + error.message);
+        }
+    }
+
     // Метод для удаления аддона
     async deleteAddon(addonId) {
         if (!confirm('Вы уверены, что хотите удалить этот аддон?')) return;
@@ -513,6 +610,36 @@ class AdminPanel {
         } catch (error) {
             console.error('Error deleting addon:', error);
             alert('Ошибка при удалении аддона: ' + error.message);
+        }
+    }
+
+    async deleteGuide(guideId) {
+        if (!confirm('Вы уверены, что хотите удалить этот гайд?')) return;
+        
+        const accessToken = localStorage.getItem('github_access_token');
+        if (!accessToken) {
+            alert('Требуется авторизация');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.apiBase}/guide/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', guideId, accessToken })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                await this.loadGuides();
+                alert('Гайд успешно удален!');
+            } else {
+                throw new Error(result.error || 'Ошибка удаления');
+            }
+        } catch (error) {
+            console.error('Error deleting guide:', error);
+            alert('Ошибка при удалении гайда: ' + error.message);
         }
     }
 
