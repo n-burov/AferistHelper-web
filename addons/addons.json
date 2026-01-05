@@ -1,9 +1,9 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-05T18:53:44.987Z",
-    "updatedBy": "Mr-Dan",
-    "totalAddons": 5,
+    "lastUpdated": "2026-01-05T16:08:07.229Z",
+    "updatedBy": "SegaZBS",
+    "totalAddons": 4,
     "schemaVersion": "1.0"
   },
   "addons": [
@@ -28,8 +28,6 @@
       "id": "weakauras",
       "name": "WeakAuras",
       "version": "v2.17.5",
-      "icon": "fas fa-bolt",
-      "cssClass": "wa",
       "description": "Мощный фреймворк для создания кастомизируемых индикаторов, таймеров и оповещений.",
       "features": [
         "Гибкие ауры",
@@ -45,8 +43,6 @@
       "id": "details",
       "name": "Details!",
       "version": "v1.13.5",
-      "icon": "fas fa-chart-bar",
-      "cssClass": "details",
       "description": "Продвинутый метр урона, исцеления и других статистик. Альтернатива Recount/Skada.",
       "features": [
         "Подробная статистика",
@@ -60,10 +56,8 @@
     },
     {
       "id": "sega-package",
-      "name": "Пак SegaZBS",
+      "name": "Пак SegaZBS (В разработке)",
       "version": "v1.1.6",
-      "icon": "fas fa-users",
-      "cssClass": "plater",
       "description": "Полный пак аддонов, которые использует SegaZBS.",
       "features": [
         "Игровые плашки",
@@ -73,26 +67,7 @@
       ],
       "downloadUrl": "",
       "author": "SegaZBS",
-      "created": "2026-01-05T18:40:30.072Z"
-    },
-    {
-      "id": "mk1ilz8vpmcoo65pj99",
-      "name": "AddonUpdater",
-      "version": "v1.0.0",
-      "icon": "fa fa-arrow-circle-o-down",
-      "cssClass": "AddonUpdater",
-      "description": "Addon Updater - программа для обновления аддонов для игры World Of Warcraft.\n\nУстановка:\n  1) Скачиваем архив.\n  2) Распаковываем. \n  3) Переносим папку в удобное для вас место.\n  4) Запускаем программу AddonUpdater.exe.",
-      "features": [
-        "Скачивать аддоны",
-        "Удалять аддоны",
-        "Обновлять аддоны",
-        "Автообновление аддонов",
-        "Открывать лаунчер или игру",
-        "Удалять настройки аддонов"
-      ],
-      "downloadUrl": "https://github.com/Mr-Dan/AddonUpdater/archive/refs/heads/main.zip",
-      "author": "Mr-Dan",
-      "created": "2026-01-05T18:53:44.570Z"
+      "created": "2026-01-05T07:27:36.171Z"
     }
   ]
 }
