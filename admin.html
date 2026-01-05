@@ -9,21 +9,143 @@
         .admin-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         .login-section, .admin-section { text-align: center; margin-top: 50px; }
         .admin-section { display: none; }
-        .user-info { background: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
-        .config-form { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { 
-            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+        
+        /* Стили как на главной странице */
+        .user-info { 
+            background: #2c3e50; 
+            color: white;
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        
+        .config-form { 
+            background: #34495e; 
+            color: white;
+            padding: 25px; 
+            border-radius: 10px; 
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; 
+            padding: 12px; 
+            border: 2px solid #7f8c8d; 
+            border-radius: 6px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
         .config-list { margin-top: 30px; text-align: left; }
         .config-item { 
-            background: white; padding: 15px; margin-bottom: 10px; border-radius: 4px; 
-            border-left: 4px solid #007acc; 
+            background: #34495e; 
+            color: white;
+            padding: 20px; 
+            margin-bottom: 15px; 
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .btn-primary { background: #007acc; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-        .btn-secondary { background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-        .btn-danger { background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        
+        .config-item h4 { 
+            color: #3498db; 
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+        
+        .btn-primary { 
+            background: #3498db; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        
+        .btn-primary:hover { background: #2980b9; }
+        
+        .btn-secondary { 
+            background: #7f8c8d; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        
+        .btn-secondary:hover { background: #636e72; }
+        
+        .btn-danger { 
+            background: #e74c3c; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        
+        .btn-danger:hover { background: #c0392b; }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #34495e;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        pre {
+            background: #2c3e50;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #7f8c8d;
+        }
     </style>
 </head>
 <body>
@@ -35,71 +157,120 @@
         </div>
 
         <div id="adminSection" class="admin-section">
-            <h1>Управление конфигами</h1>
+            <h1>Управление контентом</h1>
             
-            <div class="config-form">
-                <h3 id="formTitle">Добавить конфиг</h3>
-                <form id="configForm">
-                    <input type="hidden" id="configId">
-                    <div class="form-group">
-                        <label for="configName">Название конфига:</label>
-                                                <input type="text" id="configName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="configAddon">Аддон:</label>
-                        <select id="configAddon" required>
-                            <option value="elvui">ElvUI</option>
-                            <option value="wa">WeakAuras</option>
-                            <option value="details">Details!</option>
-                            <option value="plater">Plater</option>
-                            <option value="dbm">DBM</option>
-                            <option value="bigwigs">BigWigs</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="configClass">Класс:</label>
-                        <select id="configClass" required>
-                            <option value="warrior">Воин</option>
-                            <option value="paladin">Паладин</option>
-                            <option value="deathknight">Рыцарь смерти</option>
-                            <option value="mage">Маг</option>
-                            <option value="priest">Жрец</option>
-                            <option value="rogue">Разбойник</option>
-                            <option value="shaman">Шаман</option>
-                            <option value="hunter">Охотник</option>
-                            <option value="warlock">Чернокнижник</option>
-                            <option value="druid">Друид</option>
-                            <option value="universal">Универсальные</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="configRole">Роль:</label>
-                        <select id="configRole" required>
-                            <option value="tank">Танк</option>
-                            <option value="healer">Хил</option>
-                            <option value="dps">ДПС</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="configDescription">Описание:</label>
-                        <textarea id="configDescription" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="configContent">Содержимое конфига:</label>
-                        <textarea id="configContent" rows="10" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="configAuthor">Автор:</label>
-                        <input type="text" id="configAuthor" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Сохранить</button>
-                    <button type="button" id="cancelEdit" class="btn-secondary">Отмена</button>
-                </form>
+            <div class="tabs">
+                <div class="tab active" data-tab="configs">Конфиги</div>
+                <div class="tab" data-tab="macros">Макросы</div>
             </div>
 
-            <div class="config-list">
-                <h3>Существующие конфиги</h3>
-                <div id="configsList"></div>
+            <!-- Конфиги -->
+            <div id="configsTab" class="tab-content active">
+                <div class="config-form">
+                    <h3 id="formTitle">Добавить конфиг</h3>
+                    <form id="configForm">
+                        <input type="hidden" id="configId">
+                        <div class="form-group">
+                            <label for="configName">Название конфига:</label>
+                            <input type="text" id="configName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="configAddon">Аддон:</label>
+                            <select id="configAddon" required>
+                                <option value="elvui">ElvUI</option>
+                                <option value="wa">WeakAuras</option>
+                                <option value="details">Details!</option>
+                                <option value="plater">Plater</option>
+                                <option value="dbm">DBM</option>
+                                <option value="bigwigs">BigWigs</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="configClass">Класс:</label>
+                            <select id="configClass" required>
+                                <option value="warrior">Воин</option>
+                                <option value="paladin">Паладин</option>
+                                <option value="deathknight">Рыцарь смерти</option>
+                                <option value="mage">Маг</option>
+                                <option value="priest">Жрец</option>
+                                <option value="rogue">Разбойник</option>
+                                <option value="shaman">Шаман</option>
+                                <option value="hunter">Охотник</option>
+                                <option value="warlock">Чернокнижник</option>
+                                <option value="druid">Друид</option>
+                                <option value="universal">Универсальные</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="configDescription">Описание:</label>
+                            <textarea id="configDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="configContent">Содержимое конфига:</label>
+                            <textarea id="configContent" rows="10" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="configAuthor">Автор:</label>
+                            <input type="text" id="configAuthor" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Сохранить конфиг</button>
+                        <button type="button" id="cancelEdit" class="btn-secondary">Отмена</button>
+                    </form>
+                </div>
+
+                <div class="config-list">
+                    <h3>Существующие конфиги</h3>
+                    <div id="configsList"></div>
+                </div>
+            </div>
+
+            <!-- Макросы -->
+            <div id="macrosTab" class="tab-content">
+                <div class="config-form">
+                    <h3 id="macroFormTitle">Добавить макрос</h3>
+                    <form id="macroForm">
+                        <input type="hidden" id="macroId">
+                        <div class="form-group">
+                            <label for="macroName">Название макроса:</label>
+                            <input type="text" id="macroName" required>
+                        </div>
+                                                <div class="form-group">
+                            <label for="macroClass">Класс:</label>
+                            <select id="macroClass" required>
+                                <option value="warrior">Воин</option>
+                                <option value="paladin">Паладин</option>
+                                <option value="deathknight">Рыцарь смерти</option>
+                                <option value="mage">Маг</option>
+                                <option value="priest">Жрец</option>
+                                <option value="rogue">Разбойник</option>
+                                <option value="shaman">Шаман</option>
+                                <option value="hunter">Охотник</option>
+                                <option value="warlock">Чернокнижник</option>
+                                <option value="druid">Друид</option>
+                                <option value="universal">Универсальные</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="macroDescription">Описание:</label>
+                            <textarea id="macroDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="macroContent">Содержимое макроса:</label>
+                            <textarea id="macroContent" rows="6" required placeholder="/cast [mod:shift] Spell1; Spell2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="macroAuthor">Автор:</label>
+                            <input type="text" id="macroAuthor" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Сохранить макрос</button>
+                        <button type="button" id="cancelMacroEdit" class="btn-secondary">Отмена</button>
+                    </form>
+                </div>
+
+                <div class="config-list">
+                    <h3>Существующие макросы</h3>
+                    <div id="macrosList"></div>
+                </div>
             </div>
         </div>
     </div>
