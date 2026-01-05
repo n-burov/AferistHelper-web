@@ -901,9 +901,9 @@ copyButtonStyles.textContent = `
     
     /* Стили для активных кнопок фильтров */
     .filter-btn.active {
-        background-color: #3498db !important;
+        background-color: #CC3700 !important;
         color: white !important;
-        border-color: #3498db !important;
+        border-color: #CC3700 !important;
     }
     
     /* Показываем кнопку очистки поиска */
