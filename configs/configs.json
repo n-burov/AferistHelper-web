@@ -1,9 +1,9 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-05T10:57:24.385Z",
-    "updatedBy": "SegaZBS",
-    "totalConfigs": 24,
+    "lastUpdated": "2026-01-05T10:58:57.516Z",
+    "updatedBy": "Segazbs",
+    "totalConfigs": 25,
     "schemaVersion": "1.0"
   },
   "configs": [
@@ -290,6 +290,17 @@
       "screenshot": "blank.png",
       "author": "Segazbs",
       "created": "2026-01-05T10:53:13.804Z"
+    },
+    {
+      "id": "mk11sjyhwvpoxa6q4rd",
+      "name": "WA Характеристики Мили ДД",
+      "addon": "wa",
+      "class": "universal",
+      "description": "Для удобного отображения характеристик",
+      "config": "!WA:2!LI13ZTr11)44HshrGcgIdjbA3AMehp4OelsiqAHGwz5ihuSfRKJdqaR9hxjTjR2DZD31)iu6aIanu(vXLzAOTua3Frh6duntNMHwODYmTpFCMVF7d9X8cTD6tU)d0Z5U7kljBt4h3h8E37EUN79E(8585CL75e95PDWKP2FYd0x9(m6Z4chCrvUEEMDv)ANV)RQ5WnyCzv9ZyWDCD3HSL55oNk3qAutvlNQs0xQYDcSnUIAGFnh(KU(Mo2Ej4lmzLkEm)C)LN5xK8DEZz)RnQYnnkTGlBaLrBg62mowo8J1tp90R7nh4XsBRJoOaJpLTPFnUQUWt3RINVk3pHSjoAcTk4dVAjA4ZnRwLX92XU5rDFHLmyAbvQqRbpx28fgBQ8Y(4lkQbC1un8CzwwJB4L4QEbASzz2(frRnNV5mzsxS0mflLwPKCaUiAUwQlW4TmRaNHMPuSq285veJOLJPA5xtXwToZlXIb2rBHen1DScQBx0vvN1Rgx1WmW78BPPA4jZXeNAMStukRYIEmRkIb4LMSq(SJvsr1YSQTm1TbgmYBwhdcn4o(QuyONLWDJcRQi2Q4r()6wbNnJBRADcmoGF49LTCungt2Z8CS(vQhy5BMqgp169djtOOBP65r908vTWZa1vgHU5KhDYPN4kArqCiMK7ix62fTCh5FTDrl3r(3hw0YDK))l)ApZM20MIaXXTruUxnpNaUotZSURdciZhb(p0ZT43E0z)hzu80XffD2BsTlUKoJ26c2qEfTqhvEPWNznWi5isfmNNzTexCKjdVSXcy42uNyBUrMwepP9k7HROSTJnBrpFMBA7QwSVXIeBBAtd)A3ax12SUQpRMIfftVHRQJXqFvB)XqgMdxtj9OJpvXMv4iyw0NR6R27LdDF4H46rqyUqeDjFh9zdd2F1zp1aMgUBfE3LBaFWYnw(LKw(5Hpa(i6vnCjQywnbIPU1u7DLq8FmAfOJIwXmkzZoXIIJY4OTUdnofpQGRXPO39ovAntlt)fMjxa9HzkABIK6I1C8tfyA0uVYHmNyScMhDSdTcD6ZTGgLCPQzXQSc8oWFg(DT2n1CVd4DHlb)r4dKOnko6hcxQTpFlWpF5Nb(y4JwDSvGFjCPLB0MrBh9XhcFmz4YplEAF5oCWpghVd7xmmMJXP7fUHXG(a5lZu9OWRqy56VIbMssFEgkbL7XWdTHxdYgkabYY1vnTfteEYRhMbkdQy3BS7rwQsGLvgtUUfR8sKpmdvFAAAxXHhUd6Vj2vNLLsC9kZrONsv7Pp9tFHuia4BzAZUCPCJN5HNCQs5hFISAZPw1z8rxuo4(5NiplLfCDjwspWZ3PEj28(Z3t)vcSfIt7zOesyt8hlhKIlPk9aspfPFPOAxLzmQAD1QS9mqOIYad90DBV2Ws64uWDATK1DmQSh1hp1te6vACFh7G6Am(E8qfg7Qjdpu7zGDLCKkdGtDO1SbmgwI1LdVNihYU2oK1Ud1q71KUBjDXBg4Bg4BmXBCMFa3M2(gHtGHva8QPA4m3JgM2ChBc(MWaU38QbUPCnW0qTaXJubCl3DwZ3317W7BFuepPPZ(AfY339djqQtcyljGBmbCtp5UHV2Fdb)TDvuBCgvR5uxapbbSYWwH(BeZM6BeyNlLPfna2gC7WTLGhyluTLXkuoW2HDq6RZqk9LH7mbCZWTaF9eO)pb5FXCOH25kzQPsfHyCPIOiShmFz0UMgMENwa)ZYsPAz5ElQI(LcRaCChd2VDtWD)(nMdLqMMR62y6OoU3jovIiqXIzcd8ZOF6rI6cYU3X6zqQwFx2G5P7U9mbCmlYxknVUdxQaZM5hE6LR4y77U1066MgObizaRC5r91xGhjBDRU7C9wKwRbm8Slsrhr1IYIUuWJxdgHkyWphkZI1q3mS)DR5zssTA5MIkObjhJxiDEulDIY8PtROm(KkLvgvzQXhTSIYKhDQSLH9rUa2R4VdTJ(H(UcwutR1niAq7FssFVW9chA9dx3tYwB1i62jdPB9UewJMfk5F(TS(HYdCnc1NE1WWdk7JFPzBwTslzYDPV3DPNA9DXQOjmrc4U0KNSuPjp(6B790Ywf9OQU)ZtkA9K7ixuu(DB9EvI0scz6IJMCA8v(PXCkZkla7gYJ1H08y1riszKK7p59TbSSvzryvl4rHVspW49cfGhbUVEGsnpuANrku3FUstV)1FVUAyVzyyF17Ubgja2UHkLDVD8cmoCw0vafcUz5ChUxz4jWKzm)sZfzKmFHyoQI)EYvunycXCT1k2t5JVxltHFd9LlmeudmHtdNH24wZV5VvxAXHQGRQaN23hjyfCMdtJFaPwgtz)dlnRQv4SOwRHq7O(sy21GHc3dgoonGEy23GTMMzfjBhFXkMDEtpFpHVhsYVgZowMefhBzFKUpwPByjxhpts8yyjBwvvQhU2R7Ep0PD5KO9cjtJUd1MJ9h2TLdJATVFfNXhqAqAwd2XgLgPLLmlpwBwh78oNr8OB0SI3hDoR4r7ywXFm(yfh1IFU39kLD0XlvusoB(jNwclzxuIQx3gUNUWggahQ96wPlqfSa7WIuGd4cNf4rLCUrrvNB6MWsc)DrjbprvgWNkVabundSicwyruRy(Y41dTN02AHYWSWCrLtGVJOka80W3fEw3BRLMTydjj2rWZbNhE(BfEbHQl89kdxisLnsIC)7g((Wlbjpb8kLHxRm8QLHxUSwXCPpE6jIftFXndVUqUe(H9cpi8JIt0wnXHsNOKhmbdFJYXw)eSy7Ul4Nqz0OaXpdEB8MpKo27eP0qAhNeVj4sXIhVfQz9F(tu7n6D1EOGYughJDYhH9yPyEWfD326Cd0dJ6OWVkub5no)wcLqGFD5WkdWpOTmDl3NyDZY15Me5)OSi4od(ow02wN1jAJxVz)jtvzx7AGHoC0fEOPou8fxOd7APbr38yI4BEq0acGBJgGuaIyqSHqQqm6Fo4PIzaRbqIuY(SQ4H0NwL8poZIXKOJPKcM)yxnMdffZ6Mh9IBUfjAmK7q8OxvqLAVsCN8hIn(whdbZp5pqTlK7ixDfS9FVUquI4eedHYCk1C2dC0dE0ZWQ7KFibRiMJCkbJz1cmifcjsx8YX)qH2X(4Qhe0JzlDjW7(qDH8rqAemo4UqCDWHrgqgN6AQ(Hrfz8sUE75q4Dz34K8UVx5Nd0DTxvewi8YHTJ7ImFOXNsw(xa0Hc9FPjueo2r6D7q3J1o0rP3FY0IwR7MeZmUeLMpXzN)SbhlZb0p3dJP5Bf(PWVhZV)W4FKiHZ7A9a61MJJ7el30xlWEKncStDWi0UTuz6a2HI(gc2i41fyV2Fxqe8tynzW1ij)ZRQ7ZU5pZLdgJOiVsu5GnQmqSGaXcXa)z3Sin4AGNDP0pD7k9IRjo0zMvZCKAzorkB4InrJFB417aJ7qihjRTbWxJ1(Za4VHz6JC)Fza)WFKyl0hr(1MP)Pc(DLPVbAXFbarIkevoMeUWuKqzxnnRJnz6uShXkvh5Up(ALDPKYU(p3SXa2xwwCFZ()DY)h",
+      "screenshot": "blank.png",
+      "author": "Segazbs",
+      "created": "2026-01-05T10:58:54.857Z"
     }
   ]
 }
