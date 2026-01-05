@@ -97,7 +97,7 @@ nav a:hover {
 
 nav a.active {
     background: rgba(255, 255, 255, 0.15);
-   极影: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Исправляем иероглифы */
 }
 
 .contribute-link {
@@ -250,10 +250,9 @@ nav a.active {
 }
 
 .filter-btn.active {
-    background: var(--accent);        /* Оранжево-красный вместо голубого */
-    color: var(--dark);
-    border-color: var(--accent);
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.15); /* Полупрозрачный белый как в навигации */
+    color: var(--light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Тень как в навигации */
 }
 
 /* Поиск */
