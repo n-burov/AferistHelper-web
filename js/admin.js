@@ -429,8 +429,6 @@ class AdminPanel {
         document.getElementById('addonId').value = addon.id;
         document.getElementById('addonName').value = addon.name;
         document.getElementById('addonVersion').value = addon.version;
-        document.getElementById('addonIcon').value = addon.icon;
-        document.getElementById('addonCssClass').value = addon.cssClass;
         document.getElementById('addonDescription').value = addon.description;
         document.getElementById('addonFeatures').value = addon.features.join(', ');
         document.getElementById('addonDownloadUrl').value = addon.downloadUrl || '';
