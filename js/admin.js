@@ -1,6 +1,6 @@
 class AdminPanel {
     constructor() {
-        this.clientId = 'ваш_client_id_здесь'; // Замените на реальный Client ID
+        this.clientId = 'Ov23liPIpQgvhqpl1zAg'; // Замените на реальный Client ID
         this.redirectUri = window.location.origin + '/admin.html';
         this.apiBase = '/api';
         this.isAuthenticated = false;
