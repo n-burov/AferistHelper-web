@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель AferistHelper</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .login-section, .admin-section { text-align: center; margin-top: 50px; }
+        .admin-section { display: none; }
+        .user-info { background: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        .config-form { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; 
+        }
+        .config-list { margin-top: 30px; text-align: left; }
+        .config-item { 
+            background: white; padding: 15px; margin-bottom: 10px; border-radius: 4px; 
+            border-left: 4px solid #007acc; 
+        }
+        .btn-primary { background: #007acc; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-secondary { background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-danger { background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div id="loginSection" class="login-section">
+            <h2>Админ-панель AferistHelper</h2>
+            <p>Для доступа требуется авторизация через GitHub</p>
+            <button id="loginBtn" class="btn-primary">Войти через GitHub</button>
+        </div>
+
+        <div id="adminSection" class="admin-section">
+            <h1>Управление конфигами</h1>
+            
+            <div class="config-form">
+                <h3 id="formTitle">Добавить конфиг</h3>
+                <form id="configForm">
+                    <input type="hidden" id="configId">
+                    <div class="form-group">
+                        <label for="configName">Название конфига:</label>
+                        <input
