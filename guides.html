@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SegazbsHelper</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="index.html">SegazbsHelper</a>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="configs.html" class="nav-link">Конфиги</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="macros.html" class="nav-link">Макросы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="addons.html" class="nav-link">Аддоны</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="guides.html" class="nav-link active">Гайды</a>
+                    </li>
+                </ul>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="guides-section">
+            <h1>Видео-гайды</h1>
+            <p>Полезные видео-инструкции и руководства по использованию аддонов и макросов</p>
+            
+            <div id="guidesList" class="guides-grid">
+                <!-- Гайды будут загружены динамически -->
+                <div class="loading">Загрузка гайдов...</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 SegazbsHelper. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="js/guides.js"></script>
+    <script src="js/navbar.js"></script>
+</body>
+</html>
