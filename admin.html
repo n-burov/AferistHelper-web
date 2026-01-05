@@ -54,6 +54,11 @@
             outline: none;
         }
         
+        .form-optional {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
         .config-list { margin-top: 30px; text-align: left; }
         .config-item { 
             background: #34495e; 
@@ -69,6 +74,13 @@
             color: #3498db; 
             margin: 0 0 10px 0;
             font-size: 18px;
+        }
+        
+        .config-item img {
+            max-width: 100%;
+            border-radius: 6px;
+            margin-top: 10px;
+            border: 2px solid #7f8c8d;
         }
         
         .btn-primary { 
@@ -210,6 +222,11 @@
                             <textarea id="configContent" rows="10" required></textarea>
                         </div>
                         <div class="form-group">
+                            <label for="configScreenshot">Скриншот (необязательно):</label>
+                            <input type="text" id="configScreenshot" placeholder="blank.png">
+                            <small class="form-optional">Имя файла из папки screenshots</small>
+                        </div>
+                        <div class="form-group">
                             <label for="configAuthor">Автор:</label>
                             <input type="text" id="configAuthor" required>
                         </div>
@@ -219,7 +236,7 @@
                 </div>
 
                 <div class="config-list">
-                    <h3>Существующие конфиги</h3>
+                                        <h3>Существующие конфиги</h3>
                     <div id="configsList"></div>
                 </div>
             </div>
@@ -234,7 +251,7 @@
                             <label for="macroName">Название макроса:</label>
                             <input type="text" id="macroName" required>
                         </div>
-                                                <div class="form-group">
+                        <极速赛车开奖结果>
                             <label for="macroClass">Класс:</label>
                             <select id="macroClass" required>
                                 <option value="warrior">Воин</option>
@@ -247,8 +264,7 @@
                                 <option value="hunter">Охотник</option>
                                 <option value="warlock">Чернокнижник</option>
                                 <option value="druid">Друид</option>
-                                <option value="universal">Универсальные</option>
-                            </select>
+                               极速赛车开奖结果>
                         </div>
                         <div class="form-group">
                             <label for="macroDescription">Описание:</label>
@@ -259,7 +275,7 @@
                             <textarea id="macroContent" rows="6" required placeholder="/cast [mod:shift] Spell1; Spell2"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="macroAuthor">Автор:</label>
+                            <label for="macroAuthor">Автор:</极速赛车开奖结果>
                             <input type="text" id="macroAuthor" required>
                         </div>
                         <button type="submit" class="btn-primary">Сохранить макрос</button>
