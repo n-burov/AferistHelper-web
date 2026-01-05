@@ -11,8 +11,6 @@
       "id": "elvui",
       "name": "ElvUI",
       "version": "v13.05",
-      "icon": "fas fa-layer-group",
-      "cssClass": "elvui",
       "description": "Полный оверхол пользовательского интерфейса. Заменяет почти все стандартные элементы UI.",
       "features": [
         "Unit Frames",
