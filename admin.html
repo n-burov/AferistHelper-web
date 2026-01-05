@@ -43,4 +43,67 @@
                     <input type="hidden" id="configId">
                     <div class="form-group">
                         <label for="configName">Название конфига:</label>
-                        <input
+                                                <input type="text" id="configName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="configAddon">Аддон:</label>
+                        <select id="configAddon" required>
+                            <option value="elvui">ElvUI</option>
+                            <option value="wa">WeakAuras</option>
+                            <option value="details">Details!</option>
+                            <option value="plater">Plater</option>
+                            <option value="dbm">DBM</option>
+                            <option value="bigwigs">BigWigs</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="configClass">Класс:</label>
+                        <select id="configClass" required>
+                            <option value="warrior">Воин</option>
+                            <option value="paladin">Паладин</option>
+                            <option value="deathknight">Рыцарь смерти</option>
+                            <option value="mage">Маг</option>
+                            <option value="priest">Жрец</option>
+                            <option value="rogue">Разбойник</option>
+                            <option value="shaman">Шаман</option>
+                            <option value="hunter">Охотник</option>
+                            <option value="warlock">Чернокнижник</option>
+                            <option value="druid">Друид</option>
+                            <option value="universal">Универсальные</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="configRole">Роль:</label>
+                        <select id="configRole" required>
+                            <option value="tank">Танк</option>
+                            <option value="healer">Хил</option>
+                            <option value="dps">ДПС</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="configDescription">Описание:</label>
+                        <textarea id="configDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="configContent">Содержимое конфига:</label>
+                        <textarea id="configContent" rows="10" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="configAuthor">Автор:</label>
+                        <input type="text" id="configAuthor" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Сохранить</button>
+                    <button type="button" id="cancelEdit" class="btn-secondary">Отмена</button>
+                </form>
+            </div>
+
+            <div class="config-list">
+                <h3>Существующие конфиги</h3>
+                <div id="configsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
