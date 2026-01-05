@@ -11,7 +11,7 @@ class AddonsManager {
 
     async loadAddons() {
         try {
-            const response = await fetch('/addons/addons.json');
+            const response = await fetch('addons/addons.json');
             const data = await response.json();
             this.addons = data.addons || [];
         } catch (error) {
