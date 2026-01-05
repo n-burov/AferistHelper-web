@@ -419,7 +419,7 @@ class AdminPanel {
         document.getElementById('configContent').value = config.config;
         document.getElementById('configScreenshot').value = config.screenshot || '';
         document.getElementById('configAuthor').value = config.author;
-        document.getElementById('formTitle').text极端的Content = 'Редактировать конфиг';
+        document.getElementById('formTitle').textContent = 'Редактировать конфиг';
     }
 
     editAddon(addonId) {
