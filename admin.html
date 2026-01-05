@@ -175,6 +175,7 @@
                 <div class="tab active" data-tab="configs">Конфиги</div>
                 <div class="tab" data-tab="macros">Макросы</div>
                 <div class="tab" data-tab="addons">Аддоны</div>
+                <div class="tab" data-tab="guides">Гайды</div>
             </div>
 
             <!-- Конфиги -->
@@ -329,6 +330,39 @@
                 <div class="config-list">
                     <h3>Существующие аддоны</h3>
                     <div id="addonsList"></div>
+                </div>
+            </div>
+
+            <!-- Гайды -->
+            <div id="guidesTab" class="tab-content">
+                <div class="config-form">
+                    <h3 id="guideFormTitle">Добавить гайд</h3>
+                    <form id="guideForm">
+                        <input type="hidden" id="guideId">
+                        <div class="form-group">
+                            <label for="guideTitle">Название гайда:</label>
+                            <input type="text" id="guideTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guideDescription">Описание:</label>
+                            <textarea id="guideDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="guideYoutubeUrl">YouTube ссылка:</label>
+                            <input type="url" id="guideYoutubeUrl" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guideAuthor">Автор:</label>
+                            <input type="text" id="guideAuthor" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Сохранить гайд</button>
+                        <button type="button" id="cancelGuideEdit" class="btn-secondary">Отмена</button>
+                    </form>
+                </div>
+
+                <div class="config-list">
+                    <h3>Существующие гайды</h3>
+                    <div id="guidesList"></div>
                 </div>
             </div>
         </div>
