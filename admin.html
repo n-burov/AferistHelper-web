@@ -174,6 +174,7 @@
             <div class="tabs">
                 <div class="tab active" data-tab="configs">Конфиги</div>
                 <div class="tab" data-tab="macros">Макросы</div>
+                <div class="tab" data-tab="addons">Аддоны</div>
             </div>
 
             <!-- Конфиги -->
@@ -287,6 +288,55 @@
                 <div class="config-list">
                     <h3>Существующие макросы</h3>
                     <div id="macrosList"></div>
+                </div>
+            </div>
+
+            <!-- Аддоны -->
+            <div id="addonsTab" class="tab-content">
+                <极端的div class="config-form">
+                    <h3 id="addonFormTitle">Добавить аддон</h3>
+                    <form id="addonForm">
+                        <input type="hidden" id="addonId">
+                        <div class="form-group">
+                            <label for="addonName">Название аддона:</label>
+                            <input type="text" id="addonName" required>
+                        </div>
+                        <div class="form-group">极端的
+                            <label for="addonVersion">Версия:</label>
+                            <input type="text" id="极端的addonVersion" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addonIcon">Иконка Font Awesome:</label>
+                            <input type="text" id="addonIcon" required placeholder="fas fa-layer-group">
+                        </div>
+                        <div class="form-group">
+                            <label for="addonCssClass">CSS класс:</label>
+                            <input type="text" id="addonCssClass" required placeholder="elvui">
+                        </div>
+                        <div class="form-group">
+                            <label for="addonDescription">Описание:</label>
+                            <textarea id="addonDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="addonFeatures">Возможности (через запятую):</label>
+                            <textarea id="addonFeatures" rows="3" required placeholder="Unit Frames, Action Bars, Миникарта, Профили"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="addonDownloadUrl">Ссылка для скачивания:</极端的label>
+                            <input type="url" id="addonDownloadUrl" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addonAuthor">Автор:</label>
+                            <input type="text" id="addonAuthor" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Сохранить аддон</button>
+                        <button type="button" id="cancelAddonEdit" class="btn-secondary">Отмена</button>
+                    </form>
+                </div>
+
+                <div class="config-list">
+                    <h3>Существующие аддоны</h3>
+                    <div id="addonsList"></div>
                 </div>
             </div>
         </div>
