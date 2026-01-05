@@ -320,6 +320,81 @@ class AdminPanel {
         }
     }
 
+    async handleMacroSubmit(e) {
+        e.preventDefault();
+        
+        const accessToken = localStorage.getItem('github_access_token');
+        if (!accessToken) {
+            alert('Требуется авторизация');
+            return;
+        }
+
+        const formData = {
+            id: document.getElementById('macroId').value || this.generateId(),
+            name: document.getElementById('macroName').value,
+            class: document.getElementById('macroClass').value,
+            description: document.getElementById('macroDescription').value,
+            macro: document.getElementById('macroContent').value,
+            author: document.getElementById('macroAuthor').value,
+            created: new Date().toISOString()
+        };
+
+        try {
+            const action = document.getElementById('macroId').value ? 'update' : 'add';
+            
+            const response = await fetch(`${this.apiBase}/macro/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, macroData: formData, accessToken })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                this.resetForm('macro');
+                await this.loadMacros();
+                alert('Макрос успешно сохранен!');
+            } else {
+                throw new Error(result.error || 'Ошибка сохранения');
+            }
+        } catch (error) {
+            console.error('Error saving macro:', error);
+            alert('Ошибка при сохранении макроса: ' + error.message);
+        }
+    }
+
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    editConfig(configId) {
+        const config = this.configs.find(c => c.id === configId);
+        if (!config) return;
+
+        document.getElementById('configId').value = config.id;
+        document.getElementById('configName').value = config.name;
+        document.getElementById('configAddon').value = config.addon;
+        document.getElementById('configClass').value = config.class;
+        document.getElementById('configDescription').value = config.description;
+        document.getElementById('configContent').value = config.config;
+        document.getElementById('configScreenshot').value = config.screenshot || '';
+        document.getElementById('configAuthor').value = config.author;
+        document.getElementById('formTitle').textContent = 'Редактировать конфиг';
+    }
+
+    editMacro(macroId) {
+        const macro = this.macros.find(m => m.id === macroId);
+        if (!macro) return;
+
+        document.getElementById('macroId').value = macro.id;
+        document.getElementById('macroName').value = macro.name;
+        document.getElementById('macroClass').value = macro.class;
+        document.getElementById('macroDescription').value = macro.description;
+        document.getElementById('macroContent').value = macro.macro;
+        document.getElementById('macroAuthor').value = macro.author;
+        document.getElementById('macroFormTitle').textContent = 'Редактировать макрос';
+    }
+
     escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
