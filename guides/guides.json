@@ -1,9 +1,9 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-05T21:35:32.473Z",
-    "updatedBy": "test",
-    "totalGuides": 1,
+    "lastUpdated": "2026-01-05T22:29:13.348Z",
+    "updatedBy": "Segazbs",
+    "totalGuides": 2,
     "schemaVersion": "1.0"
   },
   "guides": [
@@ -14,6 +14,14 @@
       "youtubeUrl": "https://aferisthelper.vercel.app/addons.html",
       "author": "test",
       "created": "2026-01-05T21:35:30.606Z"
+    },
+    {
+      "id": "mk1qg9muwytbf7u24ug",
+      "title": "Гайд на Мага в Ветке (Лед)",
+      "description": "Гайд на фрост мага или же Маг в ветке Лед.\nЕсли ты только начал играть на фрост маге, тут ты найдешь ответы на все свои вопросы.\nНе Забудь поставить лайк,подписаться и написать комментарий насколько помог тебе гайд.",
+      "youtubeUrl": "https://www.youtube.com/watch?v=Esgo-WH1Nug",
+      "author": "Segazbs",
+      "created": "2026-01-05T22:29:12.006Z"
     }
   ]
 }
