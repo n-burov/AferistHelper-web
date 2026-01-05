@@ -10,7 +10,8 @@
     --accent-dark: #A52A2A;
     --danger: #FF6B6B;
     --warning: #FFD166;
-    --info: #4ECDC4;
+    /*--info: #4ECDC4; */
+    --info: #CC3700;
     --border: rgba(255, 255, 255, 0.1);
     --card-bg: rgba(255, 255, 255, 0.05);
     --hover-bg: rgba(255, 255, 255, 0.08);
@@ -250,9 +251,11 @@ nav a.active {
 }
 
 .filter-btn.active {
-    background: rgba(255, 255, 255, 0.15); /* Полупрозрачный белый как в навигации */
-    color: var(--light);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Тень как в навигации */
+    background: var(--accent);        /* Красный акцентный цвет #CC3700 */
+    color: var(--dark);
+    border-color: var(--accent);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(204, 55, 0, 0.3); /* Красная тень */
 }
 
 /* Поиск */
