@@ -1,0 +1,87 @@
+class AddonsManager {
+    constructor() {
+        this.addons = [];
+        this.init();
+    }
+
+    async init() {
+        await this.loadAddons();
+        this.renderAddons();
+    }
+
+    async loadAddons() {
+        try {
+            const response = await fetch('/addons/addons.json');
+            const data = await response.json();
+            this.addons = data.addons || [];
+        } catch (error) {
+            console.error('Error loading addons:', error);
+            this.addons = [];
+        }
+    }
+
+    renderAddons() {
+        const container = document.querySelector('.addons-grid');
+        if (!container) return;
+
+        container.innerHTML = this.addons.map(addon => this.createAddonCard(addon)).join('');
+    }
+
+    createAddonCard(addon) {
+        const featuresHtml = addon.features.map(feature => 
+            `<li><i class="fas fa-check"></i> ${this.escapeHtml(feature)}</li>`
+        ).join('');
+
+        const downloadButton = addon.downloadUrl ? 
+            `<a href="${this.escapeHtml(addon.downloadUrl)}" class="download-btn" target="_blank">
+                <i class="fas fa-download"></i> Скачать архив
+            </a>` : 
+            `<button class="download-btn secondary" disabled>
+                <i class="fas fa-clock"></i> В разработке
+            </button>`;
+
+        return `
+            <div class="addon-card">
+                <div class="addon-header ${addon.cssClass}">
+                    <div class="addon-icon">
+                        <i class="${addon.icon}"></i>
+                    </div>
+                    <div class="addon-title">
+                        <h3>${this.escapeHtml(addon.name)}</h3>
+                        <span class="addon-version">${this.escapeHtml(addon.version)}</span>
+                    </div>
+                </div>
+                <div class="addon-content">
+                    <p class="addon-description">
+                        ${this.escapeHtml(addon.description)}
+                    </p>
+                    
+                    <div class="addon-features">
+                        <h4>Основные возможности:</h4>
+                        <ul class="feature-list">
+                            ${featuresHtml}
+                        </ul>
+                    </div>
+                    
+                    <div class="addon-download">
+                        ${downloadButton}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+// Инициализация
+let addonsManager;
+
+document.addEventListener('DOMContentLoaded', function() {
+    addonsManager = new AddonsManager();
+    window.addonsManager = addonsManager;
+});
