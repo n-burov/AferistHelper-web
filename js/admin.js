@@ -452,8 +452,6 @@ class AdminPanel {
             id: document.getElementById('addonId').value || this.generateId(),
             name: document.getElementById('addonName').value,
             version: document.getElementById('addonVersion').value,
-            icon: document.getElementById('addonIcon').value,
-            cssClass: document.getElementById('addonCssClass').value,
             description: document.getElementById('addonDescription').value,
             features: document.getElementById('addonFeatures').value.split(',').map(f => f.trim()).filter(f => f),
             downloadUrl: document.getElementById('addonDownloadUrl').value,
