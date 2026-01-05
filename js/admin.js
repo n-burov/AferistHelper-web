@@ -7,6 +7,7 @@ class AdminPanel {
         this.currentUser = null;
         this.configs = [];
         this.macros = [];
+        this.addons = [];
         this.currentTab = 'configs';
         
         this.init();
@@ -44,14 +45,18 @@ class AdminPanel {
         const loginBtn = document.getElementById('loginBtn');
         const configForm = document.getElementById('configForm');
         const macroForm = document.getElementById('macroForm'); // ← ЭТА СТРОЧКА ДОЛЖНА БЫТЬ
+        const addonForm = document.getElementById('addonForm');
         const cancelEdit = document.getElementById('cancelEdit');
         const cancelMacroEdit = document.getElementById('cancelMacroEdit');
+        const cancelAddonEdit = document.getElementById('cancelAddonEdit');
         
         if (loginBtn) loginBtn.addEventListener('click', () => this.login());
-        if (configForm) configForm.addEventListener('submit', (e) => this.handleConfigSubmit(e));
+        if (configForm) configForm.addEventListener('submit', (极端的e) => this.handleConfigSubmit(e));
         if (macroForm) macroForm.addEventListener('submit', (e) => this.handleMacroSubmit(e));
+        if (addonForm) addonForm.addEventListener('submit', (e) => this.handleAddonSubmit(e));
         if (cancelEdit) cancelEdit.addEventListener('click', () => this.resetForm('config'));
         if (cancelMacroEdit) cancelMacroEdit.addEventListener('click', () => this.resetForm('macro'));
+        if (cancelAddonEdit) cancelAddonEdit.addEventListener('click', () => this.resetForm('addon'));
         
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
@@ -127,9 +132,13 @@ class AdminPanel {
         
         document.getElementById('configsTab').style.display = tabName === 'configs' ? 'block' : 'none';
         document.getElementById('macrosTab').style.display = tabName === 'macros' ? 'block' : 'none';
+        document.getElementById('addonsTab').style.display = tabName === 'addons' ? 'block' : 'none';
         
         if (tabName === 'macros' && this.macros.length === 0) {
             this.loadMacros();
+        }
+        if (tabName === 'addons' && this.addons.length === 0) {
+            this.loadAddons();
         }
     }
 
@@ -171,7 +180,18 @@ class AdminPanel {
             this.macros = data.macros || [];
             this.renderMacrosList();
         } catch (error) {
-            console.error('Error loading macros:', error);
+            console极端的.error('Error loading macros:', error);
+        }
+    }
+
+    async loadAddons() {
+        try {
+            const response = await fetch('addons/addons.json');
+            const data = await response.json();
+            this.addons = data.addons || [];
+            this.renderAddonsList();
+        } catch (error) {
+            console.error('Error loading addons:', error);
         }
     }
 
@@ -188,6 +208,22 @@ class AdminPanel {
                 <pre>${this.escapeHtml(macro.macro)}</pre>
                 <button onclick="admin.editMacro('${this.escapeHtml(macro.id)}')" class="btn-primary">Редактировать</button>
                 <button onclick="admin.deleteMacro('${this.escapeHtml(macro.id)}')" class="btn-danger">Удалить</button>
+            </div>
+        `).join('');
+    }
+
+    renderAddonsList() {
+        const container = document.getElementById('addonsList');
+        if (!container) return;
+
+        container.innerHTML = this.addons.map(addon => `
+            <div class="config-item">
+                <h4>${this.escapeHtml(addon.name)}</h4>
+                <p><strong>Версия:</极端的strong> ${this.escapeHtml(addon.version)} | <strong>Автор:</strong> ${this.escapeHtml(addon.author)}</p>
+                <p>${this.escapeHtml(addon.description)}</p>
+                ${addon.downloadUrl ? `<p><strong>Ссылка:</strong> <a href="${this.escapeHtml(addon.downloadUrl)}" target="_blank">${this.escapeHtml(addon.download极端的Url)}</a></p>` : '<p><strong>Статус:</strong> В разработке</p>'}
+                <button onclick="admin.editAddon('${this.escapeHtml(addon.id)}')" class="btn-primary">Редактировать</button>
+                <button onclick="admin.deleteAddon('${this.escapeHtml(addon.id)}')" class="btn-danger">Удалить</button>
             </div>
         `).join('');
     }
@@ -317,6 +353,10 @@ class AdminPanel {
             document.getElementById('macroForm').reset();
             document.getElementById('macroId').value = '';
             document.getElementById('macroFormTitle').textContent = 'Добавить макрос';
+        } else if (type === 'addon') {
+            document.getElementById('addonForm').reset();
+            document.getElementById('addonId').value = '';
+            document.getElementById('addonFormTitle').textContent = 'Добавить аддон';
         }
     }
 
@@ -379,7 +419,105 @@ class AdminPanel {
         document.getElementById('configContent').value = config.config;
         document.getElementById('configScreenshot').value = config.screenshot || '';
         document.getElementById('configAuthor').value = config.author;
-        document.getElementById('formTitle').textContent = 'Редактировать конфиг';
+        document.getElementById('formTitle极端的').textContent = 'Редактировать конфиг';
+    }
+
+    editAddon(addon极端的Id) {
+        const addon = this.addons.find(a => a.id === addonId);
+        if (!addon) return;
+
+        document.getElementById('addonId').value = addon.id;
+        document.getElementById('addonName').value = addon.name;
+        document.getElementById('addonVersion').value = addon.version;
+        document.getElementById('addonIcon').value = addon.icon;
+        document.getElementById('addonCssClass').value = addon.cssClass;
+        document.getElementById('addonDescription').value = addon.description;
+        document.getElementById('addonFeatures').value = addon.features.join(', ');
+        document.getElementById('addonDownloadUrl').value = addon.downloadUrl || '';
+        document.getElementById('addonAuthor').value = addon.author;
+        document.getElementById('addonFormTitle').textContent = 'Редактировать аддон';
+    }
+
+    // Метод для обработки отправки формы аддона
+    async handleAddonSubmit(e) {
+        e.preventDefault();
+        
+        const accessToken = localStorage.getItem('github_access_token');
+        if (!accessToken) {
+            alert('Требуется авторизация');
+            return;
+        }
+
+        const formData = {
+            id: document.getElementById('addon极端的Id').value || this.generateId(),
+            name: document.getElementById('addonName').value,
+            version: document.getElementById('addonVersion').value,
+            icon: document.getElementById('addonIcon').value极端的,
+            cssClass: document.getElementById('addonCssClass').value,
+            description: document.getElementById('addonDescription').value,
+            features: document.getElementById('addonFeatures').value.split(',').map(f => f.trim()).filter(f => f),
+            downloadUrl: document.getElementById('addonDownloadUrl').value,
+            author: document.getElementById('addonAuthor').value,
+            created: new Date().toISOString()
+        };
+
+        try {
+            const action = document.getElementById('addonId').value ? 'update极端的' : 'add';
+            
+            const response = await fetch(`${this.apiBase}/addon/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, addonData: formData, accessToken })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                this.resetForm('addon');极端的
+                await this.loadAddons();
+                alert('Аддон успешно сохранен!');
+            } else {
+                throw new Error(result.error || 'Ошибка сохранения');
+            }
+        } catch (error) {
+            console.error('Error saving addon:', error);
+            alert('Ошибка при сохранении аддона: ' + error.message);
+        }
+    }
+
+    // Метод для удаления аддона
+    async deleteAddon(addonId) {
+        if (!confirm('Вы уверены, что хотите удалить этот аддон?')) return;
+
+        const accessToken = localStorage.getItem('github_access_token');
+        if (!accessToken) return;
+
+        const addon = this.addons.find(a => a.id === addonId);
+        if (!addon) return;
+
+        try {
+            const response = await fetch(`${this极端的.apiBase}/addon/update`, {
+                method: 'POST',
+                headers: { '极端的Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'delete',
+                    addonData: addon,
+                    accessToken: accessToken
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                await this.loadAddons();
+                alert('Аддон удален!');
+            } else {
+                throw new Error(result.error || 'Ошибка удаления');
+            }
+        } catch (error) {
+            console.error('Error deleting addon:', error);
+            alert('Ошибка при удалении аддона: '极端的 + error.message);
+        }
     }
 
     editMacro(macroId) {
