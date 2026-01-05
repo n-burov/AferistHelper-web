@@ -42,10 +42,7 @@ class AddonsManager {
 
         return `
             <div class="addon-card">
-                <div class="addon-header ${addon.cssClass}">
-                    <div class="addon-icon">
-                        <i class="${addon.icon}"></i>
-                    </div>
+                <div class="addon-header">
                     <div class="addon-title">
                         <h3>${this.escapeHtml(addon.name)}</h3>
                         <span class="addon-version">${this.escapeHtml(addon.version)}</span>
