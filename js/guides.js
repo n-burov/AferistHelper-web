@@ -15,7 +15,8 @@ class Guides {
             if (!response.ok) {
                 throw new Error('Не удалось загрузить гайды');
             }
-            this.guides = await response.json();
+            const data = await response.json();
+            this.guides = data.guides || [];
         } catch (error) {
             console.error('Ошибка загрузки гайдов:', error);
             document.getElementById('guidesList').innerHTML = 
