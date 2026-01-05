@@ -516,8 +516,14 @@ function renderConfigs(configs) {
 }
 
 
-function showScreenshot(filename) {
-    const screenshotUrl = `screenshots/${filename}`;
+function showScreenshot(screenshotUrl) {
+    // Проверяем, является ли значение URL или именем файла
+    let finalUrl = screenshotUrl;
+    
+    // Если это не URL (не начинается с http/https), считаем что это локальный файл
+    if (!screenshotUrl.startsWith('http://') && !screenshotUrl.startsWith('https://') && screenshotUrl !== '') {
+        finalUrl = `screenshots/${screenshotUrl}`;
+    }
     
     // Создаем модальное окно для скриншота
     const modal = document.createElement('div');
@@ -531,7 +537,7 @@ function showScreenshot(filename) {
                 <span class="close-modal">&times;</span>
             </div>
             <div class="modal-body screenshot-body">
-                <img src="${screenshotUrl}" alt="Скриншот конфига" onerror="this.style.display='none'; document.querySelector('.screenshot-placeholder').style.display='flex';">
+                <img src="${finalUrl}" alt="Скриншот конфига" onerror="this.style.display='none'; document.querySelector('.screenshot-placeholder').style.display='flex';">
                 <div class="screenshot-placeholder" style="display: none;">
                     <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.3);"></i>
                     <p style="color: rgba(255,255,255,0.5); margin-top: 10px;">Скриншот не найден</p>
