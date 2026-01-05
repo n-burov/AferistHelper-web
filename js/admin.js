@@ -1,6 +1,6 @@
 class AdminPanel {
     constructor() {
-        this.clientId = 'Ov23liPIpQgvhqpl1zAg';
+        this.clientId = 'ваш_client_id_здесь';
         this.redirectUri = window.location.origin + '/admin.html';
         this.apiBase = '/api';
         this.isAuthenticated = false;
@@ -16,7 +16,6 @@ class AdminPanel {
         this.checkAuth();
         this.bindEvents();
         
-        // Обрабатываем callback только если есть код в URL
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         
@@ -29,7 +28,7 @@ class AdminPanel {
     }
 
     checkAuth() {
-        const token极速赛车开奖结果 = localStorage.getItem('github_access_token');
+        const token = localStorage.getItem('github_access_token');
         const user = localStorage.getItem('github_user');
         const expiry = localStorage.getItem('token_expiry');
         
@@ -46,7 +45,7 @@ class AdminPanel {
         const configForm = document.getElementById('configForm');
         const macroForm = document.getElementById('macroForm');
         const cancelEdit = document.getElementById('cancelEdit');
-        const cancelMacroEdit = document.getElementById('cancelMac极速赛车开奖结果dit');
+        const cancelMacroEdit = document.getElementById('cancelMacroEdit');
         
         if (loginBtn) loginBtn.addEventListener('click', () => this.login());
         if (configForm) configForm.addEventListener('submit', (e) => this.handleConfigSubmit(e));
@@ -54,7 +53,6 @@ class AdminPanel {
         if (cancelEdit) cancelEdit.addEventListener('click', () => this.resetForm('config'));
         if (cancelMacroEdit) cancelMacroEdit.addEventListener('click', () => this.resetForm('macro'));
         
-        // Обработчики вкладок
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
         });
@@ -69,106 +67,67 @@ class AdminPanel {
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         
-        if (!code) {
-            console.log('No code found in URL');
-            return;
-        }
-
-        console.log('Processing auth callback with code:', code);
+        if (!code) return;
 
         try {
             const response = await fetch(`${this.apiBase}/auth/callback?code=${encodeURIComponent(code)}`);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
             const data = await response.json();
             
             if (data.access_token) {
-                console.log('Auth successful, saving token');
-                
                 localStorage.setItem('github_access_token', data.access_token);
                 localStorage.setItem('github_user', JSON.stringify(data.user));
                 localStorage.setItem('token_expiry', (Date.now() + 3600000).toString());
                 
-                // Очищаем URL от параметра code
                 window.history.replaceState({}, document.title, window.location.pathname);
                 
                 this.isAuthenticated = true;
                 this.currentUser = data.user;
                 this.showAdminPanel();
                 await this.loadConfigs();
-                
-            } else if (data.error) {
-                console.error('Auth error from server:', data.error);
-                alert('Ошибка авторизации: '极速赛车开奖结果 data.error);
-                this.logout();
             } else {
-                throw new Error('No access token received');
+                throw new Error(data.error || 'Auth failed');
             }
-            
         } catch (error) {
-            console.error('Auth callback error:', error);
+            console.error('Auth error:', error);
             alert('Ошибка авторизации: ' + error.message);
             this.logout();
         }
     }
 
     showAdminPanel() {
-        const loginSection = document.getElementById('loginSection');
-        const adminSection = document.getElementById('adminSection');
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'block';
         
-        if (loginSection) loginSection.style.display = 'none';
-        if (adminSection) adminSection.style.display = 'block';
-        
-        if (this.currentUser && adminSection) {
-            // Удаляем старую информацию о пользователе если есть
-            const oldUserInfo = document.querySelector('.user-info');
-            if (oldUserInfo) oldUserInfo.remove();
-            
+        if (this.currentUser) {
             const userInfo = document.createElement('div');
             userInfo.className = 'user-info';
             userInfo.innerHTML = `
                 <span>Вы вошли как: <strong>${this.currentUser.login}</strong></span>
                 <button onclick="admin.logout()" class="btn-secondary">Выйти</button>
             `;
-            adminSection.prepend(userInfo);
+            document.getElementById('adminSection').prepend(userInfo);
         }
     }
 
     logout() {
-        console.log('Logging out');
         localStorage.removeItem('github_access_token');
         localStorage.removeItem('github_user');
         localStorage.removeItem('token_expiry');
         this.isAuthenticated = false;
         this.currentUser = null;
-        
-        // Показываем кнопку входа
-        const loginSection = document.getElementById('loginSection');
-        const adminSection = document.getElementById('adminSection');
-        
-        if (loginSection) loginSection.style.display = 'block';
-        if (adminSection) adminSection.style.display = 'none';
-        
-        // Очищаем URL на всякий случай
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.location.reload();
     }
 
     switchTab(tabName) {
         this.currentTab = tabName;
         
-        // Обновляем активные вкладки
         document.querySelectorAll('.tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.tab === tabName);
         });
         
-        // Показываем/скрываем контент
         document.getElementById('configsTab').style.display = tabName === 'configs' ? 'block' : 'none';
         document.getElementById('macrosTab').style.display = tabName === 'macros' ? 'block' : 'none';
         
-                // Загружаем данные если нужно
         if (tabName === 'macros' && this.macros.length === 0) {
             this.loadMacros();
         }
@@ -176,15 +135,10 @@ class AdminPanel {
 
     async loadConfigs() {
         try {
-            console.log('Loading configs...');
-            const response = await fetch('config极速赛车开奖结果s/configs.json');
-            if (!response.ok) {
-                throw new Error(`Failed to load configs: ${response.status}`);
-            }
+            const response = await fetch('configs/configs.json');
             const data = await response.json();
             this.configs = data.configs || [];
             this.renderConfigsList();
-            console.log('Configs loaded:', this.configs.length);
         } catch (error) {
             console.error('Error loading configs:', error);
         }
@@ -192,15 +146,7 @@ class AdminPanel {
 
     renderConfigsList() {
         const container = document.getElementById('configsList');
-        if (!container) {
-            console.warn('Configs list container not found');
-            return;
-        }
-
-        if (this.configs.length === 0) {
-            container.innerHTML = '<p>Конфигов пока нет</p>';
-            return;
-        }
+        if (!container) return;
 
         container.innerHTML = this.configs.map(config => `
             <div class="config-item">
@@ -209,7 +155,7 @@ class AdminPanel {
                 <p>${this.escapeHtml(config.description)}</p>
                 <p><strong>Автор:</strong> ${this.escapeHtml(config.author)}</p>
                 ${config.screenshot && config.screenshot !== 'blank.png' ? `
-                    <img src="screenshots/${this.escapeHtml(config.screenshot)}" alt="Скриншот конфига" 
+                    <img src="screenshots/${this.escapeHtml(config.screenshot)}" alt="Скриншот" 
                          onerror="this.style.display='none'" style="max-width: 300px;">
                 ` : ''}
                 <button onclick="admin.editConfig('${this.escapeHtml(config.id)}')" class="btn-primary">Редактировать</button>
@@ -220,15 +166,10 @@ class AdminPanel {
 
     async loadMacros() {
         try {
-            console.log('Loading macros...');
             const response = await fetch('macros/macros.json');
-            if (!response极速赛车开奖结果.ok) {
-                throw new Error(`Failed to load macros: ${极速赛车开奖结果response.status}`);
-            }
             const data = await response.json();
             this.macros = data.macros || [];
             this.renderMacrosList();
-            console.log('Macros loaded:', this.macros.length);
         } catch (error) {
             console.error('Error loading macros:', error);
         }
@@ -236,18 +177,10 @@ class AdminPanel {
 
     renderMacrosList() {
         const container = document.getElementById('macrosList');
-        if (!container) {
-            console.warn('Macros list container not found');
-            return;
-        }
-
-        if (this.macros.length === 0) {
-            container.innerHTML = '<p>Макросов пока нет</p>';
-            return;
-        }
+        if (!container) return;
 
         container.innerHTML = this.macros.map(macro => `
-            <极速赛车开奖结果 class="config-item">
+            <div class="config-item">
                 <h4>${this.escapeHtml(macro.name)}</h4>
                 <p><strong>Класс:</strong> ${this.escapeHtml(macro.class)}</p>
                 <p>${this.escapeHtml(macro.description)}</p>
@@ -262,8 +195,7 @@ class AdminPanel {
     async handleConfigSubmit(e) {
         e.preventDefault();
         
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
+                if (!accessToken) {
             alert('Требуется авторизация');
             return;
         }
@@ -288,10 +220,6 @@ class AdminPanel {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action, configData: formData, accessToken })
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
 
             const result = await response.json();
             
@@ -333,7 +261,7 @@ class AdminPanel {
             const response = await fetch(`${this.apiBase}/macro/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, macro极速赛车开奖结果Data: formData, accessToken })
+                body: JSON.stringify({ action, macroData: formData, accessToken })
             });
 
             const result = await response.json();
@@ -357,32 +285,24 @@ class AdminPanel {
 
     editConfig(configId) {
         const config = this.configs.find(c => c.id === configId);
-        if (!config) {
-            alert('Конфиг не найден');
-            return;
-        }
+        if (!config) return;
 
         document.getElementById('configId').value = config.id;
         document.getElementById('configName').value = config.name;
         document.getElementById('configAddon').value = config.addon;
         document.getElementById('configClass').value = config.class;
         document.getElementById('configDescription').value = config.description;
-        document.getElementById('configContent').极速赛车开奖结果value = config.config;
+        document.getElementById('configContent').value = config.config;
         document.getElementById('configScreenshot').value = config.screenshot || '';
         document.getElementById('configAuthor').value = config.author;
         
         document.getElementById('formTitle').textContent = 'Редактировать конфиг';
-        
-        // Прокручиваем к форме
         document.getElementById('configForm').scrollIntoView({ behavior: 'smooth' });
     }
 
     editMacro(macroId) {
         const macro = this.macros.find(m => m.id === macroId);
-        if (!macro) {
-            alert('Макрос не найден');
-            return;
-        }
+        if (!macro) return;
 
         document.getElementById('macroId').value = macro.id;
         document.getElementById('macroName').value = macro.name;
@@ -393,7 +313,6 @@ class AdminPanel {
         
         document.getElementById('macroFormTitle').textContent = 'Редактировать макрос';
         
-        // Переключаемся на вкладку макросов если нужно
         if (this.currentTab !== 'macros') {
             this.switchTab('macros');
         }
@@ -401,23 +320,17 @@ class AdminPanel {
         document.getElementById('macroForm').scrollIntoView({ behavior: 'smooth' });
     }
 
-        async deleteConfig(configId) {
+    async deleteConfig(configId) {
         if (!confirm('Вы уверены, что хотите удалить этот конфиг?')) return;
 
         const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
-            alert('Требуется авторизация');
-            return;
-        }
+        if (!accessToken) return;
 
         const config = this.configs.find(c => c.id === configId);
-        if (!config) {
-            alert('Конфиг не найден');
-            return;
-        }
+        if (!config) return;
 
         try {
-            const response = await fetch(`${this.apiBase}/极速赛车开奖结果config/update`, {
+            const response = await fetch(`${this.apiBase}/config/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -445,16 +358,10 @@ class AdminPanel {
         if (!confirm('Вы уверены, что хотите удалить этот макрос?')) return;
 
         const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
-            alert('Требуется авторизация');
-            return;
-        }
+        if (!accessToken) return;
 
         const macro = this.macros.find(m => m.id === macroId);
-        if (!macro) {
-            alert('Макрос не найден');
-            return;
-        }
+        if (!macro) return;
 
         try {
             const response = await fetch(`${this.apiBase}/macro/update`, {
@@ -472,7 +379,7 @@ class AdminPanel {
             if (result.success) {
                 await this.loadMacros();
                 alert('Макрос удален!');
-极速赛车开奖结果            } else {
+            } else {
                 throw new Error(result.error || 'Ошибка удаления');
             }
         } catch (error) {
@@ -501,28 +408,10 @@ class AdminPanel {
     }
 }
 
-// Инициализация админ-панели
+// Инициализация
 let admin;
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Admin page loaded');
     admin = new AdminPanel();
-    
-    // Добавляем глобально для кнопок
     window.admin = admin;
 });
-
-// Простая функция для отладки - проверяет доступность API
-async function checkApiHealth() {
-    try {
-        const response = await fetch('/api/auth/callback');
-        console.log('API health check:', response.status);
-        return response.ok;
-    } catch (error) {
-        console.error('API health check failed:', error);
-        return false;
-    }
-}
-
-// Запускаем проверку при загрузке
-setTimeout(checkApiHealth, 1000);
