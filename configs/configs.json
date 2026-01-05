@@ -1,9 +1,9 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-05T09:44:34.550Z",
+    "lastUpdated": "2026-01-05T09:54:10.153Z",
     "updatedBy": "test",
-    "totalConfigs": 23,
+    "totalConfigs": 22,
     "schemaVersion": "1.0"
   },
   "configs": [
@@ -270,17 +270,6 @@
       "screenshot": "",
       "author": "SegaZBS",
       "created": "2026-01-04T00:00:00Z"
-    },
-    {
-      "id": "mk0z4x3ubbi3s3nosl",
-      "name": "Test",
-      "addon": "elvui",
-      "class": "warrior",
-      "description": "Test",
-      "config": "test",
-      "screenshot": "blank.png",
-      "author": "test",
-      "created": "2026-01-05T09:44:32.922Z"
     }
   ]
 }
