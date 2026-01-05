@@ -349,7 +349,7 @@ class AdminPanel {
             document.getElementById('configId').value = '';
             document.getElementById('configScreenshot').value = '';
             document.getElementById('formTitle').textContent = 'Добавить конфиг';
-        } else {
+        } else if (type === 'macro') {
             document.getElementById('macroForm').reset();
             document.getElementById('macroId').value = '';
             document.getElementById('macroFormTitle').textContent = 'Добавить макрос';
@@ -516,7 +516,7 @@ class AdminPanel {
             }
         } catch (error) {
             console.error('Error deleting addon:', error);
-            alert('Ошибка при удалении аддона: '极端的 + error.message);
+            alert('Ошибка при удалении аддона: ' + error.message);
         }
     }
 
