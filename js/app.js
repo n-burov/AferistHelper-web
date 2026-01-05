@@ -518,8 +518,60 @@ function renderConfigs(configs) {
 
 function showScreenshot(filename) {
     const screenshotUrl = `screenshots/${filename}`;
-    // Открыть модальное окно или новую вкладку
-    window.open(screenshotUrl, '_blank');
+    
+    // Создаем модальное окно для скриншота
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'screenshotModal';
+    
+    modal.innerHTML = `
+        <div class="modal-content screenshot-modal">
+            <div class="modal-header">
+                <h3>Просмотр скриншота</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body screenshot-body">
+                <img src="${screenshotUrl}" alt="Скриншот конфига" onerror="this.style.display='none'; document.querySelector('.screenshot-placeholder').style.display='flex';">
+                <div class="screenshot-placeholder" style="display: none;">
+                    <i class="fas fa-image" style="font-size: 3rem; color: rgba(255,255,255,0.3);"></i>
+                    <p style="color: rgba(255,255,255,0.5); margin-top: 10px;">Скриншот не найден</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'block';
+    
+    // Закрытие модального окна
+    const closeBtn = modal.querySelector('.close-modal');
+    if (closeBtn) {
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+            setTimeout(() => modal.remove(), 300);
+        };
+    }
+    
+    // Закрытие по клику вне окна
+    modal.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            setTimeout(() => modal.remove(), 300);
+        }
+    };
+    
+    // Закрытие по Escape
+    const handleEscape = function(event) {
+        if (event.key === 'Escape') {
+            modal.style.display = 'none';
+            setTimeout(() => {
+                modal.remove();
+                document.removeEventListener('keydown', handleEscape);
+            }, 300);
+        }
+    };
+    
+    document.addEventListener('keydown', handleEscape);
 }
 
 // Инициализация фильтров
