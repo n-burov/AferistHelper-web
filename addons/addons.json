@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-05T16:08:07.229Z",
+    "lastUpdated": "2026-01-05T18:40:30.656Z",
     "updatedBy": "SegaZBS",
     "totalAddons": 4,
     "schemaVersion": "1.0"
@@ -60,7 +60,7 @@
     },
     {
       "id": "sega-package",
-      "name": "Пак SegaZBS (В разработке)",
+      "name": "Пак SegaZBS",
       "version": "v1.1.6",
       "icon": "fas fa-users",
       "cssClass": "plater",
@@ -71,9 +71,9 @@
         "Моды для боссов",
         "Скрипты"
       ],
-      "downloadUrl": "",
+      "downloadUrl": "https://github.com/fxpw/ElvUI/archive/refs/heads/master.zip",
       "author": "SegaZBS",
-      "created": "2026-01-05T07:27:36.171Z"
+      "created": "2026-01-05T18:40:30.072Z"
     }
   ]
 }
