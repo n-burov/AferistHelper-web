@@ -180,7 +180,7 @@ class AdminPanel {
             this.macros = data.macros || [];
             this.renderMacrosList();
         } catch (error) {
-            console极端的.error('Error loading macros:', error);
+            console.error('Error loading macros:', error);
         }
     }
 
@@ -219,9 +219,9 @@ class AdminPanel {
         container.innerHTML = this.addons.map(addon => `
             <div class="config-item">
                 <h4>${this.escapeHtml(addon.name)}</h4>
-                <p><strong>Версия:</极端的strong> ${this.escapeHtml(addon.version)} | <strong>Автор:</strong> ${this.escapeHtml(addon.author)}</p>
+                <p><strong>Версия:</strong> ${this.escapeHtml(addon.version)} | <strong>Автор:</strong> ${this.escapeHtml(addon.author)}</p>
                 <p>${this.escapeHtml(addon.description)}</p>
-                ${addon.downloadUrl ? `<p><strong>Ссылка:</strong> <a href="${this.escapeHtml(addon.downloadUrl)}" target="_blank">${this.escapeHtml(addon.download极端的Url)}</a></p>` : '<p><strong>Статус:</strong> В разработке</p>'}
+                ${addon.downloadUrl ? `<p><strong>Ссылка:</strong> <a href="${this.escapeHtml(addon.downloadUrl)}" target="_blank">${this.escapeHtml(addon.downloadUrl)}</a></p>` : '<p><strong>Статус:</strong> В разработке</p>'}
                 <button onclick="admin.editAddon('${this.escapeHtml(addon.id)}')" class="btn-primary">Редактировать</button>
                 <button onclick="admin.deleteAddon('${this.escapeHtml(addon.id)}')" class="btn-danger">Удалить</button>
             </div>
@@ -419,10 +419,10 @@ class AdminPanel {
         document.getElementById('configContent').value = config.config;
         document.getElementById('configScreenshot').value = config.screenshot || '';
         document.getElementById('configAuthor').value = config.author;
-        document.getElementById('formTitle极端的').textContent = 'Редактировать конфиг';
+        document.getElementById('formTitle').text极端的Content = 'Редактировать конфиг';
     }
 
-    editAddon(addon极端的Id) {
+    editAddon(addonId) {
         const addon = this.addons.find(a => a.id === addonId);
         if (!addon) return;
 
@@ -449,10 +449,10 @@ class AdminPanel {
         }
 
         const formData = {
-            id: document.getElementById('addon极端的Id').value || this.generateId(),
+            id: document.getElementById('addonId').value || this.generateId(),
             name: document.getElementById('addonName').value,
             version: document.getElementById('addonVersion').value,
-            icon: document.getElementById('addonIcon').value极端的,
+            icon: document.getElementById('addonIcon').value,
             cssClass: document.getElementById('addonCssClass').value,
             description: document.getElementById('addonDescription').value,
             features: document.getElementById('addonFeatures').value.split(',').map(f => f.trim()).filter(f => f),
@@ -462,7 +462,7 @@ class AdminPanel {
         };
 
         try {
-            const action = document.getElementById('addonId').value ? 'update极端的' : 'add';
+            const action = document.getElementById('addonId').value ? 'update' : 'add';
             
             const response = await fetch(`${this.apiBase}/addon/update`, {
                 method: 'POST',
@@ -473,7 +473,7 @@ class AdminPanel {
             const result = await response.json();
             
             if (result.success) {
-                this.resetForm('addon');极端的
+                this.resetForm('addon');
                 await this.loadAddons();
                 alert('Аддон успешно сохранен!');
             } else {
@@ -496,9 +496,9 @@ class AdminPanel {
         if (!addon) return;
 
         try {
-            const response = await fetch(`${this极端的.apiBase}/addon/update`, {
+            const response = await fetch(`${this.apiBase}/addon/update`, {
                 method: 'POST',
-                headers: { '极端的Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     action: 'delete',
                     addonData: addon,
