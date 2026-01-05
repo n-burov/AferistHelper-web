@@ -3,44 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SegazbsHelper</title>
+    <title> SegazbsHelper </title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/RFNNQ4RP/71a2c23b-f462-482a-8e89-f0c4336d3d98.jpg">
 </head>
 <body>
     <header>
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="nav-logo">
-                    <a href="index.html">SegazbsHelper</a>
-                </div>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="index.html" class="nav-link">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="configs.html" class="nav-link">Конфиги</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="macros.html" class="nav-link">Макросы</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="addons.html" class="nav-link">Аддоны</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="guides.html" class="nav-link active">Гайды</a>
-                    </li>
-                </ul>
-                <div class="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
+        <div class="container">
+            <div class="header-content">
+                <h1><img src="images/icons8-орда-world-of-warcraft-48.png" alt="Horde" class="horde-icon"> SegazbsHelper | Гайды</h1>
+                <p class="subtitle">Полезные гайды на различные классы</p>
             </div>
-        </nav>
+            <nav>
+                <a href="index.html"><i class="fas fa-th-large"></i> Конфиги</a>
+                <a href="macros.html"><i class="fas fa-terminal"></i> Макросы</a>
+                <a href="addons.html"><i class="fas fa-puzzle-piece"></i> Аддоны</a>
+                <a href="guides.html" class="active"><i class="fas fa-video"></i> Гайды</a>
+                <a href="contribute.html" class="contribute-link">
+                    <i class="fas fa-plus-circle"></i> Добавить конфиг
+                </a>
+            </nav>
+        </div>
     </header>
 
-    <main class="container">
+    <div class="container">
         <section class="guides-section">
             <h1>Видео-гайды</h1>
             <p>Полезные видео-инструкции и руководства по использованию аддонов и макросов</p>
@@ -50,15 +37,35 @@
                 <div class="loading">Загрузка гайдов...</div>
             </div>
         </section>
-    </main>
+    </div>
 
     <footer>
-        <div class="footer-content">
-            <p>&copy; 2026 SegazbsHelper. Все права защищены.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3><img src="images/icons8-орда-world-of-warcraft-48.png" alt="Horde" class="horde-icon"> AferistHelper | Конфиги</h3>
+                    <p>База конфигов для аддонов World of Warcraft 3.3.5</p>
+                    <p class="footer-note">Конфиги обновляются автоматически при изменениях в репозитории</p>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="https://github.com/n-burov/AferistHelper-web" target="_blank" class="github-link">
+                        <i class="fab fa-github"></i> GitHub репозиторий
+                    </a>
+                    <a href="contribute.html" class="contribute-link">
+                        <i class="fas fa-plus-circle"></i> Добавить конфиг
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2026 SegazbsHelper. World of Warcraft и Blizzard Entertainment являются товарными знаками или зарегистрированными товарными знаками</p>
+            </div>
         </div>
     </footer>
 
+    <script src="js/utils.js"></script>
+    <script src="js/github-data.js"></script>
     <script src="js/guides.js"></script>
-    <script src="js/navbar.js"></script>
 </body>
 </html>
