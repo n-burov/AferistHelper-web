@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-05T16:08:07.229Z",
+    "updatedBy": "SegaZBS",
+    "totalAddons": 4,
+    "schemaVersion": "1.0"
+  },
+  "addons": [
+    {
+      "id": "elvui",
+      "name": "ElvUI",
+      "version": "v13.05",
+      "icon": "fas fa-layer-group",
+      "cssClass": "elvui",
+      "description": "Полный оверхол пользовательского интерфейса. Заменяет почти все стандартные элементы UI.",
+      "features": [
+        "Unit Frames",
+        "Action Bars",
+        "Миникарта",
+        "Профили"
+      ],
+      "downloadUrl": "https://github.com/fxpw/ElvUI/archive/refs/heads/master.zip",
+      "author": "ElvUI Team",
+      "created": "2026-01-05T07:24:36.171Z"
+    },
+    {
+      "id": "weakauras",
+      "name": "WeakAuras",
+      "version": "v2.17.5",
+      "icon": "fas fa-bolt",
+      "cssClass": "wa",
+      "description": "Мощный фреймворк для создания кастомизируемых индикаторов, таймеров и оповещений.",
+      "features": [
+        "Гибкие ауры",
+        "Таймеры",
+        "Прогресс-бары",
+        "Импорт/Экспорт"
+      ],
+      "downloadUrl": "https://github.com/fxpw/WeakAuras-Sirus.su/archive/refs/heads/main.zip",
+      "author": "WeakAuras Team",
+      "created": "2026-01-05T07:25:36.171Z"
+    },
+    {
+      "id": "details",
+      "name": "Details!",
+      "version": "v1.13.5",
+      "icon": "fas fa-chart-bar",
+      "cssClass": "details",
+      "description": "Продвинутый метр урона, исцеления и других статистик. Альтернатива Recount/Skada.",
+      "features": [
+        "Подробная статистика",
+        "Графики",
+        "Сегменты боя",
+        "Угрозы"
+      ],
+      "downloadUrl": "https://github.com/fxpw/Details_Sirus/archive/refs/heads/main.zip",
+      "author": "Details! Team",
+      "created": "2026-01-05T07:26:36.171Z"
+    },
+    {
+      "id": "sega-package",
+      "name": "Пак SegaZBS (В разработке)",
+      "version": "v1.1.6",
+      "icon": "fas fa-users",
+      "cssClass": "plater",
+      "description": "Полный пак аддонов, которые использует SegaZBS.",
+      "features": [
+        "Игровые плашки",
+        "Кастомизация цветов",
+        "Моды для боссов",
+        "Скрипты"
+      ],
+      "downloadUrl": "",
+      "author": "SegaZBS",
+      "created": "2026-01-05T07:27:36.171Z"
+    }
+  ]
+}
