@@ -172,5 +172,79 @@ class AdminPanel {
         }
     }
 
-    generateId() {
-        return `config-${Date.now()}-${Math.random().toString(36).substr(2,
+        generateId() {
+        return `config-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    editConfig(configId) {
+        const config = this.configs.find(c => c.id === configId);
+        if (!config) return;
+
+        document.getElementById('configId').value = config.id;
+        document.getElementById('configName').value = config.name;
+        document.getElementById('configAddon').value = config.addon;
+        document.getElementById('configClass').value = config.class;
+        document.getElementById('configRole').value = config.role;
+        document.getElementById('configDescription').value = config.description;
+        document.getElementById('configContent').value = config.config;
+        document.getElementById('configAuthor').value = config.author;
+        
+        document.getElementById('formTitle').textContent = 'Редактировать конфиг';
+    }
+
+    async deleteConfig(configId) {
+        if (!confirm('Вы уверены, что хотите удалить этот конфиг?')) return;
+
+        const accessToken = localStorage.getItem('github_access_token');
+        if (!accessToken) {
+            alert('Требуется авторизация');
+            return;
+        }
+
+        const config = this.configs.find(c => c.id === configId);
+        if (!config) return;
+
+        try {
+            const response = await fetch(`${this.apiBase}/config/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'delete',
+                    configData: config,
+                    accessToken: accessToken
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                await this.loadConfigs();
+                alert('Конфиг удален!');
+            } else {
+                throw new Error(result.error || 'Ошибка удаления');
+            }
+        } catch (error) {
+            console.error('Error deleting config:', error);
+            alert('Ошибка при удалении конфига: ' + error.message);
+        }
+    }
+
+    resetForm() {
+        document.getElementById('configForm').reset();
+        document.getElementById('configId').value = '';
+        document.getElementById('formTitle').textContent = 'Добавить конфиг';
+    }
+}
+
+// Инициализация админ-панели
+const admin = new AdminPanel();
+
+// Обработка callback при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    
+    if (code) {
+        admin.handleAuthCallback();
+    }
+});
