@@ -527,12 +527,12 @@ function addMacrosStyles() {
             align-items: center;
             justify-content: center;
             gap: 8px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, #CC3700, #A52A2A);
             color: white;
         }
         
         .copy-macro-btn:hover {
-            background: linear-gradient(135deg, #2980b9, #3498db);
+            background: linear-gradient(135deg, #A52A2A, #CC3700);
         }
         
         .copy-macro-btn.copied {
