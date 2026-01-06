@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-06T15:42:22.384Z",
+    "lastUpdated": "2026-01-06T15:43:27.194Z",
     "updatedBy": "test",
     "totalGuides": 1,
     "schemaVersion": "1.0"
@@ -9,11 +9,11 @@
   "guides": [
     {
       "id": "mk2rcvv7enacu35dppc",
-      "title": "test",
-      "description": "test",
+      "title": "Какое-то название",
+      "description": "Какое-то описание...",
       "youtubeUrl": "https://aferisthelper.vercel.app/addons.html",
       "author": "test",
-      "created": "2026-01-06T15:42:19.987Z"
+      "created": "2026-01-06T15:43:25.011Z"
     }
   ]
 }
