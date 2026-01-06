@@ -281,7 +281,7 @@ class AdminPanel {
             description: document.getElementById('configDescription').value,
             class: document.getElementById('configClass').value,
             addon: document.getElementById('configAddon').value,
-            content: document.getElementById('configContent').value,
+            config: document.getElementById('configContent').value, // ← ИЗМЕНИТЬ content на config
             author: document.getElementById('configAuthor').value,
             created: new Date().toISOString()
         };
@@ -305,7 +305,7 @@ class AdminPanel {
                     try {
                         await fetch('/api/telegram/notify', {
                             method: 'POST',
-                            headers: { 'Content-Type': '极端的application/json' },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 type: 'конфиг',
                                 title: formData.name,
@@ -491,16 +491,16 @@ class AdminPanel {
     editConfig(configId) {
         const config = this.configs.find(c => c.id === configId);
         if (!config) return;
-
+    
         document.getElementById('configId').value = config.id;
         document.getElementById('configName').value = config.name;
         document.getElementById('configAddon').value = config.addon;
         document.getElementById('configClass').value = config.class;
         document.getElementById('configDescription').value = config.description;
-        document.getElementById('configContent').value = config.config;
-        document.getElementById('configScreenshot').value = config.screenshot || '';
+        document.getElementById('configContent').value = config.config; // ← ИЗМЕНИТЬ config.content на config.config
         document.getElementById('configAuthor').value = config.author;
-        document.getElementById('formTitle').textContent = 'Редактировать конфиг';
+        
+        document.getElementById('configFormTitle').textContent = 'Редактировать конфиг';
     }
 
     editAddon(addonId) {
