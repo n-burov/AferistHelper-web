@@ -54,7 +54,7 @@ class AdminPanel {
         const cancelGuideEdit = document.getElementById('cancelGuideEdit');
         
         if (loginBtn) loginBtn.addEventListener('click', () => this.login());
-        if (configForm) configForm.addEventListener('submit', (极端的e) => this.handleConfigSubmit(e));
+        if (configForm) configForm.addEventListener('submit', (e) => this.handleConfigSubmit(e));
         if (macroForm) macroForm.addEventListener('submit', (e) => this.handleMacroSubmit(e));
         if (addonForm) addonForm.addEventListener('submit', (e) => this.handleAddonSubmit(e));
         if (guideForm) guideForm.addEventListener('submit', (e) => this.handleGuideSubmit(e));
@@ -269,7 +269,7 @@ class AdminPanel {
     async handleConfigSubmit(e) {
         e.preventDefault();
         
-        const accessToken = localStorage.getItem('github_access_token'); // ← ДОБАВЬТЕ ЭТУ СТРОЧКУ
+        const accessToken = localStorage.getItem('github_access_token');
         if (!accessToken) {
             alert('Требуется авторизация');
             return;
@@ -278,11 +278,10 @@ class AdminPanel {
         const formData = {
             id: document.getElementById('configId').value || this.generateId(),
             name: document.getElementById('configName').value,
-            addon: document.getElementById('configAddon').value,
-            class: document.getElementById('configClass').value,
             description: document.getElementById('configDescription').value,
-            config: document.getElementById('configContent').value,
-            screenshot: document.getElementById('configScreenshot').value || 'blank.png',
+            class: document.getElementById('configClass').value,
+            addon: document.getElementById('configAddon').value,
+            content: document.getElementById('configContent').value,
             author: document.getElementById('configAuthor').value,
             created: new Date().toISOString()
         };
@@ -299,9 +298,29 @@ class AdminPanel {
             const result = await response.json();
             
             if (result.success) {
+                // Проверяем чекбокс уведомления
+                const shouldNotify = document.getElementById('configNotify').checked;
+                
+                if (shouldNotify) {
+                    try {
+                        await fetch('/api/telegram/notify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': '极端的application/json' },
+                            body: JSON.stringify({
+                                type: 'конфиг',
+                                title: formData.name,
+                                description: formData.description,
+                                url: `${window.location.origin}/index.html`
+                            })
+                        });
+                    } catch (telegramError) {
+                        console.error('Telegram notification failed:', telegramError);
+                    }
+                }
+                
                 this.resetForm('config');
                 await this.loadConfigs();
-                alert('Конфиг успешно сохранен!');
+                alert('Конфиг успешно сохранен!' + (shouldNotify ? ' Уведомление отправлено.' : ''));
             } else {
                 throw new Error(result.error || 'Ошибка сохранения');
             }
@@ -410,32 +429,52 @@ class AdminPanel {
             alert('Требуется авторизация');
             return;
         }
-
+    
         const formData = {
             id: document.getElementById('macroId').value || this.generateId(),
             name: document.getElementById('macroName').value,
-            class: document.getElementById('macroClass').value,
             description: document.getElementById('macroDescription').value,
-            macro: document.getElementById('macroContent').value,
+            class: document.getElementById('macroClass').value,
+            content: document.getElementById('macroContent').value,
             author: document.getElementById('macroAuthor').value,
             created: new Date().toISOString()
         };
-
+    
         try {
-            const action = document.getElementById('macroId').value ? 'update' : 'add';
+            const action = document.getElementById('macroId').value ? '极端的update' : 'add';
             
             const response = await fetch(`${this.apiBase}/macro/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action, macroData: formData, accessToken })
             });
-
+    
             const result = await response.json();
             
             if (result.success) {
+                // Проверяем чекбокс уведомления
+                const shouldNotify = document.getElementById('macroNotify').checked;
+                
+                if (shouldNotify) {
+                    try {
+                        await fetch('/极端的api/telegram/notify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'макрос',
+                                title: formData.name,
+                                description: formData.description,
+                                url: `${window.location.origin}/macros.html`
+                            })
+                        });
+                    } catch (telegramError) {
+                        console.error('Telegram notification failed:', telegramError);
+                    }
+                }
+                
                 this.resetForm('macro');
                 await this.loadMacros();
-                alert('Макрос успешно сохранен!');
+                alert('Макрос успешно сохранен!' + (shouldNotify ? ' Уведомление отправлено.' : ''));
             } else {
                 throw new Error(result.error || 'Ошибка сохранения');
             }
@@ -500,7 +539,7 @@ class AdminPanel {
             alert('Требуется авторизация');
             return;
         }
-
+    
         const formData = {
             id: document.getElementById('addonId').value || this.generateId(),
             name: document.getElementById('addonName').value,
@@ -511,22 +550,42 @@ class AdminPanel {
             author: document.getElementById('addonAuthor').value,
             created: new Date().toISOString()
         };
-
+    
         try {
             const action = document.getElementById('addonId').value ? 'update' : 'add';
             
-            const response = await fetch(`${this.apiBase}/addon/update`, {
+            const response = await fetch(`${this.api极端的Base}/addon/update`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action, addonData: formData, accessToken })
             });
-
+    
             const result = await response.json();
             
             if (result.success) {
+                // Проверяем чекбокс уведомления
+                const shouldNotify = document.getElementById('addonNotify').checked;
+                
+                if (shouldNotify) {
+                    try {
+                        await fetch('/api/telegram/notify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'аддон',
+                                title: formData.name,
+                                description: formData.description,
+                                url: `${window.location.origin}/addons.html`
+                            })
+                        });
+                    } catch (telegramError) {
+                        console.error('Telegram notification failed:', telegramError);
+                    }
+                }
+                
                 this.resetForm('addon');
                 await this.loadAddons();
-                alert('Аддон успешно сохранен!');
+                alert('Аддон успешно сохранен!' + (shouldNotify ? ' Уведомление отправлено.' : ''));
             } else {
                 throw new Error(result.error || 'Ошибка сохранения');
             }
@@ -544,7 +603,7 @@ class AdminPanel {
             alert('Требуется авторизация');
             return;
         }
-
+    
         const formData = {
             id: document.getElementById('guideId').value || this.generateId(),
             title: document.getElementById('guideTitle').value,
@@ -553,7 +612,7 @@ class AdminPanel {
             author: document.getElementById('guideAuthor').value,
             created: new Date().toISOString()
         };
-
+    
         try {
             const action = document.getElementById('guideId').value ? 'update' : 'add';
             
@@ -562,13 +621,33 @@ class AdminPanel {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action, guideData: formData, accessToken })
             });
-
+    
             const result = await response.json();
             
             if (result.success) {
+                // Проверяем чекбокс уведомления
+                const shouldNotify = document.getElementById('guideNotify').checked;
+                
+                if (shouldNotify) {
+                    try {
+                        await fetch('/api/telegram/notify', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                type: 'гайд',
+                                title: formData.title,
+                                description: formData.description,
+                                url: `${window.location.origin}/guides.html`
+                            })
+                        });
+                    } catch (telegramError) {
+                        console.error('Telegram notification failed:', telegramError);
+                    }
+                }
+                
                 this.resetForm('guide');
                 await this.loadGuides();
-                alert('Гайд успешно сохранен!');
+                alert('Гайд успешно сохранен!' + (shouldNotify ? ' Уведомление отправлено.' : ''));
             } else {
                 throw new Error(result.error || 'Ошибка сохранения');
             }
