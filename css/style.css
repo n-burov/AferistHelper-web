@@ -1133,7 +1133,7 @@ footer .horde-icon {
 
 /* Улучшенный дизайн хедера в виде флага Орды - темная версия */
 
-@import url('https://fonts.googleapis.com/css2?family=New+Rocker&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=New+Rocker&display=swap');
 
 .header-flag {
     background: linear-gradient(
@@ -1249,7 +1249,7 @@ footer .horde-icon {
 /* Текст названия */
 /* Текст названия с эффектной обводкой */
 .header-title-flag {
-    font-family: 'New Rocker", system-ui;
+    font-family: 'New Rocker', system-ui;
     font-size: 2.4rem;
     font-style: normal;
     font-weight: 400;
@@ -1270,30 +1270,6 @@ footer .horde-icon {
     margin: 0;
     line-height: 1.1;
     position: relative;
-}
-
-/* Эффект свечения */
-.header-title-flag::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 120%;
-    height: 120%;
-    background: radial-gradient(
-        ellipse at center,
-        rgba(139, 0, 0, 0.4) 0%,
-        transparent 70%
-    );
-    transform: translate(-50%, -50%);
-    z-index: -1;
-    filter: blur(20px);
-    animation: title-glow 3s ease-in-out infinite alternate;
-}
-
-@keyframes title-glow {
-    0% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
 }
 
 .header-subtitle-flag {
