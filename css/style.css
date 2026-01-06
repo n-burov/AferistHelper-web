@@ -1128,3 +1128,114 @@ footer .horde-icon {
 .emoji {
     font-size: 1.2em;
 }
+
+/* Новый хедер в стиле флага Орды */
+.header-flag {
+    background: linear-gradient(
+        to bottom,
+        rgba(102, 0, 0, 0.95) 0%,
+        rgba(76, 0, 0, 0.85) 30%,
+        rgba(51, 0, 0, 0.7) 60%,
+        rgba(38, 0, 0, 0.4) 100%
+    );
+    padding: 2rem 0 3rem 0;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Рваные края флага */
+.header-flag::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0,20 Q20,0 40,20 Q60,0 80,20 Q100,0 100,20 L100,40 L0,40 Z' fill='%23660000'/%3E%3C/svg%3E") bottom center / 100% 40px repeat-x;
+}
+
+/* Крупное лого Орды */
+.horde-logo-large {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 1rem;
+    background: radial-gradient(circle, #cc3700 0%, #8B0000 70%, #660000 100%);
+    border-radius: 50%;
+    border: 4px solid #ffd700;
+    box-shadow: 0 0 30px rgba(204, 55, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.horde-logo-large::before {
+    content: '⚔️';
+    font-size: 3.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Заголовок */
+.header-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7),
+                 0 0 10px rgba(204, 55, 0, 0.8);
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Подзаголовок */
+.header-subtitle {
+    color: #ffffff;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+}
+
+/* Навигация */
+.header-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+}
+
+/* Анимации */
+@keyframes flagWave {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(1deg); }
+}
+
+.header-flag {
+    animation: flagWave 10s ease-in-out infinite;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .header-title {
+        font-size: 2rem;
+    }
+    
+    .horde-logo-large {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .horde-logo-large::before {
+        font-size: 2.5rem;
+    }
+    
+    .header-nav {
+        gap: 0.5rem;
+    }
+}
