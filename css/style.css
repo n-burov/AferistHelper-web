@@ -1129,21 +1129,23 @@ footer .horde-icon {
     font-size: 1.2em;
 }
 
-/* Улучшенный дизайн хедера в виде флага Орды */
+/* ===== ТЕМНЫЙ ДИЗАЙН ХЕДЕРА С КРУПНЫМ ЛОГОТИПОМ ===== */
+
+/* Улучшенный дизайн хедера в виде флага Орды - темная версия */
 .header-flag {
     background: linear-gradient(
         135deg,
-        #8B0000 0%,
-        #660000 25%,
-        #8B0000 50%,
-        #660000 75%,
-        #8B0000 100%
+        #450000 0%,
+        #300000 25%,
+        #450000 50%,
+        #300000 75%,
+        #450000 100%
     );
-    padding: 1.5rem 0;
+    padding: 1.8rem 0;
     position: relative;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    border-bottom: 3px solid #A52A2A;
-    min-height: 120px;
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.6);
+    border-bottom: 3px solid #700000;
+    min-height: 160px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -1156,25 +1158,25 @@ footer .horde-icon {
     position: absolute;
     left: 0;
     right: 0;
-    height: 12px;
+    height: 15px;
     background: repeating-linear-gradient(
         45deg,
         transparent,
-        transparent 4px,
-        #A52A2A 4px,
-        #A52A2A 8px
+        transparent 5px,
+        #700000 5px,
+        #700000 10px
     );
     z-index: 2;
 }
 
 .header-flag::before {
     top: 0;
-    transform: translateY(-6px);
+    transform: translateY(-7px);
 }
 
 .header-flag::after {
     bottom: 0;
-    transform: translateY(6px);
+    transform: translateY(7px);
 }
 
 /* Контейнер для контента хедера */
@@ -1185,152 +1187,251 @@ footer .horde-icon {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 25px;
 }
 
 /* Левый блок с логотипом и названием */
 .header-left {
     display: flex;
     align-items: center;
-    gap: 15px;
-    flex: 0 0 25%;
+    gap: 20px;
+    flex: 0 0 30%;
 }
 
-/* Большое пульсирующее лого Орды */
+/* Большое темное пульсирующее лого Орды */
 .horde-logo-large {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #CC3700, #FF4500);
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #8B0000, #A52A2A);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 
-        0 0 40px rgba(255, 69, 0, 0.6),
-        0 0 80px rgba(255, 69, 0, 0.3),
-        inset 0 0 15px rgba(255, 255, 255, 0.2);
+        0 0 50px rgba(139, 0, 0, 0.5),
+        0 0 100px rgba(139, 0, 0, 0.2),
+        inset 0 0 20px rgba(0, 0, 0, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.1);
     position: relative;
-    animation: pulse 3s ease-in-out infinite;
+    animation: pulse-dark 4s ease-in-out infinite;
+    border: 2px solid rgba(165, 42, 42, 0.3);
 }
 
 .horde-logo-large img {
-    width: 40px;
-    height: 40px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    width: 55px;
+    height: 55px;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7)) 
+           brightness(1.1) 
+           contrast(1.2);
 }
 
-/* Анимация пульсации */
-@keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.9; }
+/* Анимация пульсации для темной темы */
+@keyframes pulse-dark {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 
+            0 0 50px rgba(139, 0, 0, 0.5),
+            0 0 100px rgba(139, 0, 0, 0.2),
+            inset 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+    50% { 
+        transform: scale(1.08); 
+        box-shadow: 
+            0 0 70px rgba(139, 0, 0, 0.6),
+            0 0 130px rgba(139, 0, 0, 0.3),
+            inset 0 0 25px rgba(0, 0, 0, 0.5);
+    }
 }
 
 /* Текст названия */
 .header-title-flag {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
-        2px 2px 4px rgba(0, 0, 0, 0.7),
-        0 0 20px rgba(255, 69, 0, 0.5);
+        3px 3px 6px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(139, 0, 0, 0.4);
+    letter-spacing: 0.5px;
 }
 
 .header-subtitle-flag {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.9rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-    margin-top: 2px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    margin-top: 3px;
+    font-weight: 400;
 }
 
-/* Улучшенная навигация */
+/* Улучшенная навигация - темная версия */
 .nav-flag {
     display: flex;
-    gap: 5px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 25px;
-    padding: 5px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    padding: 6px;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .nav-flag a {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    padding: 8px 20px;
-    border-radius: 20px;
+    padding: 10px 22px;
+    border-radius: 25px;
     transition: all 0.3s ease;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .nav-flag a:hover {
     color: #FFFFFF;
-    background: rgba(255, 69, 0, 0.3);
-    transform: translateY(-1px);
+    background: rgba(139, 0, 0, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2);
 }
 
 .nav-flag a.active {
     color: #FFFFFF;
-    background: rgba(255, 69, 0, 0.4);
-    box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+    background: rgba(139, 0, 0, 0.35);
+    box-shadow: 
+        0 4px 15px rgba(139, 0, 0, 0.3),
+        inset 0 1px 2px rgba(255, 255, 255, 0.1);
 }
 
 /* Кнопка "Добавить конфиг" */
 .contribute-link-flag {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #FFFFFF !important;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8) !important;
 }
 
 .contribute-link-flag:hover {
-    background: rgba(255, 69, 0, 0.3);
-    border-color: rgba(255, 69, 0, 0.4);
+    background: rgba(139, 0, 0, 0.3);
+    border-color: rgba(139, 0, 0, 0.4);
+    color: #FFFFFF !important;
 }
 
 /* Адаптивность */
-@media (max-width: 968px) {
+@media (max-width: 1024px) {
     .header-content-flag {
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
         text-align: center;
+        padding: 0 20px;
     }
     
     .header-left {
         flex: none;
         justify-content: center;
+        gap: 15px;
+    }
+    
+    .horde-logo-large {
+        width: 75px;
+        height: 75px;
+    }
+    
+    .horde-logo-large img {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .header-title-flag {
+        font-size: 1.7rem;
     }
     
     .nav-flag {
         flex-wrap: wrap;
         justify-content: center;
+        max-width: 100%;
     }
     
     .nav-flag a {
-        padding: 6px 15px;
-        font-size: 0.85rem;
+        padding: 8px 18px;
+        font-size: 0.88rem;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+    .header-flag {
+        padding: 1.2rem 0;
+        min-height: 130px;
+    }
+    
     .header-title-flag {
         font-size: 1.5rem;
     }
     
+    .header-subtitle-flag {
+        font-size: 0.85rem;
+    }
+    
     .horde-logo-large {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
     }
     
     .horde-logo-large img {
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
+    }
+    
+        .nav-flag {
+        border-radius: 20px;
+        padding: 4px;
+        gap: 4px;
     }
     
     .nav-flag a {
-        padding: 5px 12px;
+        padding: 6px 14px;
         font-size: 0.8rem;
+        gap: 6px;
+    }
+    
+    .nav-flag a i {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-left {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .header-title-flag {
+        font-size: 1.3rem;
+    }
+    
+    .nav-flag {
+        flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .nav-flag a {
+        justify-content: center;
+        border-radius: 15px;
+    }
+}
+
+/* Плавное появление для анимаций */
+.header-flag {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
