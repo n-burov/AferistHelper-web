@@ -1129,7 +1129,7 @@ footer .horde-icon {
     font-size: 1.2em;
 }
 
-/* Новый дизайн хедера в виде флага Орды */
+/* Улучшенный дизайн хедера в виде флага Орды */
 .header-flag {
     background: linear-gradient(
         135deg,
@@ -1139,14 +1139,13 @@ footer .horde-icon {
         #660000 75%,
         #8B0000 100%
     );
-    padding: 2rem 0;
+    padding: 1.5rem 0;
     position: relative;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     border-bottom: 3px solid #A52A2A;
-    min-height: 200px;
+    min-height: 120px;
     display: flex;
     align-items: center;
-    justify-content: center;
     overflow: hidden;
 }
 
@@ -1157,51 +1156,66 @@ footer .horde-icon {
     position: absolute;
     left: 0;
     right: 0;
-    height: 15px;
+    height: 12px;
     background: repeating-linear-gradient(
         45deg,
         transparent,
-        transparent 5px,
-        #A52A2A 5px,
-        #A52A2A 10px
+        transparent 4px,
+        #A52A2A 4px,
+        #A52A2A 8px
     );
     z-index: 2;
 }
 
 .header-flag::before {
     top: 0;
-    transform: translateY(-7px);
+    transform: translateY(-6px);
 }
 
 .header-flag::after {
     bottom: 0;
-    transform: translateY(7px);
+    transform: translateY(6px);
 }
 
-/* Большая эмблема Орды в центре */
+/* Контейнер для контента хедера */
+.header-content-flag {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Левый блок с логотипом и названием */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 0 0 25%;
+}
+
+/* Большое пульсирующее лого Орды */
 .horde-logo-large {
-    width: 120px;
-    height: 120px;
+    width: 60px;
+    height: 60px;
     background: linear-gradient(135deg, #CC3700, #FF4500);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 
-        0 0 60px rgba(255, 69, 0, 0.6),
-        0 0 100px rgba(255, 69, 0, 0.3),
-        inset 0 0 20px rgba(255, 255, 255, 0.2);
+        0 0 40px rgba(255, 69, 0, 0.6),
+        0 0 80px rgba(255, 69, 0, 0.3),
+        inset 0 0 15px rgba(255, 255, 255, 0.2);
     position: relative;
-    z-index: 1;
     animation: pulse 3s ease-in-out infinite;
 }
 
-.horde-logo-large::before {
-    content: '';
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23FFFFFF' d='M50 20 L80 50 L50 80 L20 50 Z'/%3E%3C/svg%3E") center/contain no-repeat;
+.horde-logo-large img {
+    width: 40px;
+    height: 40px;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
@@ -1211,85 +1225,112 @@ footer .horde-icon {
     50% { transform: scale(1.05); opacity: 0.9; }
 }
 
-/* Текст на флаге */
-.header-title {
-    font-size: 2.5rem;
+/* Текст названия */
+.header-title-flag {
+    font-size: 1.8rem;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
         2px 2px 4px rgba(0, 0, 0, 0.7),
         0 0 20px rgba(255, 69, 0, 0.5);
-    margin-left: 20px;
-    position: relative;
-    z-index: 1;
 }
 
-.header-subtitle {
+.header-subtitle-flag {
     color: rgba(255, 255, 255, 0.9);
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-    margin-top: 5px;
+    margin-top: 2px;
 }
 
-/* Навигация на флаге */
-.header-nav {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
+/* Улучшенная навигация */
+.nav-flag {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    z-index: 3;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 25px;
+    padding: 5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.header-nav a {
-    color: #FFFFFF;
+.nav-flag a {
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     padding: 8px 20px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;
     transition: all 0.3s ease;
     font-weight: 500;
-    backdrop-filter: blur(10px);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.header-nav a:hover {
+.nav-flag a:hover {
+    color: #FFFFFF;
     background: rgba(255, 69, 0, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(255, 69, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.nav-flag a.active {
+    color: #FFFFFF;
+    background: rgba(255, 69, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+}
+
+/* Кнопка "Добавить конфиг" */
+.contribute-link-flag {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFFFFF !important;
+}
+
+.contribute-link-flag:hover {
+    background: rgba(255, 69, 0, 0.3);
+    border-color: rgba(255, 69, 0, 0.4);
 }
 
 /* Адаптивность */
-@media (max-width: 768px) {
-    .header-flag {
-        padding: 1.5rem 0;
-        min-height: 150px;
+@media (max-width: 968px) {
+    .header-content-flag {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .header-left {
+        flex: none;
+        justify-content: center;
+    }
+    
+    .nav-flag {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-flag a {
+        padding: 6px 15px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-title-flag {
+        font-size: 1.5rem;
     }
     
     .horde-logo-large {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .horde-logo-large::before {
         width: 50px;
         height: 50px;
     }
     
-    .header-title {
-        font-size: 1.8rem;
+    .horde-logo-large img {
+        width: 30px;
+        height: 30px;
     }
     
-    .header-nav {
-        flex-wrap: wrap;
-        gap: 10px;
-        bottom: 10px;
-    }
-    
-    .header-nav a {
-        padding: 6px 15px;
-        font-size: 0.9rem;
+    .nav-flag a {
+        padding: 5px 12px;
+        font-size: 0.8rem;
     }
 }
