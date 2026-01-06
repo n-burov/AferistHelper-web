@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     
     // Для действий add и update требуется guideData
     if ((action === 'add' || action === 'update') && !guideData) {
-        return res.status极端的(400).json({ error: 'Missing guideData for add/update' });
+        return res.status(400).json({ error: 'Missing guideData for add/update' });
     }
     
     // Для действия delete требуется guideId
@@ -56,7 +56,7 @@ export default async function handler(req, res) {
         await octokit.repos.createOrUpdateFileContents({
             owner: process.env.GITHUB_OWNER,
             repo: process.env.GITHUB_REPO,
-            path: '极端的guides/guides.json',
+            path: 'guides/guides.json',
             message: `${action} guide: ${action === 'delete' ? guideId : guideData.title}`,
             content: Buffer.from(JSON.stringify(guides, null, 2)).toString('base64'),
             sha: currentContent.sha
