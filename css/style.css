@@ -1251,7 +1251,7 @@ footer .horde-icon {
 .header-title-flag {
     font-family: 'New Rocker", system-ui;
     font-size: 2.4rem;
-    font-weight: 700;
+    font-weight: 400;
     color: #FFFFFF;
     text-shadow: 
         -3px -3px 0 #8B0000,
@@ -1266,7 +1266,6 @@ footer .horde-icon {
         0 0 70px rgba(139, 0, 0, 0.5),
         0 0 100px rgba(139, 0, 0, 0.3);
     letter-spacing: 2px;
-    text-transform: uppercase;
     margin: 0;
     line-height: 1.1;
     position: relative;
