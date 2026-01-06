@@ -1132,6 +1132,19 @@ footer .horde-icon {
 /* ===== ТЕМНЫЙ ДИЗАЙН ХЕДЕРА С КРУПНЫМ ЛОГОТИПОМ ===== */
 
 /* Улучшенный дизайн хедера в виде флага Орды - темная версия */
+
+/* Подключение шрифта Warcraft */
+@font-face {
+    font-family: 'Warcraft';
+    src: url('fonts/warcraft.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Резервный шрифт */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&display=swap');
+
 .header-flag {
     background: linear-gradient(
         135deg,
@@ -1245,13 +1258,29 @@ footer .horde-icon {
 
 /* Текст названия */
 .header-title-flag {
-    font-size: 2rem;
-    font-weight: bold;
+    font-family: 'Warcraft', 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 500;
     color: #FFFFFF;
     text-shadow: 
-        3px 3px 6px rgba(0, 0, 0, 0.8),
-        0 0 25px rgba(139, 0, 0, 0.4);
-    letter-spacing: 0.5px;
+        /* Многослойная обводка */
+        -2px -2px 0 #8B0000,
+        2px -2px 0 #8B0000,
+        -2px 2px 0 #8B0000,
+        2px 2px 0 #8B0000,
+        -3px -3px 0 #660000,
+        3px -3px 0 #660000,
+        -3px 3px 0 #660000,
+        3px 3px 0 #660000,
+        /* Внешняя тень */
+        0 0 30px rgba(139, 0, 0, 0.6),
+        0 0 60px rgba(139, 0, 0, 0.4),
+        0 0 90px rgba(139, 0, 0, 0.2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.1;
+    position: relative;
 }
 
 .header-subtitle-flag {
