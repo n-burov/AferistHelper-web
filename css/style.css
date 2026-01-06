@@ -1133,7 +1133,7 @@ footer .horde-icon {
 
 /* Улучшенный дизайн хедера в виде флага Орды - темная версия */
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Russo+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=New+Rocker&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 .header-flag {
     background: linear-gradient(
@@ -1249,7 +1249,7 @@ footer .horde-icon {
 /* Текст названия */
 /* Текст названия с эффектной обводкой */
 .header-title-flag {
-    font-family: 'Orbitron', 'Russo One', sans-serif;
+    font-family: 'New Rocker", system-ui;
     font-size: 2.4rem;
     font-weight: 700;
     color: #FFFFFF;
