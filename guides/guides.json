@@ -1,10 +1,19 @@
 {
   "meta": {
     "version": "1.0.0",
-    "lastUpdated": "2026-01-05T16:08:07.229Z",
-    "updatedBy": "SegaZBS",
-    "totalGuides": 0,
+    "lastUpdated": "2026-01-06T07:51:16.669Z",
+    "updatedBy": "test",
+    "totalGuides": 1,
     "schemaVersion": "1.0"
   },
-  "guides": []
+  "guides": [
+    {
+      "id": "mk2aj293taxa2ykd7ri",
+      "title": "test",
+      "description": "test",
+      "youtubeUrl": "https://aferisthelper.vercel.app/addons.html",
+      "author": "test",
+      "created": "2026-01-06T07:51:14.727Z"
+    }
+  ]
 }
