@@ -4,12 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Segazbs Helper </title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/RFNNQ4RP/71a2c23b-f462-482a-8e89-f0c4336d3d98.jpg">
+    <!-- Критические ресурсы сначала -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=New+Rocker&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Preload для шрифтов -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=New+Rocker&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=New+Rocker&display=swap" rel="stylesheet">
+    </noscript>
+    <style>
+        /* Критический CSS для мгновенного отображения */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1A1A1A;
+            color: #E8E8E8;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+        .loading { 
+            text-align: center; 
+            padding: 60px 20px;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
 </head>
 <body>
     <header class="header-flag">
@@ -180,8 +211,10 @@
         </div>
     </div>
 
-    <script src="js/utils.js"></script>
-    <script src="js/github-data.js"></script>
-    <script src="js/app.js"></script>
+    <!-- Скрипты с defer для неблокирующей загрузки -->
+    <script src="js/preload.js" defer></script>
+    <script src="js/utils.js" defer></script>
+    <script src="js/github-data.js" defer></script>
+    <script src="js/app.js" defer></script>
 </body>
 </html>
