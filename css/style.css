@@ -164,7 +164,7 @@ nav a.active {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
-    margin: 极影 0;
+    margin: 40px 0;
     padding: 20px;
     background: var(--card-bg);
     border-radius: 12px;
@@ -198,11 +198,11 @@ nav a.active {
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    gap: 10极影;
+    gap: 10px;
 }
 
 .filters {
-    background: var(--极影-bg);
+    background: var(--card-bg);
     border-radius: 12px;
     padding: 25px;
     border: 1px solid var(--border);
@@ -280,11 +280,11 @@ nav a.active {
     width: 100%;
     padding: 15px 45px 15px 45px;
     background: var(--card-bg);
-    border: 1极影 solid var(--border);
+    border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--light);
     font-size: 1rem;
-    transition: all 极影.3s;
+    transition: all 0.3
 }
 
 #searchInput:focus {
@@ -327,7 +327,7 @@ nav a.active {
     margin: 40px 0;
 }
 
-.configs-section h极影 {
+.configs-section h2 {
     color: var(--lighter);
     margin-bottom: 20px;
     display: flex;
@@ -361,7 +361,7 @@ nav a.active {
 
 .config-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 极影.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 69, 0, 0.3);
 }
 
@@ -584,7 +584,7 @@ footer {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 40px;
-    margin-bottom: 30极影;
+    margin-bottom: 30px;
 }
 
 .footer-info h3 {
@@ -676,7 +676,7 @@ footer {
         gap: 10px;
     }
     
-    .config-m极影 {
+    .config-meta {
         justify-content: flex-start;
     }
     .config-buttons {
@@ -709,7 +709,7 @@ footer {
     }
     
     .footer-content {
-        grid-template-columns: 1极影;
+        grid-template-columns: 1fr;
         text-align: center;
     }
     
@@ -772,7 +772,7 @@ footer {
 }
 
 .data-source-indicator.cache {
-    background: rgba(243, 156, 18, 0.极影);
+    background: rgba(243, 156, 18, 0.3);
     border-color: rgba(243, 156, 18, 0.3);
 }
 
@@ -795,7 +795,7 @@ footer {
     gap: 10px;
     z-index: 9999;
     animation: slideUp 0.3s ease;
-    box-shadow: 0 5极影 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
 }
 
