@@ -217,6 +217,48 @@ ${errorInfo.error?.stack || 'Стек не доступен'}
     testFileAccess();
 }
 
+// Обновляем обработку ошибок
+function showFallbackUI(error) {
+    console.error('Показываем fallback UI:', error);
+    
+    const grid = document.getElementById('configsGrid');
+    if (grid) {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <div style="font-size: 4rem; color: #3498db; margin-bottom: 20px;">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <h3 style="color: #3498db; margin-bottom: 15px;">
+                    Проблемы с соединением
+                </h3>
+                <p style="margin-bottom: 20px; color: rgba(255, 255, 255, 0.8);">
+                    Не удалось загрузить конфиги. Проверьте интернет-соединение.
+                </p>
+                <div style="color: rgba(255, 255, 255, 0.6); margin-bottom: 25px;">
+                    <i class="fas fa-info-circle"></i>
+                    ${error.message}
+                </div>
+                <div style="margin-top: 30px;">
+                    <button onclick="location.reload(true)" style="
+                        background: #3498db;
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        margin-right: 10px;
+                    ">
+                        <i class="fas fa-sync-alt"></i> Попробовать снова
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    updateLoadingState(false);
+}
+
 // Функция проверки доступа к файлу
 async function testFileAccess() {
     const resultElement = document.getElementById('fileCheckResult');
@@ -311,55 +353,72 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.log('4. Прямая загрузка конфигов...');
         updateLoadingState(true, 'Загрузка конфигов...');
         
-        const testUrl = 'https://raw.githubusercontent.com/n-burov/AferistHelper-web/main/configs/configs.json';
-        console.log('   URL:', testUrl);
-        
-        try {
-            const response = await fetch(testUrl + '?t=' + Date.now());
-            console.log('   Статус:', response.status, response.ok);
-            
-            if (response.ok) {
-                const text = await response.text();
-                console.log('   Размер ответа:', text.length, 'символов');
+        console.log('4. Загрузка конфигов...');
+        updateLoadingState(true, 'Загрузка конфигов...');
+
+        // Проверяем есть ли предзагруженные данные
+        const preloadedData = sessionStorage.getItem('preloadedConfigs');
+        if (preloadedData) {
+            try {
+                const data = JSON.parse(preloadedData);
+                console.log('✅ Используем предзагруженные данные:', data.configs?.length || 0);
                 
-                try {
-                    const data = JSON.parse(text);
-                    console.log('✅ JSON успешно распарсен!');
-                    console.log('   Конфигов:', data.configs?.length || 0);
-                    console.log('   Мета:', data.meta);
-                    
-                    // Теперь используем gitHubData
-                    const result = await gitHubData.getConfigs(true);
-                    console.log('5. Результат через gitHubData:', result);
-                    
-                    if (result.success || result.data?.length > 0) {
-                        // Успех! Рендерим конфиги
-                        renderConfigs(result.data || []);
-                        updateLoadingState(false);
-                        showNotification('Конфиги успешно загружены!', 'success');
-                    } else {
-                        throw new Error('gitHubData вернул пустой результат: ' + (result.error || 'неизвестная ошибка'));
-                    }
-                    
-                } catch (jsonError) {
-                    throw new Error('Ошибка парсинга JSON: ' + jsonError.message);
-                }
-            } else {
-                throw new Error(`HTTP ошибка: ${response.status} ${response.statusText}`);
+                // Используем предзагруженные данные для мгновенного отображения
+                renderConfigs(data.configs || []);
+                updateLoadingState(false);
+                showNotification('Конфиги загружены из кэша!', 'success');
+                
+                // Параллельно загружаем свежие данные
+                loadFreshDataInBackground();
+                
+            } catch (error) {
+                console.error('Ошибка парсинга предзагруженных данных:', error);
+                loadFreshData();
             }
-        } catch (fetchError) {
-            throw new Error('Ошибка загрузки файла: ' + fetchError.message);
+        } else {
+            loadFreshData();
+        }
+
+        async function loadFreshData() {
+            try {
+                const result = await gitHubData.getConfigs(true);
+                if (result.success || result.data?.length > 0) {
+                    renderConfigs(result.data || []);
+                    updateLoadingState(false);
+                    showNotification('Конфиги успешно загружены!', 'success');
+                } else {
+                    throw new Error('gitHubData вернул пустой результат');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                showFallbackUI(error);
+            }
+        }
+
+        async function loadFreshDataInBackground() {
+            // Фоновая загрузка свежих данных
+            setTimeout(async () => {
+                try {
+                    const result = await gitHubData.getConfigs(true);
+                    if (result.success && result.data?.length > 0) {
+                        // Обновляем UI если данные изменились
+                        const currentCount = window.allConfigs?.length || 0;
+                        if (result.data.length !== currentCount) {
+                            renderConfigs(result.data);
+                            showNotification('Конфиги обновлены!', 'success');
+                        }
+                    }
+                } catch (error) {
+                    console.log('Фоновая загрузка не удалась:', error.message);
+                }
+            }, 2000);
         }
         
     } catch (error) {
         console.error('❌ КРИТИЧЕСКАЯ ОШИБКА:', error);
         
         // Показываем ошибку в UI
-        showErrorOverlay({
-            type: 'Инициализация приложения',
-            message: error.message,
-            error: error
-        });
+        showFallbackUI(error);
         
         // Также показываем простую версию для пользователя
         const grid = document.getElementById('configsGrid');
@@ -919,19 +978,26 @@ function updateStats(configs) {
     }
 }
 
-// Обновление состояния загрузки
+// Обновляем функцию показа загрузки
 function updateLoadingState(isLoading, message = 'Загрузка...') {
     const loadingElement = document.querySelector('.loading');
-    if (loadingElement) {
+    const grid = document.getElementById('configsGrid');
+    
+    if (loadingElement && grid) {
         if (isLoading) {
             loadingElement.style.display = 'flex';
-            loadingElement.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message}`;
+            loadingElement.innerHTML = `
+                <div class="loading-content">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <div>${message}</div>
+                    <div class="loading-subtext">Загрузка из GitHub...</div>
+                </div>
+            `;
         } else {
             loadingElement.style.display = 'none';
         }
     }
 }
-
 
 // Вспомогательные функции
 function escapeHtml(text) {
