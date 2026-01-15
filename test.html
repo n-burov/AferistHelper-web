@@ -10,6 +10,238 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=New+Rocker&display=swap" rel="stylesheet">
+    <style>
+        /* Стили для главной страницы */
+        .hero-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a69bd 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .streamer-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .hero-text h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-family: 'New Rocker', cursive;
+        }
+
+        .hero-description {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .stream-schedule {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stream-schedule h3 {
+            margin-bottom: 10px;
+            color: #f39c12;
+        }
+
+        /* Социальные сети */
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .social-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            text-decoration: none;
+            color: #333;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .social-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .social-card i {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .social-card span {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .social-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .twitch { color: #9146ff; }
+        .youtube { color: #ff0000; }
+        .vk { color: #4a76a8; }
+        .telegram { color: #0088cc; }
+        .discord { color: #5865f2; }
+
+        /* О стримере */
+        .about-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .about-text h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .about-text ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .about-text li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .about-text li i {
+            color: #27ae60;
+            margin-right: 10px;
+        }
+
+        .about-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #4a69bd;
+        }
+
+        .stat-card i {
+            font-size: 2em;
+            color: #4a69bd;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h4 {
+            font-size: 1.5em;
+            margin: 10px 0;
+            color: #2c3e50;
+        }
+
+        /* Ивенты */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .event-card {
+            display: flex;
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .event-date {
+            background: #4a69bd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            min-width: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .event-date .day {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .event-date .month {
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .event-info {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .event-info h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .event-info p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .event-time {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <header class="header-flag">
