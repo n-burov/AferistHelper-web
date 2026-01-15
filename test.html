@@ -467,6 +467,61 @@
             box-shadow: 0 4px 12px rgba(204, 55, 0, 0.3);
         }
 
+        /* Плашка поддержки разработчика */
+        .support-banner {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0 0 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .support-banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .support-banner-text {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .support-banner-text i {
+            color: var(--accent);
+            margin-right: 5px;
+        }
+
+        .support-banner-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--light);
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .support-banner-link:hover {
+            background: rgba(204, 55, 0, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .support-banner-link i {
+            color: var(--accent);
+        }
+
         /* Адаптивность */
         @media (max-width: 768px) {
             .hero-content {
@@ -491,6 +546,16 @@
             }
 
             .cta-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .support-banner-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .support-banner-link {
                 width: 100%;
                 justify-content: center;
             }
@@ -659,13 +724,18 @@
                     <p>Стример World of Warcraft | Сообщество геймеров</p>
                     <p class="footer-note">Присоединяйся к нашим стримам и ивентам!</p>
                 </div>
-                
-                <div class="footer-links">
-                    <a href="https://github.com/n-burov/AferistHelper-web" target="_blank" class="github-link">
-                        <i class="fab fa-github"></i> GitHub
-                    </a>
-                    <a href="contribute.html" class="contribute-link">
-                        <i class="fas fa-envelope"></i> Контакты
+            </div>
+            
+            <!-- Плашка поддержки разработчика -->
+            <div class="support-banner">
+                <div class="support-banner-content">
+                    <p class="support-banner-text">
+                        <i class="fas fa-heart"></i>
+                        Сайт создан подписчиком для вашего удобства. Если хотите поддержать разработку:
+                    </p>
+                    <a href="https://boosty.to/your-profile" target="_blank" class="support-banner-link">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        Поддержать на Boosty
                     </a>
                 </div>
             </div>
