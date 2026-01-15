@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Segazbs Helper </title>
+    <title>SegaZBS - Главная</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/RFNNQ4RP/71a2c23b-f462-482a-8e89-f0c4336d3d98.jpg">
@@ -19,8 +19,8 @@
                     <img src="images/icons8-орда-world-of-warcraft-48.png" alt="Horde">
                 </div>
                 <div>
-                    <h1 class="header-title-flag">SegaZBS Helper</h1>
-                    <p class="header-subtitle-flag">Помощник для World of Warcraft</p>
+                    <h1 class="header-title-flag">SegaZBS</h1>
+                    <p class="header-subtitle-flag">Стример World of Warcraft</p>
                 </div>
             </div>
             
@@ -34,154 +34,184 @@
     </header>
 
     <div class="container">
-        <!-- Информационный баннер -->
-        <div class="info-banner">
-            <i class="fas fa-sync-alt"></i>
-            <div>
-                <strong>Конфиги обновляются автоматически</strong>
-                <p>Все изменения в репозитории GitHub сразу отображаются на сайте</p>
-                <a href="contribute.html" class="banner-link">Хотите добавить свой конфиг? →</a>
-            </div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats-bar" id="statsBar">
-            <div class="stat">
-                <i class="fas fa-database"></i>
-                <span id="totalConfigs">0</span> конфигов
-            </div>
-            <div class="stat">
-                <i class="fas fa-users"></i>
-                <span id="uniqueAuthors">0</span> авторов
-            </div>
-            <div class="stat">
-                <i class="fas fa-history"></i>
-                Обновлено: <span id="lastUpdated">сегодня</span>
-            </div>
-        </div>
-
-        <!-- Фильтры -->
-        <section class="filters-section">
-            <h2><i class="fas fa-filter"></i> Фильтры</h2>
-            
-            <div class="filters">
-                <div class="filter-group">
-                    <h3><i class="fas fa-plug"></i> Аддон</h3>
-                    <div class="filter-options" id="addonFilter">
-                        <button class="filter-btn active" data-addon="all">Все аддоны</button>
-                        <button class="filter-btn" data-addon="elvui">ElvUI</button>
-                        <button class="filter-btn" data-addon="wa">WeakAuras</button>
-                        <button class="filter-btn" data-addon="details">Details!</button>
-                        <button class="filter-btn" data-addon="plater">Plater</button>
-                        <button class="filter-btn" data-addon="dbm">DBM</button>
-                        <button class="filter-btn" data-addon="bigwigs">BigWigs</button>
+        <!-- Герой-секция -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-image">
+                    <img src="https://i.postimg.cc/RFNNQ4RP/71a2c23b-f462-482a-8e89-f0c4336d3d98.jpg" alt="SegaZBS" class="streamer-avatar">
+                </div>
+                <div class="hero-text">
+                    <h1>Добро пожаловать на мой стрим!</h1>
+                    <p class="hero-description">
+                        Привет! Я SegaZBS - стример World of Warcraft. Стримлю PvP, рейды, фарм и просто весело проводим время в Азероте. 
+                        Присоединяйся к сообществу и давайте играть вместе!
+                    </p>
+                    <div class="stream-schedule">
+                        <h3><i class="fas fa-calendar-alt"></i> Расписание стримов:</h3>
+                        <p>Пн-Пт: 19:00 - 23:00 (МСК)</p>
+                        <p>Сб-Вс: 15:00 - 22:00 (МСК)</p>
                     </div>
                 </div>
-
-                <div class="filter-group">
-                    <h3><i class="fas fa-user"></i> Класс</h3>
-                    <div class="filter-options" id="classFilter">
-                        <button class="filter-btn active" data-class="all">Все классы</button>
-                        <button class="filter-btn" data-class="warrior"><i class="fas fa-shield-alt"></i> Воин</button>
-                        <button class="filter-btn" data-class="paladin"><i class="fas fa-sun"></i> Паладин</button>
-                        <button class="filter-btn" data-class="deathknight"><i class="fas fa-skull"></i> Рыцарь смерти</button>
-                        <button class="filter-btn" data-class="mage"><i class="fas fa-fire"></i> Маг</button>
-                        <button class="filter-btn" data-class="priest"><i class="fas fa-cross"></i> Жрец</button>
-                        <button class="filter-btn" data-class="rogue"><i class="fas fa-user-secret"></i> Разбойник</button>
-                        <button class="filter-btn" data-class="shaman"><i class="fas fa-bolt"></i> Шаман</button>
-                        <button class="filter-btn" data-class="hunter"><i class="fas fa-bullseye"></i> Охотник</button>
-                        <button class="filter-btn" data-class="warlock"><i class="fas fa-hat-wizard"></i> Чернокнижник</button>
-                        <button class="filter-btn" data-class="druid"><i class="fas fa-paw"></i> Друид</button>
-                        <button class="filter-btn" data-class="universal"><i class="fas fa-users"></i> Универсальные</button>
-                    </div>
-                </div>
-
-                <!-- УБИРАЕМ секцию фильтрации по ролям -->
-                <!-- <div class="filter-group">
-                    <h3><i class="fas fa-tasks"></i> Роль</h3>
-                    <div class="filter-options" id="roleFilter">
-                        <button class="filter-btn active" data-role="all">Все роли</button>
-                        <button class="filter-btn" data-role="tank"><i class="fas fa-shield-alt"></i> Танк</button>
-                        <button class="filter-btn" data-role="healer"><i class="fas fa-heart"></i> Хил</button>
-                        <button class="filter-btn" data-role="dps"><i class="fas fa-bolt"></i> ДПС</button>
-                    </div>
-                </div> -->
             </div>
         </section>
 
-        <!-- Поиск -->
-        <div class="search-section">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Поиск по названию или описанию...">
-                <button id="clearSearch" class="clear-btn" title="Очистить поиск">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="search-stats">
-                Найдено: <span id="searchResultsCount">0</span> конфигов
-            </div>
-        </div>
-
-        <!-- Сетка конфигов -->
-        <section class="configs-section">
-            <h2><i class="fas fa-th-list"></i> Конфиги <span id="configCount">(0)</span></h2>
-            
-            <div class="configs-grid" id="configsGrid">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Загрузка конфигов...
-                </div>
-            </div>
-            
-            <div class="no-results" id="noResults" style="display: none;">
-                <i class="fas fa-search"></i>
-                <h3>Конфиги не найдены</h3>
-                <p>Попробуйте изменить параметры фильтрации</p>
+        <!-- Социальные сети -->
+        <section class="social-section">
+            <h2><i class="fas fa-share-alt"></i> Подписывайся!</h2>
+            <div class="social-grid">
+                <a href="https://twitch.tv/segazbs" target="_blank" class="social-card twitch">
+                    <i class="fab fa-twitch"></i>
+                    <span>Twitch</span>
+                    <p>Основная платформа для стримов</p>
+                </a>
+                
+                <a href="https://youtube.com/segazbs" target="_blank" class="social-card youtube">
+                    <i class="fab fa-youtube"></i>
+                    <span>YouTube</span>
+                    <p>Записи стримов и гайды</p>
+                </a>
+                
+                <a href="https://vk.com/segazbs" target="_blank" class="social-card vk">
+                    <i class="fab fa-vk"></i>
+                    <span>ВКонтакте</span>
+                    <p>Новости и анонсы</p>
+                </a>
+                
+                <a href="https://t.me/segazbs" target="_blank" class="social-card telegram">
+                    <i class="fab fa-telegram"></i>
+                    <span>Telegram</span>
+                    <p>Мгновенные уведомления</p>
+                </a>
+                
+                <a href="https://discord.gg/segazbs" target="_blank" class="social-card discord">
+                    <i class="fab fa-discord"></i>
+                    <span>Discord</span>
+                    <p>Сообщество и общение</p>
+                </a>
             </div>
         </section>
-    </div>
+
+        <!-- О стримере -->
+        <section class="about-section">
+            <h2><i class="fas fa-user"></i> Обо мне</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Почему WoW?</h3>
+                    <p>Играю в World of Warcraft с 2008 года. Люблю PvP, рейдовый контент и создание контента для сообщества. 
+                    На моих стримах ты найдешь не только геймплей, но и полезные советы по аддонам, макросам и геймплею.</p>
+                    
+                    <h3>Что ждать от стримов?</h3>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Живое общение с чатом</li>
+                        <li><i class="fas fa-check"></i> Полезные гайды и советы</li>
+                        <li><i class="fas fa-check"></i> Веселые игры с подписчиками</li>
+                        <li><i class="fas fa-check"></i> Регулярные ивенты и турниры</li>
+                    </ul>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-calendar-days"></i>
+                        <h4>5+ лет</h4>
+                        <p>в стриминге</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <h4>1000+</h4>
+                        <p>подписчиков</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-video"></i>
+                        <h4>500+</h4>
+                        <p>стримов</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Предстоящие ивенты -->
+        <section class="events-section">
+            <h2><i class="fas fa-calendar-star"></i> Ближайшие ивенты</h2>
+            <div class="events-grid">
+                <div class="event-card">
+                    <div class="event-date">
+                        <span class="day">20</span>
+                        <span class="month">Янв</span>
+                    </div>
+                    <div class="event-info">
+                        <h3>PvP Турнир 3v3</h3>
+                        <p>Арена на призы от спонсоров</p>
+                        <span class="event-time"><i class="fas fa-clock"></i> 20:00 МСК</span>
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="event-date">
+                        <span class="day">25</span>
+                        <span class="month">Янв</span>
+                    </div>
+                    <div class="event-info">
+                        <h3>Рейд ICC 25HC</h3>
+                        <p>Проходим Ледяную Цитадель на героике</p>
+                        <span class="event-time"><i class="fas fa-clock"></i> 19:00 МСК</span>
+                    </div>
+                </div>
+                
+                <div class="event-card">
+                    <div class="event-date">
+                        <span class="day">28</span>
+                        <span class="month">Янв</span>
+                    </div>
+                    <div class="event-info">
+                        <h3>Q&A Сессия</h3>
+                        <p>Отвечаю на ваши вопросы о WoW</p>
+                        <span class="event-time"><i class="fas fa-clock"></i> 18:00 МСК</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Призыв к действию -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Готов присоединиться?</h2>
+                <p>Подписывайся на стримы, участвуй в ивентах и становись частью нашего сообщества!</p>
+                <div class="cta-buttons">
+                    <a href="https://twitch.tv/segazbs" target="_blank" class="cta-btn primary">
+                        <i class="fab fa-twitch"></i> Смотреть на Twitch
+                    </a>
+                    <a href="https://discord.gg/segazbs" target="_blank" class="cta-btn secondary">
+                        <i class="fab fa-discord"></i> Присоединиться к Discord
+                    </a>
+                </div>
+            </div>
+        </section>
     </div>
 
     <footer>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <h3><img src="images/icons8-орда-world-of-warcraft-48.png" alt="Horde" class="horde-icon"> AferistHelper | Конфиги</h3>
-                    <p>База конфигов для аддонов World of Warcraft 3.3.5</p>
-                    <p class="footer-note">Конфиги обновляются автоматически при изменениях в репозитории</p>
+                    <h3><img src="images/icons8-орда-world-of-warcraft-48.png" alt="Horde" class="horde-icon"> SegaZBS</h3>
+                    <p>Стример World of Warcraft | Сообщество геймеров</p>
+                    <p class="footer-note">Присоединяйся к нашим стримам и ивентам!</p>
                 </div>
                 
                 <div class="footer-links">
                     <a href="https://github.com/n-burov/AferistHelper-web" target="_blank" class="github-link">
-                        <i class="fab fa-github"></i> GitHub репозиторий
+                        <i class="fab fa-github"></i> GitHub
                     </a>
                     <a href="contribute.html" class="contribute-link">
-                        <i class="fas fa-plus-circle"></i> Добавить конфиг
+                        <i class="fas fa-envelope"></i> Контакты
                     </a>
                 </div>
             </div>
             
             <div class="footer-bottom">
-                <p>© 2026 SegazbsHelper. World of Warcraft и Blizzard Entertainment являются товарными знаками или зарегистрированными товарными знаками</p>
+                <p>© 2026 SegaZBS. World of Warcraft и Blizzard Entertainment являются товарными знаками или зарегистрированными товарными знаками</p>
             </div>
         </div>
     </footer>
 
-    <!-- Модальное окно для инструкций -->
-    <div id="instructionModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Инструкция по установке</h3>
-                <span class="close-modal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div id="modalContent"></div>
-            </div>
-        </div>
-    </div>
-
     <script src="js/utils.js"></script>
-    <script src="js/github-data.js"></script>
-    <script src="js/app.js"></script>
 </body>
 </html>
