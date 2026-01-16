@@ -909,7 +909,11 @@ function showInstruction(addonType) {
     });
 }
 
-// Функция для копирования конфига из кнопки
+// Глобальная переменная для хранения конфига, который нужно скопировать
+let pendingCopyConfig = null;
+let pendingCopyButton = null;
+
+// Функция для копирования конфига из кнопки (теперь открывает модальное окно)
 function copyConfigFromButton(button) {
     try {
         const configEncoded = button.getAttribute('data-config');
@@ -920,33 +924,118 @@ function copyConfigFromButton(button) {
         
         const config = JSON.parse(decodeURIComponent(configEncoded));
         
-        copyToClipboard(config)
-            .then(success => {
-                if (success) {
-                    // Меняем иконку на успех
-                    const icon = button.querySelector('i');
-                    if (icon) {
-                        icon.className = 'fas fa-check';
-                        button.classList.add('copied');
-                        
-                        // Возвращаем иконку обратно через 2 секунды
-                        setTimeout(() => {
-                            icon.className = 'fas fa-copy';
-                            button.classList.remove('copied');
-                        }, 2000);
-                    }
-                    showNotification('Конфиг скопирован в буфер обмена!', 'success');
-                } else {
-                    showNotification('Не удалось скопировать конфиг', 'error');
+        // Сохраняем конфиг и кнопку для последующего копирования
+        pendingCopyConfig = config;
+        pendingCopyButton = button;
+        
+        // Сбрасываем состояние модального окна
+        const checkbox = document.getElementById('copyConfirmationCheckbox');
+        const copyButton = document.getElementById('copyConfirmButton');
+        
+        if (checkbox) checkbox.checked = false;
+        if (copyButton) copyButton.disabled = true;
+        
+        // Показываем модальное окно
+        const modal = document.getElementById('copyModal');
+        if (modal) {
+            modal.style.display = 'block';
+            
+            // Добавляем обработчики закрытия
+            const closeBtn = modal.querySelector('.close-modal');
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                    modal.style.display = 'none';
+                };
+            }
+            
+            // Закрытие по клику вне окна
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
                 }
-            })
-            .catch(error => {
-                console.error('Ошибка копирования:', error);
-                showNotification('Ошибка при копировании', 'error');
-            });
+            };
+            
+            // Закрытие по Escape
+            const handleEscape = function(event) {
+                if (event.key === 'Escape') {
+                    modal.style.display = 'none';
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            
+            document.addEventListener('keydown', handleEscape);
+        }
     } catch (error) {
         console.error('Ошибка обработки конфига:', error);
         showNotification('Ошибка обработки конфига', 'error');
+    }
+}
+
+// Функция для выполнения копирования после подтверждения
+function performCopyAfterConfirmation() {
+    if (!pendingCopyConfig || !pendingCopyButton) {
+        showNotification('Ошибка: конфиг не найден', 'error');
+        return;
+    }
+    
+    copyToClipboard(pendingCopyConfig)
+        .then(success => {
+            if (success) {
+                // Меняем иконку на успех
+                const icon = pendingCopyButton.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-check';
+                    pendingCopyButton.classList.add('copied');
+                    
+                    // Возвращаем иконку обратно через 2 секунды
+                    setTimeout(() => {
+                        icon.className = 'fas fa-copy';
+                        pendingCopyButton.classList.remove('copied');
+                    }, 2000);
+                }
+                showNotification('Конфиг скопирован в буфер обмена!', 'success');
+                
+                // Закрываем модальное окно
+                const modal = document.getElementById('copyModal');
+                if (modal) modal.style.display = 'none';
+            } else {
+                showNotification('Не удалось скопировать конфиг', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка копирования:', error);
+            showNotification('Ошибка при копировании', 'error');
+        });
+}
+
+// Инициализация обработчиков для модального окна копирования
+function initCopyModalHandlers() {
+    const checkbox = document.getElementById('copyConfirmationCheckbox');
+    const copyButton = document.getElementById('copyConfirmButton');
+    const cancelButton = document.getElementById('copyCancelButton');
+    const modal = document.getElementById('copyModal');
+    
+    if (checkbox && copyButton) {
+        // Обработчик изменения состояния чекбокса
+        checkbox.addEventListener('change', function() {
+            copyButton.disabled = !this.checked;
+        });
+    }
+    
+    if (copyButton) {
+        // Обработчик нажатия на кнопку копирования
+        copyButton.addEventListener('click', function() {
+            if (!this.disabled) {
+                performCopyAfterConfirmation();
+            }
+        });
+    }
+    
+    if (cancelButton && modal) {
+        // Обработчик нажатия на кнопку отмены
+        cancelButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
     }
 }
 
