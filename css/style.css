@@ -1549,6 +1549,7 @@ footer .horde-icon {
     gap: 10px;
     transition: all 0.3s;
     font-size: 1rem;
+    opacity: 1;
 }
 
 .modal-buttons .copy-btn:hover:not(:disabled) {
@@ -1557,27 +1558,16 @@ footer .horde-icon {
 }
 
 .modal-buttons .copy-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
     transform: none !important;
     box-shadow: none !important;
-}
-
-.modal-buttons .cancel-btn {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--light);
-    border: 1px solid var(--border);
-    padding: 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.modal-buttons .cancel-btn:hover {
     background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.modal-buttons .copy-btn:disabled i {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 /* Адаптивность для модального окна подтверждения */
