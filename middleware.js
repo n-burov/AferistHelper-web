@@ -1,27 +1,27 @@
-// middleware.js в корне проекта
-import { NextResponse } from 'next/server';
-
+// api/middleware.js
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|public/).*)',
-  ],
+  runtime: 'edge',
+  regions: ['sin1']
 };
 
-export function middleware(request) {
-  const response = NextResponse.next();
+export default async function handler(request) {
+  const url = new URL(request.url);
   
-  // Добавляем headers для обхода DPI
-  response.headers.set('X-Requested-With', 'XMLHttpRequest');
-  response.headers.set('X-Is-Ajax', 'true');
-  response.headers.set('Sec-Fetch-Dest', 'document');
-  response.headers.set('Sec-Fetch-Mode', 'navigate');
-  response.headers.set('Sec-Fetch-Site', 'none');
-  response.headers.set('Upgrade-Insecure-Requests', '1');
-  
-  // Для API запросов добавляем дополнительные headers
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    response.headers.set('Content-Type', 'application/json');
+  // Для статических файлов - просто пропускаем
+  if (url.pathname.match(/\.(js|css|png|jpg|json|ico|svg)$/)) {
+    return new Response(null, { status: 200 });
   }
+  
+  // Для HTML - добавляем headers
+  const response = new Response(null, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-Is-Ajax': 'true',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    }
+  });
   
   return response;
 }
