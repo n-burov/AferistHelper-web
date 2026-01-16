@@ -570,6 +570,9 @@ function renderConfigs(configs) {
     // Инициализируем фильтры
     initFilters();
     
+    // Инициализируем обработчики модального окна копирования
+    initCopyModalHandlers();
+    
     // Обновляем счетчик конфигов
     updateConfigCount(configs.length);
 }
