@@ -210,6 +210,42 @@
         </div>
     </div>
 
+    <!-- Модальное окно для подтверждения копирования -->
+    <div id="copyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="copyModalTitle">Подтверждение копирования конфига</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="warning-message">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="warning-text">
+                        <p><strong>ВНИМАНИЕ!</strong></p>
+                        <p>Для корректной работы конфигов все аддоны должны быть обновлены до последней версии. Используйте программу AddonUpdater, которую можно скачать на <a href="addons.html">странице с аддонами</a>.</p>
+                        <p>Перед копированием убедитесь, что ваши аддоны обновлены, иначе конфиг может работать некорректно.</p>
+                    </div>
+                </div>
+                <div class="confirmation-checkbox">
+                    <label>
+                        <input type="checkbox" id="copyConfirmationCheckbox">
+                        <span>Я ознакомлен с предупреждением и обновил аддоны</span>
+                    </label>
+                </div>
+                <div class="modal-buttons">
+                    <button id="copyConfirmButton" class="copy-btn" disabled>
+                        <i class="fas fa-copy"></i> Копировать конфиг
+                    </button>
+                    <button id="copyCancelButton" class="cancel-btn">
+                        Отмена
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Скрипты с defer для неблокирующей загрузки -->
     <script src="js/preload.js" defer></script>
     <script src="js/utils.js" defer></script>
