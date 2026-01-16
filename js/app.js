@@ -365,6 +365,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 // Используем предзагруженные данные для мгновенного отображения
                 renderConfigs(data.configs || []);
+                initCopyModalHandlers();
                 updateLoadingState(false);
                 showNotification('Конфиги загружены из кэша!', 'success');
                 
@@ -569,9 +570,6 @@ function renderConfigs(configs) {
     
     // Инициализируем фильтры
     initFilters();
-    
-    // Инициализируем обработчики модального окна копирования
-    initCopyModalHandlers();
     
     // Обновляем счетчик конфигов
     updateConfigCount(configs.length);
@@ -1015,7 +1013,6 @@ function performCopyAfterConfirmation() {
 function initCopyModalHandlers() {
     const checkbox = document.getElementById('copyConfirmationCheckbox');
     const copyButton = document.getElementById('copyConfirmButton');
-    const cancelButton = document.getElementById('copyCancelButton');
     const modal = document.getElementById('copyModal');
     
     if (checkbox && copyButton) {
@@ -1031,13 +1028,6 @@ function initCopyModalHandlers() {
             if (!this.disabled) {
                 performCopyAfterConfirmation();
             }
-        });
-    }
-    
-    if (cancelButton && modal) {
-        // Обработчик нажатия на кнопку отмены
-        cancelButton.addEventListener('click', function() {
-            modal.style.display = 'none';
         });
     }
 }
