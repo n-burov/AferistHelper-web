@@ -1,48 +1,65 @@
-const fs = require('fs').promises;
-const path = require('path');
+import { Octokit } from '@octokit/rest';
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
     if (req.method !== 'POST') {
-        res.status(405).json({ error: 'Метод не разрешен' });
-        return;
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const { donors, accessToken } = req.body;
+    if (!donors || !Array.isArray(donors) || !accessToken) {
+        return res.status(400).json({ error: 'Missing required parameters: donors array and accessToken' });
     }
 
     try {
-        // Получаем данные из тела запроса
-        const { donors } = req.body;
-
-        if (!donors || !Array.isArray(donors)) {
-            res.status(400).json({ error: 'Некорректные данные: ожидается массив донатеров' });
-            return;
-        }
+        const octokit = new Octokit({ auth: accessToken });
+        
+        // Получаем текущий top-donors.json
+        const { data: currentContent } = await octokit.repos.getContent({
+            owner: process.env.GITHUB_OWNER,
+            repo: process.env.GITHUB_REPO,
+            path: 'top-donors/top-donors.json'
+        });
 
         // Проверяем структуру данных
         for (let donor of donors) {
-            if (!donor.hasOwnProperty('id') || !donor.hasOwnProperty('name') || !donor.hasOwnProperty('amount') || !donor.hasOwnProperty('position')) {
-                res.status(400).json({ error: 'Некорректная структура данных донатера: отсутствуют обязательные поля' });
-                return;
+            if (!donor.hasOwnProperty('id') || !donor.hasOwnProperty('name') || !donor.hasOwnProperty('amount')) {
+                return res.status(400).json({ error: 'Некорректная структура данных донатера: отсутствуют обязательные поля (id, name, amount)' });
             }
             
             // Преобразуем числовые поля к нужному типу
             donor.id = Number(donor.id);
             donor.amount = Number(donor.amount);
-            donor.position = Number(donor.position);
             
-            if (isNaN(donor.id) || isNaN(donor.amount) || isNaN(donor.position) || typeof donor.name !== 'string') {
-                res.status(400).json({ error: 'Некорректные типы данных донатера' });
-                return;
+            if (isNaN(donor.id) || isNaN(donor.amount) || typeof donor.name !== 'string') {
+                return res.status(400).json({ error: 'Некорректные типы данных донатера' });
             }
         }
 
-        // Определяем путь к файлу
-        const filePath = path.join(process.cwd(), 'top-donors', 'top-donors.json');
+        // Обновляем содержимое файла
+        const content = Buffer.from(currentContent.content, 'base64').toString('utf8');
+        const topDonors = JSON.parse(content);
 
-        // Записываем обновленные данные
-        await fs.writeFile(filePath, JSON.stringify(donors, null, 2));
+        // Заменяем содержимое массива донатеров
+        const updatedDonors = donors.map(donor => ({
+            id: donor.id,
+            name: donor.name,
+            amount: donor.amount,
+            currency: donor.currency || '₽'
+        }));
 
-        res.status(200).json({ success: true, message: 'Топ донатеров успешно обновлен' });
+        // Сохраняем в репозиторий
+        await octokit.repos.createOrUpdateFileContents({
+            owner: process.env.GITHUB_OWNER,
+            repo: process.env.GITHUB_REPO,
+            path: 'top-donors/top-donors.json',
+            message: 'update top donors',
+            content: Buffer.from(JSON.stringify(updatedDonors, null, 2)).toString('base64'),
+            sha: currentContent.sha
+        });
+
+        res.json({ success: true, message: 'Топ донатеров успешно обновлен' });
     } catch (error) {
-        console.error('Ошибка при обновлении топа донатеров:', error);
-        res.status(500).json({ error: 'Ошибка сервера при обновлении топа донатеров' });
+        console.error('Update error:', error);
+        res.status(500).json({ error: 'Failed to update top donors' });
     }
-};
+}
