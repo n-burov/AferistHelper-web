@@ -344,10 +344,29 @@ class AdminPanel {
         return cardDiv;
     }
 
-    addNewDonor() {
-        const container = document.getElementById('donorsContainer');
-        if (!container) return;
+    saveCurrentFormData() {
+        const donorCards = document.querySelectorAll('.donor-card');
+        donorCards.forEach((card, index) => {
+            const idInput = card.querySelector('.donor-id');
+            const nameInput = card.querySelector('.donor-name');
+            const amountInput = card.querySelector('.donor-amount');
+            const currencyInput = card.querySelector('.donor-currency');
+            
+            if (this.topDonors[index]) {
+                this.topDonors[index].id = idInput ? (idInput.value || this.topDonors[index].id) : this.topDonors[index].id;
+                this.topDonors[index].name = nameInput ? (nameInput.value || '') : '';
+                if (amountInput && amountInput.value !== '' && !isNaN(parseFloat(amountInput.value))) {
+                    this.topDonors[index].amount = parseFloat(amountInput.value);
+                }
+                this.topDonors[index].currency = currencyInput ? (currencyInput.value || '₽') : '₽';
+            }
+        });
+    }
 
+    addNewDonor() {
+        // Сначала сохраним текущие данные из формы
+        this.saveCurrentFormData();
+        
         // Добавляем нового донатера в массив
         const newDonor = { id: this.generateId(), name: '', amount: 0, currency: '₽' };
         this.topDonors.push(newDonor);
@@ -358,6 +377,9 @@ class AdminPanel {
 
     removeDonor(index) {
         if (confirm('Вы уверены, что хотите удалить этого донатера?')) {
+            // Сначала сохраним текущие данные из формы
+            this.saveCurrentFormData();
+            
             this.topDonors.splice(index, 1);
             this.renderTopDonors(); // Перерисовываем список
         }
@@ -380,44 +402,23 @@ class AdminPanel {
             return;
         }
         
-        const donorCards = document.querySelectorAll('.donor-card');
-        const donors = [];
-
-        donorCards.forEach((card, index) => {
-            const idInput = card.querySelector('.donor-id');
-            const nameInput = card.querySelector('.donor-name');
-            const amountInput = card.querySelector('.donor-amount');
-            const currencyInput = card.querySelector('.donor-currency');
-
-            const id = idInput ? idInput.value : this.generateId();
-            const name = nameInput ? (nameInput.value || '') : '';
-            const amount = amountInput ? parseFloat(amountInput.value) || 0 : 0;
-            const currency = currencyInput ? (currencyInput.value || '₽') : '₽';
-
-            // Всегда добавляем элемент, даже если поля пустые, чтобы сохранить структуру
-            donors.push({
-                id,
-                name,
-                amount,
-                currency
-            });
-        });
-
+        // Сначала сохраним текущие данные из формы
+        this.saveCurrentFormData();
+        
         try {
             const response = await fetch('/api/top-donors/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ donors, accessToken })
+                body: JSON.stringify({ donors: this.topDonors, accessToken })
             });
 
             const result = await response.json();
 
             if (result.success) {
                 // Обновляем локальный массив донатеров
-                this.topDonors = donors;
                 alert('Топ донатеров успешно обновлен!');
                 // Перезагружаем список для обновления интерфейса
-                this.renderTopDonors();
+                this.loadTopDonors(); // Загружаем обновленные данные с сервера
             } else {
                 throw new Error(result.error || 'Ошибка сохранения');
             }
