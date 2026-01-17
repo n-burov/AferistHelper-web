@@ -18,8 +18,18 @@ module.exports = async (req, res) => {
 
         // Проверяем структуру данных
         for (let donor of donors) {
-            if (typeof donor.id !== 'number' || typeof donor.name !== 'string' || typeof donor.amount !== 'number') {
-                res.status(400).json({ error: 'Некорректная структура данных донатера' });
+            if (!donor.hasOwnProperty('id') || !donor.hasOwnProperty('name') || !donor.hasOwnProperty('amount') || !donor.hasOwnProperty('position')) {
+                res.status(400).json({ error: 'Некорректная структура данных донатера: отсутствуют обязательные поля' });
+                return;
+            }
+            
+            // Преобразуем числовые поля к нужному типу
+            donor.id = Number(donor.id);
+            donor.amount = Number(donor.amount);
+            donor.position = Number(donor.position);
+            
+            if (isNaN(donor.id) || isNaN(donor.amount) || isNaN(donor.position) || typeof donor.name !== 'string') {
+                res.status(400).json({ error: 'Некорректные типы данных донатера' });
                 return;
             }
         }
