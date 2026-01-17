@@ -30,8 +30,14 @@ export default async function handler(req, res) {
             donor.id = Number(donor.id);
             donor.amount = Number(donor.amount);
             
-            if (isNaN(donor.id) || isNaN(donor.amount) || typeof donor.name !== 'string') {
-                return res.status(400).json({ error: 'Некорректные типы данных донатера' });
+            // Проверяем, являются ли числа допустимыми
+            if (isNaN(donor.id) || isNaN(donor.amount)) {
+                return res.status(400).json({ error: 'Некорректные числовые типы данных донатера' });
+            }
+            
+            // Убедимся, что имя - строка
+            if (typeof donor.name !== 'string') {
+                return res.status(400).json({ error: 'Поле name должно быть строкой' });
             }
         }
 
