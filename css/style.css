@@ -1566,6 +1566,112 @@ footer .horde-icon {
     gap: 15px;
 }
 
+/* Стили для топа донатеров */
+.donors-section {
+    margin: 40px 0;
+    width: 100%;
+}
+
+.donors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+.donor-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.donor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 69, 0, 0.3);
+}
+
+.donor-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+}
+
+.donor-header i {
+    font-size: 1.5em;
+    color: var(--accent);
+}
+
+.donor-header h3 {
+    color: var(--lighter);
+    margin: 0;
+    font-size: 1.3em;
+}
+
+.donor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.donor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.donor-item:last-child {
+    border-bottom: none;
+}
+
+.donor-rank {
+    font-weight: bold;
+    color: var(--accent);
+    min-width: 40px;
+}
+
+.donor-name {
+    flex: 1;
+    color: var(--light);
+    margin: 0 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.donor-amount {
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 70px;
+    text-align: right;
+}
+
+/* Адаптивность для топа донатеров */
+@media (max-width: 768px) {
+    .donors-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .donor-item {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .donor-name {
+        margin: 0 5px;
+    }
+}
+
 .loading-subtext {
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.5);
