@@ -9,6 +9,7 @@ class AdminPanel {
         this.macros = [];
         this.addons = [];
         this.guides = [];
+        this.topDonors = [];
         this.currentTab = 'configs';
         
         this.init();
@@ -139,6 +140,7 @@ class AdminPanel {
         document.getElementById('macrosTab').style.display = tabName === 'macros' ? 'block' : 'none';
         document.getElementById('addonsTab').style.display = tabName === 'addons' ? 'block' : 'none';
         document.getElementById('guidesTab').style.display = tabName === 'guides' ? 'block' : 'none';
+        document.getElementById('homeTab').style.display = tabName === 'home' ? 'block' : 'none';
         
         if (tabName === 'macros' && this.macros.length === 0) {
             this.loadMacros();
@@ -148,6 +150,9 @@ class AdminPanel {
         }
         if (tabName === 'guides' && this.guides.length === 0) {
             this.loadGuides();
+        }
+        if (tabName === 'home' && this.topDonors.length === 0) {
+            this.loadTopDonors();
         }
     }
 
@@ -264,6 +269,211 @@ class AdminPanel {
                 <button onclick="admin.deleteGuide('${this.escapeHtml(guide.id)}')" class="btn-danger">Удалить</button>
             </div>
         `).join('');
+    }
+
+    async loadTopDonors() {
+        try {
+            const response = await fetch('top-donors/top-donors.json');
+            const data = await response.json();
+            this.topDonors = Array.isArray(data) ? data : [];
+            this.renderTopDonors();
+        } catch (error) {
+            console.error('Error loading top donors:', error);
+        }
+    }
+
+    renderTopDonors() {
+        const container = document.getElementById('donorsContainer');
+        if (!container) return;
+
+        // Очищаем контейнер
+        container.innerHTML = '';
+
+        // Добавляем каждого донатера
+        this.topDonors.forEach((donor, index) => {
+            const donorElement = this.createDonorElement(donor, index);
+            container.appendChild(donorElement);
+        });
+
+        // Добавляем обработчики событий для новых элементов
+        this.bindTopDonorsEvents();
+    }
+
+    createDonorElement(donor, index) {
+        const donorDiv = document.createElement('div');
+        donorDiv.className = 'donor-item';
+        donorDiv.innerHTML = `
+            <div class="form-group">
+                <label>Донатер #${index + 1}</label>
+                <input type="hidden" class="donor-id" value="${donor.id || ''}">
+            </div>
+            <div class="form-group">
+                <label for="donorName${index}">Имя:</label>
+                <input type="text" id="donorName${index}" class="donor-name" value="${this.escapeHtml(donor.name || '')}" required>
+            </div>
+            <div class="form-group">
+                <label for="donorAmount${index}">Сумма:</label>
+                <input type="number" id="donorAmount${index}" class="donor-amount" value="${donor.amount || ''}" required>
+            </div>
+            <div class="form-group">
+                <label for="donorCurrency${index}">Валюта:</label>
+                <input type="text" id="donorCurrency${index}" class="donor-currency" value="${this.escapeHtml(donor.currency || '₽')}" required>
+            </div>
+            <div class="form-group">
+                <label for="donorPosition${index}">Позиция:</label>
+                <input type="number" id="donorPosition${index}" class="donor-position" value="${donor.position || index + 1}" required>
+            </div>
+            <button type="button" class="btn-danger remove-donor-btn" data-index="${index}">Удалить</button>
+            <hr>
+        `;
+        return donorDiv;
+    }
+
+    bindTopDonorsEvents() {
+        // Обработчик для кнопки "Добавить донатера"
+        const addDonorBtn = document.getElementById('addDonorBtn');
+        if (addDonorBtn && !addDonorBtn.dataset.bound) {
+            addDonorBtn.dataset.bound = 'true';
+            addDonorBtn.addEventListener('click', () => {
+                this.addDonorRow();
+            });
+        }
+
+        // Обработчики для кнопок "Удалить"
+        document.querySelectorAll('.remove-donor-btn').forEach(btn => {
+            if (!btn.dataset.listenerAdded) {
+                btn.dataset.listenerAdded = 'true';
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    this.removeDonorRow(index);
+                });
+            }
+        });
+
+        // Обработчик формы топа донатеров
+        const topDonorsForm = document.getElementById('topDonorsForm');
+        if (topDonorsForm && !topDonorsForm.dataset.submitted) {
+            topDonorsForm.dataset.submitted = 'true';
+            topDonorsForm.addEventListener('submit', (e) => this.handleTopDonorsSubmit(e));
+        }
+    }
+
+    addDonorRow() {
+        const container = document.getElementById('donorsContainer');
+        const index = container.children.length;
+        
+        const newDonor = {
+            id: Date.now(), // временный ID
+            name: '',
+            amount: 0,
+            currency: '₽',
+            position: index + 1
+        };
+        
+        const donorElement = this.createDonorElement(newDonor, index);
+        container.appendChild(donorElement);
+        
+        // Пересвязываем события
+        this.bindTopDonorsEvents();
+    }
+
+    removeDonorRow(index) {
+        const container = document.getElementById('donorsContainer');
+        if (container.children[index]) {
+            container.removeChild(container.children[index]);
+            
+            // Пересчитываем индексы для остальных элементов
+            this.reindexDonorRows();
+        }
+    }
+
+    reindexDonorRows() {
+        const container = document.getElementById('donorsContainer');
+        const donorElements = container.querySelectorAll('.donor-item');
+        
+        donorElements.forEach((element, idx) => {
+            const labels = element.querySelectorAll('label');
+            const inputs = element.querySelectorAll('input');
+            const removeBtn = element.querySelector('.remove-donor-btn');
+            
+            // Обновляем текст "Донатер #N"
+            if (labels[0]) {
+                labels[0].textContent = `Донатер #${idx + 1}`;
+            }
+            
+            // Обновляем ID и значения для полей
+            inputs.forEach(input => {
+                if (input.classList.contains('donor-name')) {
+                    input.id = `donorName${idx}`;
+                } else if (input.classList.contains('donor-amount')) {
+                    input.id = `donorAmount${idx}`;
+                } else if (input.classList.contains('donor-currency')) {
+                    input.id = `donorCurrency${idx}`;
+                } else if (input.classList.contains('donor-position')) {
+                    input.id = `donorPosition${idx}`;
+                    input.value = idx + 1; // автоматически обновляем позицию
+                }
+            });
+            
+            // Обновляем индекс кнопки удаления
+            if (removeBtn) {
+                removeBtn.dataset.index = idx;
+            }
+        });
+    }
+
+    async handleTopDonorsSubmit(e) {
+        e.preventDefault();
+        
+        const donorElements = document.querySelectorAll('.donor-item');
+        const donors = [];
+
+        donorElements.forEach(element => {
+            const idInput = element.querySelector('.donor-id');
+            const nameInput = element.querySelector('.donor-name');
+            const amountInput = element.querySelector('.donor-amount');
+            const currencyInput = element.querySelector('.donor-currency');
+            const positionInput = element.querySelector('.donor-position');
+
+            const id = idInput ? parseInt(idInput.value) || Date.now() : Date.now();
+            const name = nameInput ? nameInput.value : '';
+            const amount = amountInput ? parseFloat(amountInput.value) || 0 : 0;
+            const currency = currencyInput ? currencyInput.value : '₽';
+            const position = positionInput ? parseInt(positionInput.value) || 0 : 0;
+
+            if (name && amount >= 0) {
+                donors.push({
+                    id,
+                    name,
+                    amount,
+                    currency,
+                    position
+                });
+            }
+        });
+
+        // Сортируем по позиции
+        donors.sort((a, b) => a.position - b.position);
+
+        try {
+            const response = await fetch('/api/top-donors/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ donors })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                this.topDonors = donors;
+                alert('Топ донатеров успешно обновлен!');
+            } else {
+                throw new Error(result.error || 'Ошибка сохранения');
+            }
+        } catch (error) {
+            console.error('Error saving top donors:', error);
+            alert('Ошибка при сохранении топа донатеров: ' + error.message);
+        }
     }
 
     async handleConfigSubmit(e) {
