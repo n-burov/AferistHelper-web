@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "TwitchU",
+    "name": "TwitchUser5",
     "amount": 4999,
     "currency": "₽"
   },
@@ -31,7 +31,7 @@
   },
   {
     "id": 1768690366271,
-    "name": "test",
+    "name": "TwitchUser1",
     "amount": 5000,
     "currency": "₽"
   }
