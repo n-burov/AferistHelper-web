@@ -1566,111 +1566,245 @@ footer .horde-icon {
     gap: 15px;
 }
 
-/* Стили для топа донатеров */
-.donors-section {
+/* Стили для топа донатеров Twitch */
+.twitch-donors-section {
     margin: 40px 0;
     width: 100%;
 }
 
-.donors-grid {
+.section-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-header h2 {
+    color: var(--lighter);
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.twitch-donors-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
     width: 100%;
 }
 
-.donor-card {
+.twitch-donor-item {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 25px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    text-align: center;
 }
 
-.donor-card:hover {
+.twitch-donor-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     border-color: rgba(255, 69, 0, 0.3);
 }
 
-.donor-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border);
+.donor-cup {
+    font-size: 2.5em;
 }
 
-.donor-header i {
-    font-size: 1.5em;
-    color: var(--accent);
+.donor-cup i.gold {
+    color: gold;
 }
 
-.donor-header h3 {
-    color: var(--lighter);
-    margin: 0;
-    font-size: 1.3em;
+.donor-cup i.silver {
+    color: silver;
 }
 
-.donor-list {
+.donor-cup i.bronze {
+    color: #cd7f32; /* Фактический цвет бронзы */
+}
+
+.donor-cup i.gray {
+    color: gray;
+}
+
+.donor-info {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-}
-
-.donor-item {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.donor-item:last-child {
-    border-bottom: none;
-}
-
-.donor-rank {
-    font-weight: bold;
-    color: var(--accent);
-    min-width: 40px;
+    gap: 5px;
 }
 
 .donor-name {
-    flex: 1;
-    color: var(--light);
-    margin: 0 15px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    color: var(--lighter);
+    font-weight: 600;
+    font-size: 1.1em;
+    margin: 0;
 }
 
 .donor-amount {
-    font-weight: 600;
     color: var(--accent);
-    min-width: 70px;
-    text-align: right;
+    font-weight: 600;
+    font-size: 0.9em;
+    margin: 0;
 }
 
-/* Адаптивность для топа донатеров */
+/* Стили для топа помощников стримера */
+.helpers-section {
+    margin: 40px 0;
+    width: 100%;
+}
+
+.helpers-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.helper-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.helper-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 69, 0, 0.3);
+}
+
+.helper-name {
+    color: var(--lighter);
+    font-weight: 600;
+    font-size: 1.1em;
+    margin: 0;
+}
+
+/* Стили для призыва к донату */
+.donate-call-section {
+    margin: 40px 0;
+    width: 100%;
+}
+
+.donate-call-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.donate-call-content:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 69, 0, 0.3);
+}
+
+.donate-call-content h2 {
+    color: var(--lighter);
+    font-size: 1.8em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.donate-call-content p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1em;
+    margin: 0;
+}
+
+.donate-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.donate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 25px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    min-width: 220px;
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+.donate-btn.alerts {
+    background: linear-gradient(90deg, #6a0dad, #8a2be2); /* Фиолетовые тона для DA */
+    color: white;
+}
+
+.donate-btn.pay {
+    background: linear-gradient(90deg, #ff6b6b, #ff8e8e); /* Красные тона для DP */
+    color: white;
+}
+
+.donate-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.donate-btn i {
+    font-size: 1.2em;
+}
+
+/* Адаптивность для топа донатеров и помощников */
 @media (max-width: 768px) {
-    .donors-grid {
+    .twitch-donors-grid,
+    .helpers-list {
         grid-template-columns: 1fr;
     }
     
-    .donor-item {
-        flex-direction: row;
-        align-items: center;
-        gap: 10px;
+    .section-header h2 {
+        font-size: 1.5em;
     }
     
-    .donor-name {
-        margin: 0 5px;
+    .donate-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .donate-btn {
+        width: 100%;
+        max-width: 300px;
     }
 }
+
 
 .loading-subtext {
     font-size: 0.9rem;
