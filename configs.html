@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Segazbs Helper </title>
+    <link rel="canonical" href="https://segazbs.info/configs.html">
+    <!-- Критические ресурсы сначала -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Preload для шрифтов -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=New+Rocker&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=New+Rocker&display=swap" rel="stylesheet">
+    </noscript>
+    <style>
+        /* Критический CSS для мгновенного отображения */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1A1A1A;
+            color: #E8E8E8;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+        .loading { 
+            text-align: center; 
+            padding: 60px 20px;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <header class="header-flag">
+        <div class="header-content-flag">
+            <div class="header-left">
+                <div class="horde-logo-large">
+                    <img src="images/icons8-орда-world-of-warcraft-48.png" alt="Horde">
+                </div>
+                <div>
+                    <h1 class="header-title-flag">SegaZBS Helper</h1>
+                    <p class="header-subtitle-flag">Помощник для World of Warcraft</p>
+                </div>
+            </div>
+            
+            <nav class="nav-flag">
+                <a href="configs.html" class="active"><i class="fas fa-th-large"></i> Конфиги</a>
+                <a href="macros.html"><i class="fas fa-terminal"></i> Макросы</a>
+                <a href="addons.html"><i class="fas fa-puzzle-piece"></i> Аддоны</a>
+                <a href="guides.html"><i class="fas fa-video"></i> Гайды</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Информационный баннер -->
+        <div class="info-banner">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+                <strong>ВНИМАНИЕ!</strong>
+                <p>Для корректной работы конфигов все аддоны должны быть обновлены до последней версии. Используйте программу AddonUpdater, которую можно скачать на <a href="addons.html">странице с аддонами</a></p>
+            </div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat">
+                <i class="fas fa-database"></i>
+                <span id="totalConfigs">0</span> конфигов
+            </div>
+            <div class="stat">
+                <i class="fas fa-users"></i>
+                <span id="uniqueAuthors">0</span> авторов
+            </div>
+            <div class="stat">
+                <i class="fas fa-history"></i>
+                Обновлено: <span id="lastUpdated">сегодня</span>
+            </div>
+        </div>
+
+        <!-- Фильтры -->
+        <section class="filters-section">
+            <h2><i class="fas fa-filter"></i> Фильтры</h2>
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <h3><i class="fas fa-plug"></i> Аддон</h3>
+                    <div class="filter-options" id="addonFilter">
+                        <button class="filter-btn active" data-addon="all">Все аддоны</button>
+                        <button class="filter-btn" data-addon="elvui">ElvUI</button>
+                        <button class="filter-btn" data-addon="wa">WeakAuras</button>
+                        <button class="filter-btn" data-addon="details">Details!</button>
+                        <button class="filter-btn" data-addon="plater">Plater</button>
+                        <button class="filter-btn" data-addon="dbm">DBM</button>
+                        <button class="filter-btn" data-addon="bigwigs">BigWigs</button>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3><i class="fas fa-user"></i> Класс</h3>
+                    <div class="filter-options" id="classFilter">
+                        <button class="filter-btn active" data-class="all">Все классы</button>
+                        <button class="filter-btn" data-class="warrior"><i class="fas fa-shield-alt"></i> Воин</button>
+                        <button class="filter-btn" data-class="paladin"><i class="fas fa-sun"></i> Паладин</button>
+                        <button class="filter-btn" data-class="deathknight"><i class="fas fa-skull"></i> Рыцарь смерти</button>
+                        <button class="filter-btn" data-class="mage"><i class="fas fa-fire"></i> Маг</button>
+                        <button class="filter-btn" data-class="priest"><i class="fas fa-cross"></i> Жрец</button>
+                        <button class="filter-btn" data-class="rogue"><i class="fas fa-user-secret"></i> Разбойник</button>
+                        <button class="filter-btn" data-class="shaman"><i class="fas fa-bolt"></i> Шаман</button>
+                        <button class="filter-btn" data-class="hunter"><i class="fas fa-bullseye"></i> Охотник</button>
+                        <button class="filter-btn" data-class="warlock"><i class="fas fa-hat-wizard"></i> Чернокнижник</button>
+                        <button class="filter-btn" data-class="druid"><i class="fas fa-paw"></i> Друид</button>
+                        <button class="filter-btn" data-class="universal"><i class="fas fa-users"></i> Универсальные</button>
+                    </div>
+                </div>
+
+                <!-- УБИРАЕМ секцию фильтрации по ролям -->
+                <!-- <div class="filter-group">
+                    <h3><i class="fas fa-tasks"></i> Роль</h3>
+                    <div class="filter-options" id="roleFilter">
+                        <button class="filter-btn active" data-role="all">Все роли</button>
+                        <button class="filter-btn" data-role="tank"><i class="fas fa-shield-alt"></i> Танк</button>
+                        <button class="filter-btn" data-role="healer"><i class="fas fa-heart"></i> Хил</button>
+                        <button class="filter-btn" data-role="dps"><i class="fas fa-bolt"></i> ДПС</button>
+                    </div>
+                </div> -->
+            </div>
+        </section>
+
+        <!-- Поиск -->
+        <div class="search-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Поиск по названию или описанию...">
+                <button id="clearSearch" class="clear-btn" title="Очистить поиск">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-stats">
+                Найдено: <span id="searchResultsCount">0</span> конфигов
+            </div>
+        </div>
+
+        <!-- Сетка конфигов -->
+        <section class="configs-section">
+            <h2><i class="fas fa-th-list"></i> Конфиги <span id="configCount">(0)</span></h2>
+            
+            <div class="configs-grid" id="configsGrid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Загрузка конфигов...
+                </div>
+            </div>
+            
+            <div class="no-results" id="noResults" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>Конфиги не найдены</h3>
+                <p>Попробуйте изменить параметры фильтрации</p>
+            </div>
+        </section>
+    </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3><img src="images/icons8-орда-world-of-warcraft-48.png" alt="Horde" class="horde-icon"> SegaZBS</h3>
+                    <p>Стример World of Warcraft | Сообщество геймеров</p>
+                    <p class="footer-note">Присоединяйся к нашим стримам и ивентам!</p>
+                </div>
+            </div>
+            
+            <!-- Плашка сообщества -->
+            <div class="support-banner">
+                <div class="support-banner-content">
+                    <p class="support-banner-text">
+                        <i class="fas fa-users"></i>
+                        Присоединяйся к нашему сообществу в Telegram! Будь в курсе новых стримов, ивентов и общайся с другими фанатами WoW.
+                    </p>
+                    <a href="https://t.me/segazbs" target="_blank" class="support-banner-link">
+                        <i class="fab fa-telegram"></i>
+                        Подписаться на Telegram-канал
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2026 SegaZBS. World of Warcraft и Blizzard Entertainment являются товарными знаками или зарегистрированными товарными знаками</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно для инструкций -->
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Инструкция по установке</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для подтверждения копирования -->
+    <div id="copyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="copyModalTitle">Подтверждение копирования конфига</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="warning-message">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="warning-text">
+                        <p><strong>ВНИМАНИЕ!</strong></p>
+                        <p>Для корректной работы конфигов все аддоны должны быть обновлены до последней версии. Используйте программу AddonUpdater, которую можно скачать на <a href="addons.html">странице с аддонами</a>.</p>
+                        <p>Перед копированием убедитесь, что ваши аддоны обновлены, иначе конфиг может работать некорректно.</p>
+                    </div>
+                </div>
+                <div class="confirmation-checkbox">
+                    <label>
+                        <input type="checkbox" id="copyConfirmationCheckbox">
+                        <span>Я ознакомлен с предупреждением и обновил аддоны</span>
+                    </label>
+                </div>
+                <div class="modal-buttons">
+                    <button id="copyConfirmButton" class="copy-btn" disabled>
+                        <i class="fas fa-copy"></i> Копировать конфиг
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипты с defer для неблокирующей загрузки -->
+    <script src="js/preload.js" defer></script>
+    <script src="js/utils.js" defer></script>
+    <script src="js/github-data.js" defer></script>
+    <script src="js/app.js" defer></script>
+</body>
+</html>
