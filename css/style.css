@@ -639,6 +639,61 @@ footer {
     font-size: 0.85rem;
 }
 
+/* Плашка сообщества */
+.support-banner {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px 0 0 0;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.support-banner-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.support-banner-text {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.support-banner-text i {
+    color: var(--accent);
+    margin-right: 5px;
+}
+
+.support-banner-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    color: var(--light);
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.support-banner-link:hover {
+    background: rgba(204, 55, 0, 0.1);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.support-banner-link i {
+    color: var(--accent);
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
     .container {
