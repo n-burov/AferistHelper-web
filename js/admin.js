@@ -289,68 +289,40 @@ class AdminPanel {
         // Очищаем контейнер
         container.innerHTML = '';
 
-        // Добавляем каждого донатера
-        this.topDonors.forEach((donor, index) => {
-            const donorElement = this.createDonorElement(donor, index);
-            container.appendChild(donorElement);
-        });
-
-        // Добавляем обработчики событий для новых элементов
-        this.bindTopDonorsEvents();
+        // Создаем 5 карточек донатеров (всегда фиксированное количество)
+        for (let i = 0; i < 5; i++) {
+            const donor = this.topDonors[i] || { id: i + 1, name: '', amount: 0, currency: '₽', position: i + 1 };
+            const donorCard = this.createDonorCard(donor, i);
+            container.appendChild(donorCard);
+        }
+        
+        // Привязываем обработчик события к форме
+        this.bindTopDonorsFormEvent();
     }
 
-    createDonorElement(donor, index) {
-        const donorDiv = document.createElement('div');
-        donorDiv.className = 'donor-item';
-        donorDiv.innerHTML = `
-            <div class="form-group">
-                <label>Донатер #${index + 1}</label>
-                <input type="hidden" class="donor-id" value="${donor.id || ''}">
-            </div>
-            <div class="form-group">
+    createDonorCard(donor, index) {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'donor-card';
+        cardDiv.innerHTML = `
+            <h4>Донатер #${index + 1}</h4>
+            <input type="hidden" class="donor-id" value="${donor.id || index + 1}">
+            <div class="donor-input-group">
                 <label for="donorName${index}">Имя:</label>
                 <input type="text" id="donorName${index}" class="donor-name" value="${this.escapeHtml(donor.name || '')}" required>
             </div>
-            <div class="form-group">
+            <div class="donor-input-group">
                 <label for="donorAmount${index}">Сумма:</label>
                 <input type="number" id="donorAmount${index}" class="donor-amount" value="${donor.amount || ''}" required>
             </div>
-            <div class="form-group">
+            <div class="donor-input-group">
                 <label for="donorCurrency${index}">Валюта:</label>
                 <input type="text" id="donorCurrency${index}" class="donor-currency" value="${this.escapeHtml(donor.currency || '₽')}" required>
             </div>
-            <div class="form-group">
-                <label for="donorPosition${index}">Позиция:</label>
-                <input type="number" id="donorPosition${index}" class="donor-position" value="${donor.position || index + 1}" required>
-            </div>
-            <button type="button" class="btn-danger remove-donor-btn" data-index="${index}">Удалить</button>
-            <hr>
         `;
-        return donorDiv;
+        return cardDiv;
     }
 
-    bindTopDonorsEvents() {
-        // Обработчик для кнопки "Добавить донатера"
-        const addDonorBtn = document.getElementById('addDonorBtn');
-        if (addDonorBtn && !addDonorBtn.dataset.bound) {
-            addDonorBtn.dataset.bound = 'true';
-            addDonorBtn.addEventListener('click', () => {
-                this.addDonorRow();
-            });
-        }
-
-        // Обработчики для кнопок "Удалить"
-        document.querySelectorAll('.remove-donor-btn').forEach(btn => {
-            if (!btn.dataset.listenerAdded) {
-                btn.dataset.listenerAdded = 'true';
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    this.removeDonorRow(index);
-                });
-            }
-        });
-
-        // Обработчик формы топа донатеров
+    bindTopDonorsFormEvent() {
         const topDonorsForm = document.getElementById('topDonorsForm');
         if (topDonorsForm && !topDonorsForm.dataset.submitted) {
             topDonorsForm.dataset.submitted = 'true';
@@ -358,88 +330,23 @@ class AdminPanel {
         }
     }
 
-    addDonorRow() {
-        const container = document.getElementById('donorsContainer');
-        const index = container.children.length;
-        
-        const newDonor = {
-            id: Date.now(), // временный ID
-            name: '',
-            amount: 0,
-            currency: '₽',
-            position: index + 1
-        };
-        
-        const donorElement = this.createDonorElement(newDonor, index);
-        container.appendChild(donorElement);
-        
-        // Пересвязываем события
-        this.bindTopDonorsEvents();
-    }
-
-    removeDonorRow(index) {
-        const container = document.getElementById('donorsContainer');
-        if (container.children[index]) {
-            container.removeChild(container.children[index]);
-            
-            // Пересчитываем индексы для остальных элементов
-            this.reindexDonorRows();
-        }
-    }
-
-    reindexDonorRows() {
-        const container = document.getElementById('donorsContainer');
-        const donorElements = container.querySelectorAll('.donor-item');
-        
-        donorElements.forEach((element, idx) => {
-            const labels = element.querySelectorAll('label');
-            const inputs = element.querySelectorAll('input');
-            const removeBtn = element.querySelector('.remove-donor-btn');
-            
-            // Обновляем текст "Донатер #N"
-            if (labels[0]) {
-                labels[0].textContent = `Донатер #${idx + 1}`;
-            }
-            
-            // Обновляем ID и значения для полей
-            inputs.forEach(input => {
-                if (input.classList.contains('donor-name')) {
-                    input.id = `donorName${idx}`;
-                } else if (input.classList.contains('donor-amount')) {
-                    input.id = `donorAmount${idx}`;
-                } else if (input.classList.contains('donor-currency')) {
-                    input.id = `donorCurrency${idx}`;
-                } else if (input.classList.contains('donor-position')) {
-                    input.id = `donorPosition${idx}`;
-                    input.value = idx + 1; // автоматически обновляем позицию
-                }
-            });
-            
-            // Обновляем индекс кнопки удаления
-            if (removeBtn) {
-                removeBtn.dataset.index = idx;
-            }
-        });
-    }
-
     async handleTopDonorsSubmit(e) {
         e.preventDefault();
         
-        const donorElements = document.querySelectorAll('.donor-item');
+        const donorCards = document.querySelectorAll('.donor-card');
         const donors = [];
 
-        donorElements.forEach(element => {
-            const idInput = element.querySelector('.donor-id');
-            const nameInput = element.querySelector('.donor-name');
-            const amountInput = element.querySelector('.donor-amount');
-            const currencyInput = element.querySelector('.donor-currency');
-            const positionInput = element.querySelector('.donor-position');
+        donorCards.forEach((card, index) => {
+            const idInput = card.querySelector('.donor-id');
+            const nameInput = card.querySelector('.donor-name');
+            const amountInput = card.querySelector('.donor-amount');
+            const currencyInput = card.querySelector('.donor-currency');
 
-            const id = idInput ? parseInt(idInput.value) || Date.now() : Date.now();
+            const id = idInput ? parseInt(idInput.value) || (index + 1) : (index + 1);
             const name = nameInput ? nameInput.value : '';
             const amount = amountInput ? parseFloat(amountInput.value) || 0 : 0;
             const currency = currencyInput ? currencyInput.value : '₽';
-            const position = positionInput ? parseInt(positionInput.value) || 0 : 0;
+            const position = index + 1; // Позиция определяется по порядку следования
 
             if (name && amount >= 0) {
                 donors.push({
@@ -451,9 +358,6 @@ class AdminPanel {
                 });
             }
         });
-
-        // Сортируем по позиции
-        donors.sort((a, b) => a.position - b.position);
 
         try {
             const response = await fetch('/api/top-donors/update', {
