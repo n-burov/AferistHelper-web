@@ -1044,8 +1044,9 @@ footer .horde-icon {
             width: 250px;
             height: auto;
             border-radius: 8px;
-            animation: pulse-dark 4s ease-in-out infinite;
+            animation: pulse-dark 3s ease-in-out infinite;
             position: relative;
+            background: transparent;
         }
 
         .neverest-text {
