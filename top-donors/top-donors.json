@@ -3,35 +3,30 @@
     "id": 1,
     "name": "TwitchUser1",
     "amount": 5000,
-    "currency": "₽",
-    "position": 1
+    "currency": "₽"
   },
   {
     "id": 2,
     "name": "TwitchUser2",
     "amount": 3500,
-    "currency": "₽",
-    "position": 2
+    "currency": "₽"
   },
   {
     "id": 3,
     "name": "TwitchUser3",
     "amount": 2800,
-    "currency": "₽",
-    "position": 3
+    "currency": "₽"
   },
   {
     "id": 4,
     "name": "TwitchUser4",
     "amount": 1900,
-    "currency": "₽",
-    "position": 4
+    "currency": "₽"
   },
   {
     "id": 5,
     "name": "TwitchUser5",
     "amount": 1200,
-    "currency": "₽",
-    "position": 5
+    "currency": "₽"
   }
 ]
