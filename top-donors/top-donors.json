@@ -28,5 +28,11 @@
     "name": "TwitchUser5",
     "amount": 1200,
     "currency": "₽"
+  },
+  {
+    "id": 1768690366271,
+    "name": "test",
+    "amount": 5000,
+    "currency": "₽"
   }
 ]
