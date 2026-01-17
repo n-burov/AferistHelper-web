@@ -158,6 +158,47 @@
             font-family: 'Courier New', monospace;
             border: 1px solid #7f8c8d;
         }
+        
+        .donors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .donor-card {
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #7f8c8d;
+        }
+        
+        .donor-card h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+        
+        .donor-input-group {
+            margin-bottom: 10px;
+        }
+        
+        .donor-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ecf0f1;
+        }
+        
+        .donor-input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #7f8c8d;
+            border-radius: 4px;
+            background: #34495e;
+            color: #ecf0f1;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -408,10 +449,9 @@
                 <div class="config-form">
                     <h3>Редактировать топ донатеров</h3>
                     <form id="topDonorsForm">
-                        <div id="donorsContainer">
+                        <div id="donorsContainer" class="donors-grid">
                             <!-- Донатеры будут добавляться сюда динамически -->
                         </div>
-                        <button type="button" id="addDonorBtn" class="btn-secondary">Добавить донатера</button>
                         <button type="submit" class="btn-primary">Сохранить топ донатеров</button>
                     </form>
                 </div>
