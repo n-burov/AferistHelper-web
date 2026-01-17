@@ -176,6 +176,7 @@
                 <div class="tab" data-tab="macros">Макросы</div>
                 <div class="tab" data-tab="addons">Аддоны</div>
                 <div class="tab" data-tab="guides">Гайды</div>
+                <div class="tab" data-tab="home">Главная страница</div>
             </div>
 
             <!-- Конфиги -->
@@ -399,6 +400,20 @@
                 <div class="config-list">
                     <h3>Существующие гайды</h3>
                     <div id="guidesList"></div>
+                </div>
+            </div>
+
+            <!-- Главная страница -->
+            <div id="homeTab" class="tab-content">
+                <div class="config-form">
+                    <h3>Редактировать топ донатеров</h3>
+                    <form id="topDonorsForm">
+                        <div id="donorsContainer">
+                            <!-- Донатеры будут добавляться сюда динамически -->
+                        </div>
+                        <button type="button" id="addDonorBtn" class="btn-secondary">Добавить донатера</button>
+                        <button type="submit" class="btn-primary">Сохранить топ донатеров</button>
+                    </form>
                 </div>
             </div>
         </div>
