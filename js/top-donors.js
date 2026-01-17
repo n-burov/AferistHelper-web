@@ -26,20 +26,23 @@ function displayTopDonors(donors) {
     const container = document.getElementById('top-donors-container');
     if (!container) return;
 
-    // Сортируем донатеров по позиции
-    const sortedDonors = [...donors].sort((a, b) => a.position - b.position);
+    // Сортируем донатеров по сумме доната в порядке убывания
+    const sortedDonors = [...donors].sort((a, b) => b.amount - a.amount);
 
-    container.innerHTML = sortedDonors.map(donor => {
+    // Берем только первые 5 донатеров
+    const top5Donors = sortedDonors.slice(0, 5);
+
+    container.innerHTML = top5Donors.map((donor, index) => {
         // Определяем класс для кубка в зависимости от позиции
         let trophyClass = 'gray'; // по умолчанию серый
-        switch(donor.position) {
-            case 1:
+        switch(index) {
+            case 0:
                 trophyClass = 'gold';
                 break;
-            case 2:
+            case 1:
                 trophyClass = 'silver';
                 break;
-            case 3:
+            case 2:
                 trophyClass = 'bronze';
                 break;
         }
