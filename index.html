@@ -637,54 +637,10 @@
         <!-- Топ донатеров Twitch -->
         <section class="twitch-donors-section">
             <div class="section-header">
-                <h2><i class="fab fa-twitch"></i> Топ донатеры Twitch</h2>
+                <h2><i class="fas fa-heart"></i> Спасибо за вашу поддержку</h2>
             </div>
-            <div class="twitch-donors-grid">
-                <div class="twitch-donor-item">
-                    <div class="donor-cup">
-                        <i class="fas fa-trophy gold"></i>
-                    </div>
-                    <div class="donor-info">
-                        <div class="donor-name">TwitchUser1</div>
-                        <div class="donor-amount">5000 ₽</div>
-                    </div>
-                </div>
-                <div class="twitch-donor-item">
-                    <div class="donor-cup">
-                        <i class="fas fa-trophy silver"></i>
-                    </div>
-                    <div class="donor-info">
-                        <div class="donor-name">TwitchUser2</div>
-                        <div class="donor-amount">3500 ₽</div>
-                    </div>
-                </div>
-                <div class="twitch-donor-item">
-                    <div class="donor-cup">
-                        <i class="fas fa-trophy bronze"></i>
-                    </div>
-                    <div class="donor-info">
-                        <div class="donor-name">TwitchUser3</div>
-                        <div class="donor-amount">2800 ₽</div>
-                    </div>
-                </div>
-                <div class="twitch-donor-item">
-                    <div class="donor-cup">
-                        <i class="fas fa-trophy gray"></i>
-                    </div>
-                    <div class="donor-info">
-                        <div class="donor-name">TwitchUser4</div>
-                        <div class="donor-amount">1900 ₽</div>
-                    </div>
-                </div>
-                <div class="twitch-donor-item">
-                    <div class="donor-cup">
-                        <i class="fas fa-trophy gray"></i>
-                    </div>
-                    <div class="donor-info">
-                        <div class="donor-name">TwitchUser5</div>
-                        <div class="donor-amount">1200 ₽</div>
-                    </div>
-                </div>
+            <div class="twitch-donors-grid" id="top-donors-container">
+                <!-- Содержимое будет загружено через JS -->
             </div>
         </section>
 
@@ -700,30 +656,6 @@
                     <a href="https://new.donatepay.ru/@SEGAZBS" target="_blank" class="donate-btn pay">
                         <i class="fas fa-gift"></i> DonatePay
                     </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Топ помощников стримера -->
-        <section class="helpers-section">
-            <div class="section-header">
-                <h2><i class="fas fa-users"></i> Топ помощников стримера</h2>
-            </div>
-            <div class="helpers-list">
-                <div class="helper-item">
-                    <div class="helper-name">Helper1</div>
-                </div>
-                <div class="helper-item">
-                    <div class="helper-name">Helper2</div>
-                </div>
-                <div class="helper-item">
-                    <div class="helper-name">Helper3</div>
-                </div>
-                <div class="helper-item">
-                    <div class="helper-name">Helper4</div>
-                </div>
-                <div class="helper-item">
-                    <div class="helper-name">Helper5</div>
                 </div>
             </div>
         </section>
@@ -776,5 +708,6 @@
     </footer>
 
     <script src="js/utils.js"></script>
+    <script src="js/top-donors.js"></script>
 </body>
 </html>
