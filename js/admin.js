@@ -353,6 +353,8 @@ class AdminPanel {
         this.topDonors.push(newDonor);
         
         const donorCard = this.createDonorCard(newDonor, newIndex);
+        
+        // Находим кнопку "Добавить донатера"
         const addButton = container.querySelector('button[type="button"]');
         
         // Вставляем новую карточку перед кнопкой добавления
