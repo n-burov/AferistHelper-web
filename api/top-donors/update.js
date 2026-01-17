@@ -39,6 +39,7 @@ export default async function handler(req, res) {
             if (typeof donor.name !== 'string') {
                 return res.status(400).json({ error: 'Поле name должно быть строкой' });
             }
+            
         }
 
         // Обновляем содержимое файла
