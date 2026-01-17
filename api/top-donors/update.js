@@ -31,7 +31,7 @@ export default async function handler(req, res) {
             donor.amount = Number(donor.amount);
             
             // Проверяем, являются ли числа допустимыми
-            if (isNaN(donor.id) || isNaN(donor.amount)) {
+            if (isNaN(donor.id) || isNaN(donor.amount) || !isFinite(donor.id) || !isFinite(donor.amount)) {
                 return res.status(400).json({ error: 'Некорректные числовые типы данных донатера' });
             }
             
