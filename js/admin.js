@@ -390,9 +390,9 @@ class AdminPanel {
             const currencyInput = card.querySelector('.donor-currency');
 
             const id = idInput ? idInput.value : this.generateId();
-            const name = nameInput ? nameInput.value : '';
+            const name = nameInput ? (nameInput.value || '') : '';
             const amount = amountInput ? parseFloat(amountInput.value) || 0 : 0;
-            const currency = currencyInput ? currencyInput.value : '₽';
+            const currency = currencyInput ? (currencyInput.value || '₽') : '₽';
 
             // Всегда добавляем элемент, даже если поля пустые, чтобы сохранить структуру
             donors.push({
