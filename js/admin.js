@@ -376,7 +376,7 @@ class AdminPanel {
         this.saveCurrentFormData();
         
         // Добавляем нового донатера в массив
-        const newDonor = { id: this.generateId(), name: '', amount: 0, currency: '₽' };
+        const newDonor = { id: Number(Date.now()), name: '', amount: 0, currency: '₽' };
         this.topDonors.push(newDonor);
         
         // Полностью перерисовываем список, чтобы избежать проблем с DOM-манипуляциями
