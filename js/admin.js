@@ -355,9 +355,17 @@ class AdminPanel {
             if (this.topDonors[index]) {
                 this.topDonors[index].id = idInput ? (idInput.value || this.topDonors[index].id) : this.topDonors[index].id;
                 this.topDonors[index].name = nameInput ? (nameInput.value || '') : '';
-                if (amountInput && amountInput.value !== '' && !isNaN(parseFloat(amountInput.value))) {
-                    this.topDonors[index].amount = parseFloat(amountInput.value);
+                
+                // Обработка amount с дополнительной проверкой
+                let amountValue = 0;
+                if (amountInput && amountInput.value !== '') {
+                    const parsedAmount = parseFloat(amountInput.value);
+                    if (!isNaN(parsedAmount) && isFinite(parsedAmount)) {
+                        amountValue = parsedAmount;
+                    }
                 }
+                this.topDonors[index].amount = amountValue;
+                
                 this.topDonors[index].currency = currencyInput ? (currencyInput.value || '₽') : '₽';
             }
         });
