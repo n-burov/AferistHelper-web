@@ -348,21 +348,12 @@ class AdminPanel {
         const container = document.getElementById('donorsContainer');
         if (!container) return;
 
-        const newIndex = this.topDonors.length;
+        // Добавляем нового донатера в массив
         const newDonor = { id: this.generateId(), name: '', amount: 0, currency: '₽' };
         this.topDonors.push(newDonor);
         
-        const donorCard = this.createDonorCard(newDonor, newIndex);
-        
-        // Находим кнопку "Добавить донатера"
-        const addButton = container.querySelector('button[type="button"]');
-        
-        // Вставляем новую карточку перед кнопкой добавления
-        if (addButton) {
-            container.insertBefore(donorCard, addButton);
-        } else {
-            container.appendChild(donorCard);
-        }
+        // Полностью перерисовываем список, чтобы избежать проблем с DOM-манипуляциями
+        this.renderTopDonors();
     }
 
     removeDonor(index) {
