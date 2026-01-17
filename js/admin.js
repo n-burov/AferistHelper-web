@@ -348,15 +348,14 @@ class AdminPanel {
             const currency = currencyInput ? currencyInput.value : '₽';
             const position = index + 1; // Позиция определяется по порядку следования
 
-            if (name && amount >= 0) {
-                donors.push({
-                    id,
-                    name,
-                    amount,
-                    currency,
-                    position
-                });
-            }
+            // Всегда добавляем элемент, даже если поля пустые, чтобы сохранить структуру
+            donors.push({
+                id,
+                name,
+                amount,
+                currency,
+                position
+            });
         });
 
         try {
