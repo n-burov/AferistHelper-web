@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сайт закрыт на неопределенный срок</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f1f1f1;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .icon {
+            font-size: 80px;
+            color: #ff6b6b;
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            color: #a0a0c0;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        
+        .message {
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 5px solid #ff6b6b;
+            text-align: left;
+        }
+        
+        .closure-info {
+            background-color: rgba(255, 107, 107, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .closure-info h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #ff9e7d;
+        }
+        
+        .closure-info p {
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #888;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+            
+            .message {
+                font-size: 16px;
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 30px 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 26px;
+            }
+            
+            .icon {
+                font-size: 60px;
+            }
+            
+            .container {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            <i class="fas fa-door-closed"></i>
+        </div>
+        
+        <h1>Сайт временно закрыт</h1>
+        <p class="subtitle">На неопределенный срок</p>
+        
+        <div class="message">
+            <p>Уважаемые посетители!</p>
+            <p>Сообщаем вам, что данный сайт закрыт на неопределенный срок. Это решение было принято в связи с техническими работами, переездом на новый хостинг или другими организационными причинами.</p>
+            <p>Мы приносим извинения за возможные неудобства и благодарим вас за понимание. Информация о возможном возобновлении работы будет опубликована здесь же, когда такие планы появятся.</p>
+        </div>
+        
+        <div class="closure-info">
+            <h3>Информация о закрытии</h3>
+            <p><i class="fas fa-calendar-times"></i> Дата закрытия: <strong>18.01.2026</strong></p>
+            <p><i class="fas fa-history"></i> Статус: <strong>На неопределенный срок</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; Все права защищены. 2026</p>
+            <p>Сайт закрыт с 18 января 2026 года</p>
+        </div>
+    </div>
+
+    <script>
+        // Простой счетчик дней с момента закрытия
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeDate = new Date('2026-01-18');
+            const today = new Date();
+            const diffTime = Math.abs(today - closeDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Обновляем информацию о времени с момента закрытия
+            const daysElement = document.createElement('div');
+            daysElement.className = 'closure-info';
+            daysElement.innerHTML = `
+                <h3>Время с момента закрытия</h3>
+                <p><i class="fas fa-clock"></i> Сайт не работает уже: <strong>${diffDays} ${getDaysWord(diffDays)}</strong></p>
+                <p><i class="fas fa-calendar-alt"></i> Текущая дата: <strong>${formatDate(today)}</strong></p>
+            `;
+            
+            const container = document.querySelector('.container');
+            const closureInfo = document.querySelector('.closure-info');
+            container.insertBefore(daysElement, closureInfo);
+            
+            // Функция для правильного склонения слова "день"
+            function getDaysWord(days) {
+                let lastDigit = days % 10;
+                let lastTwoDigits = days % 100;
+                
+                if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+                    return 'дней';
+                }
+                
+                if (lastDigit === 1) {
+                    return 'день';
+                }
+                
+                if (lastDigit >= 2 && lastDigit <= 4) {
+                    return 'дня';
+                }
+                
+                return 'дней';
+            }
+            
+            // Функция для форматирования даты
+            function formatDate(date) {
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}.${month}.${year}`;
+            }
+        });
+    </script>
+</body>
+</html>
