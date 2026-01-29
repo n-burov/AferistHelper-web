@@ -213,6 +213,7 @@
                 <li>Выберите JSON файлы для миграции</li>
                 <li>Нажмите "Начать миграцию"</li>
                 <li>Дождитесь завершения процесса</li>
+                <li>УДАЛИТЕ этот файл после использования в целях безопасности!</li>
             </ol>
         </div>
 
@@ -301,11 +302,10 @@
             for (let i = 0; i < configs.length; i++) {
                 const config = configs[i];
                 try {
-                    const response = await fetch('/api/config/update', {
+                    const response = await fetch('/api/configs/update', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + getAuthToken()
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             action: 'add',
@@ -359,11 +359,10 @@
             for (let i = 0; i < macros.length; i++) {
                 const macro = macros[i];
                 try {
-                    const response = await fetch('/api/macro/update', {
+                    const response = await fetch('/api/macros/update', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + getAuthToken()
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             action: 'add',
@@ -415,11 +414,10 @@
             for (let i = 0; i < addons.length; i++) {
                 const addon = addons[i];
                 try {
-                    const response = await fetch('/api/addon/update', {
+                    const response = await fetch('/api/addons/update', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + getAuthToken()
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             action: 'add',
@@ -471,11 +469,10 @@
             for (let i = 0; i < guides.length; i++) {
                 const guide = guides[i];
                 try {
-                    const response = await fetch('/api/guide/update', {
+                    const response = await fetch('/api/guides/update', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + getAuthToken()
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             action: 'add',
@@ -520,11 +517,10 @@
             log(`Найдено донатеров: ${donorsArray.length}`, 'info');
 
             try {
-                const response = await fetch('/api/top-donors/update', {
+                const response = await fetch('/api/donors/update', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + getAuthToken()
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         donors: donorsArray.map(d => ({
@@ -550,15 +546,6 @@
             }
         }
 
-        function getAuthToken() {
-            // Получаем токен из localStorage (если пользователь авторизован)
-            const token = localStorage.getItem('admin_token');
-            if (!token) {
-                throw new Error('Требуется авторизация. Пожалуйста, войдите в админ-панель сначала.');
-            }
-            return token;
-        }
-
         async function startMigration() {
             if (migrationInProgress) {
                 alert('Миграция уже выполняется');
@@ -573,13 +560,6 @@
 
             if (!configsFile && !macrosFile && !addonsFile && !guidesFile && !donorsFile) {
                 alert('Выберите хотя бы один файл для миграции');
-                return;
-            }
-
-            try {
-                getAuthToken(); // Проверяем авторизацию
-            } catch (error) {
-                alert('Ошибка: ' + error.message + '\n\nПожалуйста, сначала войдите в админ-панель (/admin.html)');
                 return;
             }
 
@@ -636,6 +616,15 @@
                 document.getElementById('migrateBtn').disabled = false;
             }
         }
+
+        // Автоматический запуск при загрузке, если URL содержит параметр
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('auto')) {
+                log('Автоматический запуск миграции...', 'info');
+                setTimeout(() => startMigration(), 1000);
+            }
+        });
     </script>
 </body>
 </html>
