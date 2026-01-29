@@ -1,7 +1,5 @@
 class AdminPanel {
     constructor() {
-        this.clientId = 'Ov23liPIpQgvhqpl1zAg';
-        this.redirectUri = window.location.origin + '/admin.html';
         this.apiBase = '/api';
         this.isAuthenticated = false;
         this.currentUser = null;
@@ -19,20 +17,15 @@ class AdminPanel {
         this.checkAuth();
         this.bindEvents();
         
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        
-        if (code) {
-            await this.handleAuthCallback();
-        } else if (this.isAuthenticated) {
+        if (this.isAuthenticated) {
             await this.loadConfigs();
             this.showAdminPanel();
         }
     }
 
     checkAuth() {
-        const token = localStorage.getItem('github_access_token');
-        const user = localStorage.getItem('github_user');
+        const token = localStorage.getItem('admin_token');
+        const user = localStorage.getItem('admin_user');
         const expiry = localStorage.getItem('token_expiry');
         
         if (token && user && expiry && Date.now() < parseInt(expiry)) {
@@ -44,9 +37,9 @@ class AdminPanel {
     }
 
     bindEvents() {
-        const loginBtn = document.getElementById('loginBtn');
+        const loginForm = document.getElementById('loginForm');
         const configForm = document.getElementById('configForm');
-        const macroForm = document.getElementById('macroForm'); // ← ЭТА СТРОЧКА ДОЛЖНА БЫТЬ
+        const macroForm = document.getElementById('macroForm');
         const addonForm = document.getElementById('addonForm');
         const cancelEdit = document.getElementById('cancelEdit');
         const cancelMacroEdit = document.getElementById('cancelMacroEdit');
@@ -54,7 +47,7 @@ class AdminPanel {
         const guideForm = document.getElementById('guideForm');
         const cancelGuideEdit = document.getElementById('cancelGuideEdit');
         
-        if (loginBtn) loginBtn.addEventListener('click', () => this.login());
+        if (loginForm) loginForm.addEventListener('submit', (e) => this.handleLogin(e));
         if (configForm) configForm.addEventListener('submit', (e) => this.handleConfigSubmit(e));
         if (macroForm) macroForm.addEventListener('submit', (e) => this.handleMacroSubmit(e));
         if (addonForm) addonForm.addEventListener('submit', (e) => this.handleAddonSubmit(e));
@@ -69,27 +62,30 @@ class AdminPanel {
         });
     }
 
-    login() {
-        const authUrl = `https://github.com/login/oauth/authorize?client_id=${this.clientId}&redirect_uri=${this.redirectUri}&scope=repo`;
-        window.location.href = authUrl;
-    }
-
-    async handleAuthCallback() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
+    async handleLogin(e) {
+        e.preventDefault();
         
-        if (!code) return;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (!username || !password) {
+            alert('Введите логин и пароль');
+            return;
+        }
 
         try {
-            const response = await fetch(`${this.apiBase}/auth/callback?code=${encodeURIComponent(code)}`);
+            const response = await fetch(`${this.apiBase}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
             const data = await response.json();
             
-            if (data.access_token) {
-                localStorage.setItem('github_access_token', data.access_token);
-                localStorage.setItem('github_user', JSON.stringify(data.user));
-                localStorage.setItem('token_expiry', (Date.now() + 3600000).toString());
-                
-                window.history.replaceState({}, document.title, window.location.pathname);
+            if (data.success && data.token) {
+                localStorage.setItem('admin_token', data.token);
+                localStorage.setItem('admin_user', JSON.stringify(data.user));
+                localStorage.setItem('token_expiry', data.expiresAt.toString());
                 
                 this.isAuthenticated = true;
                 this.currentUser = data.user;
@@ -101,7 +97,6 @@ class AdminPanel {
         } catch (error) {
             console.error('Auth error:', error);
             alert('Ошибка авторизации: ' + error.message);
-            this.logout();
         }
     }
 
@@ -113,7 +108,7 @@ class AdminPanel {
             const userInfo = document.createElement('div');
             userInfo.className = 'user-info';
             userInfo.innerHTML = `
-                <span>Вы вошли как: <strong>${this.currentUser.login}</strong></span>
+                <span>Вы вошли как: <strong>${this.currentUser.username}</strong></span>
                 <button onclick="admin.logout()" class="btn-secondary">Выйти</button>
             `;
             document.getElementById('adminSection').prepend(userInfo);
@@ -121,8 +116,8 @@ class AdminPanel {
     }
 
     logout() {
-        localStorage.removeItem('github_access_token');
-        localStorage.removeItem('github_user');
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
         localStorage.removeItem('token_expiry');
         this.isAuthenticated = false;
         this.currentUser = null;
@@ -158,7 +153,7 @@ class AdminPanel {
 
     async loadConfigs() {
         try {
-            const response = await fetch('configs/configs.json');
+            const response = await fetch(`${this.apiBase}/config/get`);
             const data = await response.json();
             this.configs = data.configs || [];
             this.renderConfigsList();
@@ -189,7 +184,7 @@ class AdminPanel {
 
     async loadMacros() {
         try {
-            const response = await fetch('macros/macros.json');
+            const response = await fetch(`${this.apiBase}/macro/get`);
             const data = await response.json();
             this.macros = data.macros || [];
             this.renderMacrosList();
@@ -200,7 +195,7 @@ class AdminPanel {
 
     async loadAddons() {
         try {
-            const response = await fetch('addons/addons.json');
+            const response = await fetch(`${this.apiBase}/addon/get`);
             const data = await response.json();
             this.addons = data.addons || [];
             this.renderAddonsList();
@@ -211,7 +206,7 @@ class AdminPanel {
 
     async loadGuides() {
         try {
-            const response = await fetch('guides/guides.json');
+            const response = await fetch(`${this.apiBase}/guide/get`);
             const data = await response.json();
             this.guides = data.guides || [];
             this.renderGuidesList();
@@ -273,7 +268,7 @@ class AdminPanel {
 
     async loadTopDonors() {
         try {
-            const response = await fetch('top-donors/top-donors.json');
+            const response = await fetch(`${this.apiBase}/top-donors/get`);
             const data = await response.json();
             this.topDonors = Array.isArray(data) ? data : [];
             this.renderTopDonors();
@@ -404,8 +399,8 @@ class AdminPanel {
     async handleTopDonorsSubmit(e) {
         e.preventDefault();
         
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
             alert('Требуется авторизация');
             return;
         }
@@ -416,8 +411,11 @@ class AdminPanel {
         try {
             const response = await fetch('/api/top-donors/update', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ donors: this.topDonors, accessToken })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ donors: this.topDonors })
             });
 
             const result = await response.json();
@@ -439,8 +437,8 @@ class AdminPanel {
     async handleConfigSubmit(e) {
         e.preventDefault();
         
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
             alert('Требуется авторизация');
             return;
         }
@@ -451,7 +449,7 @@ class AdminPanel {
             description: document.getElementById('configDescription').value,
             class: document.getElementById('configClass').value,
             addon: document.getElementById('configAddon').value,
-            config: document.getElementById('configContent').value, // ← ИЗМЕНИТЬ content на config
+            config: document.getElementById('configContent').value,
             author: document.getElementById('configAuthor').value,
             created: new Date().toISOString()
         };
@@ -461,8 +459,11 @@ class AdminPanel {
             
             const response = await fetch(`${this.apiBase}/config/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, configData: formData, accessToken })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ action, configData: formData })
             });
     
             const result = await response.json();
@@ -505,8 +506,8 @@ class AdminPanel {
     async deleteConfig(configId) {
         if (!confirm('Вы уверены, что хотите удалить этот конфиг?')) return;
 
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) return;
+        const token = localStorage.getItem('admin_token');
+        if (!token) return;
 
         const config = this.configs.find(c => c.id === configId);
         if (!config) return;
@@ -514,11 +515,13 @@ class AdminPanel {
         try {
             const response = await fetch(`${this.apiBase}/config/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     action: 'delete',
-                    configData: config,
-                    accessToken: accessToken
+                    configData: config
                 })
             });
 
@@ -539,8 +542,8 @@ class AdminPanel {
     async deleteMacro(macroId) {
         if (!confirm('Вы уверены, что хотите удалить этот макрос?')) return;
 
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) return;
+        const token = localStorage.getItem('admin_token');
+        if (!token) return;
 
         const macro = this.macros.find(m => m.id === macroId);
         if (!macro) return;
@@ -548,11 +551,13 @@ class AdminPanel {
         try {
             const response = await fetch(`${this.apiBase}/macro/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     action: 'delete',
-                    macroData: macro,
-                    accessToken: accessToken
+                    macroData: macro
                 })
             });
 
@@ -594,8 +599,8 @@ class AdminPanel {
     async handleMacroSubmit(e) {
         e.preventDefault();
         
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
             alert('Требуется авторизация');
             return;
         }
@@ -605,18 +610,21 @@ class AdminPanel {
             name: document.getElementById('macroName').value,
             description: document.getElementById('macroDescription').value,
             class: document.getElementById('macroClass').value,
-            content: document.getElementById('macroContent').value,
+            macro: document.getElementById('macroContent').value,
             author: document.getElementById('macroAuthor').value,
             created: new Date().toISOString()
         };
     
         try {
-            const action = document.getElementById('macroId').value ? '极端的update' : 'add';
+            const action = document.getElementById('macroId').value ? 'update' : 'add';
             
             const response = await fetch(`${this.apiBase}/macro/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, macroData: formData, accessToken })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ action, macroData: formData })
             });
     
             const result = await response.json();
@@ -627,7 +635,7 @@ class AdminPanel {
                 
                 if (shouldNotify) {
                     try {
-                        await fetch('/极端的api/telegram/notify', {
+                        await fetch('/api/telegram/notify', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
@@ -704,8 +712,8 @@ class AdminPanel {
     async handleAddonSubmit(e) {
         e.preventDefault();
         
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
             alert('Требуется авторизация');
             return;
         }
@@ -724,10 +732,13 @@ class AdminPanel {
         try {
             const action = document.getElementById('addonId').value ? 'update' : 'add';
             
-            const response = await fetch(`${this.api极端的Base}/addon/update`, {
+            const response = await fetch(`${this.apiBase}/addon/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, addonData: formData, accessToken })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ action, addonData: formData })
             });
     
             const result = await response.json();
@@ -768,8 +779,8 @@ class AdminPanel {
     async handleGuideSubmit(e) {
         e.preventDefault();
         
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
             alert('Требуется авторизация');
             return;
         }
@@ -788,8 +799,11 @@ class AdminPanel {
             
             const response = await fetch(`${this.apiBase}/guide/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, guideData: formData, accessToken })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ action, guideData: formData })
             });
     
             const result = await response.json();
@@ -831,8 +845,8 @@ class AdminPanel {
     async deleteAddon(addonId) {
         if (!confirm('Вы уверены, что хотите удалить этот аддон?')) return;
 
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) return;
+        const token = localStorage.getItem('admin_token');
+        if (!token) return;
 
         const addon = this.addons.find(a => a.id === addonId);
         if (!addon) return;
@@ -840,11 +854,13 @@ class AdminPanel {
         try {
             const response = await fetch(`${this.apiBase}/addon/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify({
                     action: 'delete',
-                    addonData: addon,
-                    accessToken: accessToken
+                    addonData: addon
                 })
             });
 
@@ -865,8 +881,8 @@ class AdminPanel {
     async deleteGuide(guideId) {
         if (!confirm('Вы уверены, что хотите удалить этот гайд?')) return;
         
-        const accessToken = localStorage.getItem('github_access_token');
-        if (!accessToken) {
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
             alert('Требуется авторизация');
             return;
         }
@@ -874,8 +890,11 @@ class AdminPanel {
         try {
             const response = await fetch(`${this.apiBase}/guide/update`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'delete', guideId, accessToken })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ action: 'delete', guideId })
             });
 
             const result = await response.json();

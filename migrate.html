@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Миграция данных в Supabase</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .file-input-wrapper {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #667eea;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .log.active {
+            display: block;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+        }
+
+        .log-entry.success {
+            color: #4caf50;
+        }
+
+        .log-entry.error {
+            color: #f44336;
+        }
+
+        .log-entry.info {
+            color: #2196f3;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            color: #1565c0;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Миграция данных в Supabase</h1>
+        <p class="subtitle">Загрузите JSON файлы для автоматической миграции в базу данных</p>
+
+        <div class="info-box">
+            <strong>📋 Инструкция:</strong>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Убедитесь, что SQL схема выполнена в Supabase (файл db/schema.sql)</li>
+                <li>Выберите JSON файлы для миграции</li>
+                <li>Нажмите "Начать миграцию"</li>
+                <li>Дождитесь завершения процесса</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>📁 Выбор файлов для миграции</h2>
+            
+            <div class="file-input-wrapper">
+                <label for="configsFile">Конфиги (configs.json):</label>
+                <input type="file" id="configsFile" accept=".json">
+            </div>
+
+            <div class="file-input-wrapper">
+                <label for="macrosFile">Макросы (macros.json):</label>
+                <input type="file" id="macrosFile" accept=".json">
+            </div>
+
+            <div class="file-input-wrapper">
+                <label for="addonsFile">Аддоны (addons.json):</label>
+                <input type="file" id="addonsFile" accept=".json">
+            </div>
+
+            <div class="file-input-wrapper">
+                <label for="guidesFile">Гайды (guides.json):</label>
+                <input type="file" id="guidesFile" accept=".json">
+            </div>
+
+            <div class="file-input-wrapper">
+                <label for="donorsFile">Топ донатеров (top-donors.json):</label>
+                <input type="file" id="donorsFile" accept=".json">
+            </div>
+
+            <button id="migrateBtn" onclick="startMigration()">Начать миграцию</button>
+        </div>
+
+        <div class="progress" id="progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            <div id="progressText">Подготовка...</div>
+        </div>
+
+        <div class="log" id="log"></div>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        let migrationInProgress = false;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            logDiv.classList.add('active');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progress').classList.add('active');
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressFill').textContent = Math.round(percent) + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        async function migrateConfigs(file) {
+            if (!file) return { success: true, count: 0 };
+
+            log('Загрузка configs.json...', 'info');
+            const text = await file.text();
+            const data = JSON.parse(text);
+            const configs = data.configs || [];
+
+            log(`Найдено конфигов: ${configs.length}`, 'info');
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < configs.length; i++) {
+                const config = configs[i];
+                try {
+                    const response = await fetch('/api/config/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + getAuthToken()
+                        },
+                        body: JSON.stringify({
+                            action: 'add',
+                            configData: {
+                                id: config.id,
+                                name: config.name,
+                                description: config.description,
+                                class: config.class,
+                                addon: config.addon,
+                                role: config.role || null,
+                                config: config.config,
+                                screenshot: config.screenshot || null,
+                                author: config.author,
+                                created: config.created || new Date().toISOString()
+                            }
+                        })
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        const error = await response.json();
+                        log(`Ошибка при миграции конфига ${config.id}: ${error.error}`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`Ошибка при миграции конфига ${config.id}: ${error.message}`, 'error');
+                    errorCount++;
+                }
+
+                updateProgress((i + 1) / configs.length * 100, `Миграция конфигов: ${i + 1}/${configs.length}`);
+            }
+
+            log(`Конфиги: успешно ${successCount}, ошибок ${errorCount}`, successCount > 0 ? 'success' : 'error');
+            return { success: errorCount === 0, count: successCount };
+        }
+
+        async function migrateMacros(file) {
+            if (!file) return { success: true, count: 0 };
+
+            log('Загрузка macros.json...', 'info');
+            const text = await file.text();
+            const data = JSON.parse(text);
+            const macros = data.macros || [];
+
+            log(`Найдено макросов: ${macros.length}`, 'info');
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < macros.length; i++) {
+                const macro = macros[i];
+                try {
+                    const response = await fetch('/api/macro/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + getAuthToken()
+                        },
+                        body: JSON.stringify({
+                            action: 'add',
+                            macroData: {
+                                id: macro.id,
+                                name: macro.name,
+                                description: macro.description,
+                                class: macro.class,
+                                addon: macro.addon || 'universal',
+                                macro: macro.macro,
+                                author: macro.author,
+                                created: macro.created || new Date().toISOString()
+                            }
+                        })
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        const error = await response.json();
+                        log(`Ошибка при миграции макроса ${macro.id}: ${error.error}`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`Ошибка при миграции макроса ${macro.id}: ${error.message}`, 'error');
+                    errorCount++;
+                }
+
+                updateProgress((i + 1) / macros.length * 100, `Миграция макросов: ${i + 1}/${macros.length}`);
+            }
+
+            log(`Макросы: успешно ${successCount}, ошибок ${errorCount}`, successCount > 0 ? 'success' : 'error');
+            return { success: errorCount === 0, count: successCount };
+        }
+
+        async function migrateAddons(file) {
+            if (!file) return { success: true, count: 0 };
+
+            log('Загрузка addons.json...', 'info');
+            const text = await file.text();
+            const data = JSON.parse(text);
+            const addons = data.addons || [];
+
+            log(`Найдено аддонов: ${addons.length}`, 'info');
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < addons.length; i++) {
+                const addon = addons[i];
+                try {
+                    const response = await fetch('/api/addon/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + getAuthToken()
+                        },
+                        body: JSON.stringify({
+                            action: 'add',
+                            addonData: {
+                                id: addon.id,
+                                name: addon.name,
+                                version: addon.version,
+                                description: addon.description,
+                                features: Array.isArray(addon.features) ? addon.features : [],
+                                downloadUrl: addon.downloadUrl || null,
+                                author: addon.author,
+                                created: addon.created || new Date().toISOString()
+                            }
+                        })
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        const error = await response.json();
+                        log(`Ошибка при миграции аддона ${addon.id}: ${error.error}`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`Ошибка при миграции аддона ${addon.id}: ${error.message}`, 'error');
+                    errorCount++;
+                }
+
+                updateProgress((i + 1) / addons.length * 100, `Миграция аддонов: ${i + 1}/${addons.length}`);
+            }
+
+            log(`Аддоны: успешно ${successCount}, ошибок ${errorCount}`, successCount > 0 ? 'success' : 'error');
+            return { success: errorCount === 0, count: successCount };
+        }
+
+        async function migrateGuides(file) {
+            if (!file) return { success: true, count: 0 };
+
+            log('Загрузка guides.json...', 'info');
+            const text = await file.text();
+            const data = JSON.parse(text);
+            const guides = data.guides || [];
+
+            log(`Найдено гайдов: ${guides.length}`, 'info');
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < guides.length; i++) {
+                const guide = guides[i];
+                try {
+                    const response = await fetch('/api/guide/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + getAuthToken()
+                        },
+                        body: JSON.stringify({
+                            action: 'add',
+                            guideData: {
+                                id: guide.id,
+                                title: guide.title,
+                                description: guide.description,
+                                youtubeUrl: guide.youtubeUrl,
+                                author: guide.author,
+                                created: guide.created || new Date().toISOString()
+                            }
+                        })
+                    });
+
+                    if (response.ok) {
+                        successCount++;
+                    } else {
+                        const error = await response.json();
+                        log(`Ошибка при миграции гайда ${guide.id}: ${error.error}`, 'error');
+                        errorCount++;
+                    }
+                } catch (error) {
+                    log(`Ошибка при миграции гайда ${guide.id}: ${error.message}`, 'error');
+                    errorCount++;
+                }
+
+                updateProgress((i + 1) / guides.length * 100, `Миграция гайдов: ${i + 1}/${guides.length}`);
+            }
+
+            log(`Гайды: успешно ${successCount}, ошибок ${errorCount}`, successCount > 0 ? 'success' : 'error');
+            return { success: errorCount === 0, count: successCount };
+        }
+
+        async function migrateDonors(file) {
+            if (!file) return { success: true, count: 0 };
+
+            log('Загрузка top-donors.json...', 'info');
+            const text = await file.text();
+            const donors = JSON.parse(text);
+            const donorsArray = Array.isArray(donors) ? donors : [];
+
+            log(`Найдено донатеров: ${donorsArray.length}`, 'info');
+
+            try {
+                const response = await fetch('/api/top-donors/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + getAuthToken()
+                    },
+                    body: JSON.stringify({
+                        donors: donorsArray.map(d => ({
+                            id: Number(d.id),
+                            name: d.name,
+                            amount: Number(d.amount),
+                            currency: d.currency || '₽'
+                        }))
+                    })
+                });
+
+                if (response.ok) {
+                    log(`Донатеры: успешно мигрировано ${donorsArray.length}`, 'success');
+                    return { success: true, count: donorsArray.length };
+                } else {
+                    const error = await response.json();
+                    log(`Ошибка при миграции донатеров: ${error.error}`, 'error');
+                    return { success: false, count: 0 };
+                }
+            } catch (error) {
+                log(`Ошибка при миграции донатеров: ${error.message}`, 'error');
+                return { success: false, count: 0 };
+            }
+        }
+
+        function getAuthToken() {
+            // Получаем токен из localStorage (если пользователь авторизован)
+            const token = localStorage.getItem('admin_token');
+            if (!token) {
+                throw new Error('Требуется авторизация. Пожалуйста, войдите в админ-панель сначала.');
+            }
+            return token;
+        }
+
+        async function startMigration() {
+            if (migrationInProgress) {
+                alert('Миграция уже выполняется');
+                return;
+            }
+
+            const configsFile = document.getElementById('configsFile').files[0];
+            const macrosFile = document.getElementById('macrosFile').files[0];
+            const addonsFile = document.getElementById('addonsFile').files[0];
+            const guidesFile = document.getElementById('guidesFile').files[0];
+            const donorsFile = document.getElementById('donorsFile').files[0];
+
+            if (!configsFile && !macrosFile && !addonsFile && !guidesFile && !donorsFile) {
+                alert('Выберите хотя бы один файл для миграции');
+                return;
+            }
+
+            try {
+                getAuthToken(); // Проверяем авторизацию
+            } catch (error) {
+                alert('Ошибка: ' + error.message + '\n\nПожалуйста, сначала войдите в админ-панель (/admin.html)');
+                return;
+            }
+
+            migrationInProgress = true;
+            document.getElementById('migrateBtn').disabled = true;
+            document.getElementById('log').innerHTML = '';
+            document.getElementById('status').className = 'status';
+
+            log('Начало миграции...', 'info');
+
+            try {
+                const totalFiles = [configsFile, macrosFile, addonsFile, guidesFile, donorsFile].filter(f => f).length;
+                let completedFiles = 0;
+
+                if (configsFile) {
+                    await migrateConfigs(configsFile);
+                    completedFiles++;
+                    updateProgress(completedFiles / totalFiles * 100, `Завершено файлов: ${completedFiles}/${totalFiles}`);
+                }
+
+                if (macrosFile) {
+                    await migrateMacros(macrosFile);
+                    completedFiles++;
+                    updateProgress(completedFiles / totalFiles * 100, `Завершено файлов: ${completedFiles}/${totalFiles}`);
+                }
+
+                if (addonsFile) {
+                    await migrateAddons(addonsFile);
+                    completedFiles++;
+                    updateProgress(completedFiles / totalFiles * 100, `Завершено файлов: ${completedFiles}/${totalFiles}`);
+                }
+
+                if (guidesFile) {
+                    await migrateGuides(guidesFile);
+                    completedFiles++;
+                    updateProgress(completedFiles / totalFiles * 100, `Завершено файлов: ${completedFiles}/${totalFiles}`);
+                }
+
+                if (donorsFile) {
+                    await migrateDonors(donorsFile);
+                    completedFiles++;
+                    updateProgress(completedFiles / totalFiles * 100, `Завершено файлов: ${completedFiles}/${totalFiles}`);
+                }
+
+                updateProgress(100, 'Миграция завершена!');
+                log('✅ Миграция успешно завершена!', 'success');
+                showStatus('Миграция успешно завершена!', 'success');
+
+            } catch (error) {
+                log('❌ Критическая ошибка: ' + error.message, 'error');
+                showStatus('Ошибка при миграции: ' + error.message, 'error');
+            } finally {
+                migrationInProgress = false;
+                document.getElementById('migrateBtn').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

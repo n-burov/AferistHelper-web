@@ -1,7 +1,9 @@
 {
   "name": "aferisthelper-admin",
   "version": "1.0.0",
+  "type": "module",
   "dependencies": {
-    "@octokit/rest": "^19.0.0"
+    "pg": "^8.11.3",
+    "bcryptjs": "^2.4.3"
   }
 }

@@ -1,61 +1,72 @@
-import { Octokit } from '@octokit/rest';
+import { query } from '../../../lib/db.js';
+import { verifyAuth } from '../../../lib/auth.js';
 
 export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-    const { action, addonData, accessToken } = req.body;
-    if (!action || !addonData || !accessToken) {
-        return res.status(400).json({ error: 'Missing required parameters' });
+  // Проверка авторизации
+  const auth = verifyAuth(req);
+  if (!auth) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const { action, addonData } = req.body;
+  if (!action || !addonData) {
+    return res.status(400).json({ error: 'Missing required parameters' });
+  }
+
+  try {
+    switch (action) {
+      case 'add':
+        await query(
+          `INSERT INTO addons (id, name, version, description, features, download_url, author, created, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+          [
+            addonData.id,
+            addonData.name,
+            addonData.version,
+            addonData.description,
+            Array.isArray(addonData.features) ? addonData.features : [],
+            addonData.downloadUrl || null,
+            addonData.author,
+            addonData.created || new Date().toISOString(),
+            new Date().toISOString()
+          ]
+        );
+        break;
+
+      case 'update':
+        await query(
+          `UPDATE addons 
+           SET name = $2, version = $3, description = $4, features = $5, 
+               download_url = $6, author = $7, updated_at = $8
+           WHERE id = $1`,
+          [
+            addonData.id,
+            addonData.name,
+            addonData.version,
+            addonData.description,
+            Array.isArray(addonData.features) ? addonData.features : [],
+            addonData.downloadUrl || null,
+            addonData.author,
+            new Date().toISOString()
+          ]
+        );
+        break;
+
+      case 'delete':
+        await query('DELETE FROM addons WHERE id = $1', [addonData.id]);
+        break;
+
+      default:
+        return res.status(400).json({ error: 'Invalid action' });
     }
 
-    try {
-        const octokit = new Octokit({ auth: accessToken });
-        
-        // Получаем текущий addons.json
-        const { data: currentContent } = await octokit.repos.getContent({
-            owner: process.env.GITHUB_OWNER,
-            repo: process.env.GITHUB_REPO,
-            path: 'addons/addons.json'
-        });
-
-        const content = Buffer.from(currentContent.content, 'base64').toString('utf8');
-        const addons = JSON.parse(content);
-
-        // Обрабатываем действие
-        switch (action) {
-            case 'add':
-                addons.addons.push(addonData);
-                break;
-            case 'update':
-                const index = addons.addons.findIndex(a => a.id === addonData.id);
-                if (index !== -1) addons.addons[index] = addonData;
-                break;
-            case 'delete':
-                addons.addons = addons.addons.filter(a => a.id !== addonData.id);
-                break;
-            default:
-                return res.status(400).json({ error: 'Invalid action' });
-        }
-
-        // Обновляем метаданные
-        addons.meta.lastUpdated = new Date().toISOString();
-        addons.meta.totalAddons = addons.addons.length;
-        addons.meta.updatedBy = addonData.author || 'Unknown';
-
-        // Сохраняем в репозиторий
-        await octokit.repos.createOrUpdateFileContents({
-            owner: process.env.GITHUB_OWNER,
-            repo: process.env.GITHUB_REPO,
-            path: 'addons/addons.json',
-            message: `${action} addon: ${addonData.name}`,
-            content: Buffer.from(JSON.stringify(addons, null, 2)).toString('base64'),
-            sha: currentContent.sha
-        });
-
-        res.json({ success: true, message: 'Addon updated successfully' });
-
-    } catch (error) {
-        console.error('Update error:', error);
-        res.status(500).json({ error: 'Failed to update addon' });
-    }
+    res.json({ success: true, message: 'Addon updated successfully' });
+  } catch (error) {
+    console.error('Update error:', error);
+    res.status(500).json({ error: 'Failed to update addon: ' + error.message });
+  }
 }
