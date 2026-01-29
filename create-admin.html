@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание первого администратора</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.error {
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #e1e5e9;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #a7f3d0;
+        }
+
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #fecaca;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #bfdbfe;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .requirements {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-user-shield"></i> Создание администратора</h1>
+            <p>Создайте первого администратора для доступа к панели управления</p>
+        </div>
+
+        <div class="alert info" id="infoAlert">
+            <i class="fas fa-info-circle"></i> Все поля, кроме логина и пароля, необязательны
+        </div>
+
+        <div class="alert success" id="successAlert">
+            <i class="fas fa-check-circle"></i> <span id="successMessage"></span>
+        </div>
+
+        <div class="alert error" id="errorAlert">
+            <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
+        </div>
+
+        <form id="adminForm">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Логин *</label>
+                <input type="text" id="username" name="username" placeholder="Введите логин" required>
+                <div class="error-message" id="usernameError">Логин не может быть пустым</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Пароль *</label>
+                <input type="password" id="password" name="password" placeholder="Минимум 6 символов" required>
+                <div class="password-strength">
+                    <div class="strength-bar" id="strengthBar"></div>
+                </div>
+                <div class="error-message" id="passwordError">Пароль должен содержать минимум 6 символов</div>
+                <div class="requirements">Рекомендуется использовать цифры, буквы и специальные символы</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword"><i class="fas fa-lock"></i> Подтверждение пароля *</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Повторите пароль" required>
+                <div class="error-message" id="confirmPasswordError">Пароли не совпадают</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="email" name="email" placeholder="email@example.com">
+                <div class="error-message" id="emailError">Введите корректный email</div>
+            </div>
+
+            <div class="form-group">
+                <label for="fullName"><i class="fas fa-id-card"></i> Полное имя</label>
+                <input type="text" id="fullName" name="fullName" placeholder="Иванов Иван Иванович">
+            </div>
+
+            <button type="submit" class="btn" id="submitBtn">
+                <i class="fas fa-user-plus"></i> Создать администратора
+            </button>
+        </form>
+
+        <div class="footer">
+            <p><i class="fas fa-shield-alt"></i> Защищено шифрованием паролей</p>
+            <p style="margin-top: 8px; font-size: 12px;">После создания администратора вы сможете войти в панель управления</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('adminForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const strengthBar = document.getElementById('strengthBar');
+            const infoAlert = document.getElementById('infoAlert');
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Показать информационное сообщение
+            infoAlert.style.display = 'block';
+
+            // Проверка сложности пароля
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                if (password.length >= 6) strength += 25;
+                if (password.length >= 10) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password)) strength += 25;
+                
+                strengthBar.style.width = strength + '%';
+                
+                if (strength < 50) {
+                    strengthBar.style.backgroundColor = '#ef4444';
+                } else if (strength < 75) {
+                    strengthBar.style.backgroundColor = '#f59e0b';
+                } else {
+                    strengthBar.style.backgroundColor = '#10b981';
+                }
+            });
+
+            // Валидация формы
+            function validateForm() {
+                let isValid = true;
+                
+                // Сброс ошибок
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+                document.querySelectorAll('input').forEach(el => {
+                    el.classList.remove('error');
+                });
+                
+                // Проверка логина
+                const username = document.getElementById('username').value.trim();
+                if (!username) {
+                    document.getElementById('usernameError').style.display = 'block';
+                    document.getElementById('username').classList.add('error');
+                    isValid = false;
+                }
+                
+                // Проверка пароля
+                const password = passwordInput.value;
+                if (password.length < 6) {
+                    document.getElementById('passwordError').style.display = 'block';
+                    passwordInput.classList.add('error');
+                    isValid = false;
+                }
+                
+                // Проверка подтверждения пароля
+                const confirmPassword = confirmPasswordInput.value;
+                if (password !== confirmPassword) {
+                    document.getElementById('confirmPasswordError').style.display = 'block';
+                    confirmPasswordInput.classList.add('error');
+                    isValid = false;
+                }
+                
+                // Проверка email (если указан)
+                const email = document.getElementById('email').value.trim();
+                if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    document.getElementById('emailError').style.display = 'block';
+                    document.getElementById('email').classList.add('error');
+                    isValid = false;
+                }
+                
+                return isValid;
+            }
+
+            // Отправка формы
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!validateForm()) {
+                    return;
+                }
+                
+                // Собираем данные формы
+                const formData = {
+                    username: document.getElementById('username').value.trim(),
+                    password: passwordInput.value,
+                    email: document.getElementById('email').value.trim() || null,
+                    fullName: document.getElementById('fullName').value.trim() || null
+                };
+                
+                // Блокируем кнопку и показываем спиннер
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner"></span> Создание...';
+                
+                // Скрываем предыдущие сообщения
+                successAlert.style.display = 'none';
+                errorAlert.style.display = 'none';
+                
+                try {
+                    // Отправляем запрос на сервер
+                    const response = await fetch('/api/admin/create-first', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok && result.success) {
+                        // Успешное создание
+                        successMessage.textContent = result.message || 'Администратор успешно создан!';
+                        successAlert.style.display = 'block';
+                        
+                        // Очищаем форму
+                        form.reset();
+                        strengthBar.style.width = '0%';
+                        
+                        // Показываем дополнительную информацию
+                        setTimeout(() => {
+                            alert(`✅ Администратор создан!\n\nЛогин: ${result.data.username}\nID: ${result.data.id}\n\nТеперь вы можете войти в панель управления.`);
+                        }, 500);
+                    } else {
+                        // Ошибка от сервера
+                        throw new Error(result.error || 'Ошибка при создании администратора');
+                    }
+                } catch (error) {
+                    // Ошибка сети или сервера
+                    errorMessage.textContent = error.message;
+                    errorAlert.style.display = 'block';
+                    
+                    // Прокручиваем к ошибке
+                    errorAlert.scrollIntoView({ behavior: 'smooth' });
+                } finally {
+                    // Разблокируем кнопку
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Создать администратора';
+                }
+            });
+
+            // Добавляем API endpoint эмуляцию для демонстрации
+            // В реальном приложении этот код нужно удалить
+            async function emulateServerRequest(formData) {
+                // Имитация задержки сети
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Проверяем, существует ли пользователь (эмуляция)
+                const users = JSON.parse(localStorage.getItem('admin_users') || '[]');
+                const existingUser = users.find(u => u.username === formData.username);
+                
+                if (existingUser) {
+                    throw new Error('Пользователь с таким логином уже существует');
+                }
+                
+                // Создаем нового пользователя
+                const newUser = {
+                    id: Date.now(),
+                    username: formData.username,
+                    email: formData.email,
+                    full_name: formData.fullName,
+                    created_at: new Date().toISOString()
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('admin_users', JSON.stringify(users));
+                
+                return {
+                    success: true,
+                    message: 'Администратор успешно создан!',
+                    data: newUser
+                };
+            }
+            
+            // Для демонстрации подменяем fetch на эмуляцию
+            // Удалите в реальном приложении
+            const originalFetch = window.fetch;
+            window.fetch = function(url, options) {
+                if (url === '/api/admin/create-first') {
+                    const formData = JSON.parse(options.body);
+                    return Promise.resolve({
+                        ok: true,
+                        json: () => emulateServerRequest(formData)
+                    });
+                }
+                return originalFetch.apply(this, arguments);
+            };
+        });
+    </script>
+</body>
+</html>
